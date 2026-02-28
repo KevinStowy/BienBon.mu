@@ -14,7 +14,7 @@ meta:
   last_updated: "2026-02-28"
   workers:
     alpha: { status: working, current_task: "5.1" }
-    beta: { status: working, current_task: "2.2" }
+    beta: { status: idle, current_task: null }
 
 # ============================================================================
 # PHASE 1 — FONDATIONS (séquentiel, un seul worker)
@@ -187,7 +187,7 @@ phases:
         name: "BC Payment — ledger, Peach Payments, commissions"
         agent: nestjs-module
         assigned_to: beta
-        status: claimed
+        status: done
         worker: beta
         blocked_by: ["1.2", "1.3", "1.4", "1.6"]
         needs_human: "Obtenir les clés API Peach Payments (sandbox) : PEACH_API_KEY + PEACH_WEBHOOK_SECRET"
