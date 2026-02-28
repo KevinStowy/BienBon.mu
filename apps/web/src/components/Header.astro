@@ -1,0 +1,131 @@
+---
+import type { Locale } from '../i18n/utils';
+import { t, getLocalizedPath } from '../i18n/utils';
+import LanguageSwitcher from './LanguageSwitcher.astro';
+
+interface Props {
+  locale: Locale;
+  currentPath?: string;
+}
+
+const { locale, currentPath = '/' } = Astro.props;
+---
+
+<header class="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-neutral-200 shadow-sm">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <nav
+      class="flex items-center justify-between h-16"
+      aria-label={locale === 'fr' ? 'Navigation principale' : locale === 'en' ? 'Main navigation' : 'Navigasyon prinsipal'}
+    >
+      <!-- Logo -->
+      <a
+        href={getLocalizedPath(locale, '/')}
+        class="flex items-center gap-2 font-extrabold text-xl text-green-700 hover:text-green-900 transition-colors"
+        aria-label="BienBon — Retour à l'accueil"
+      >
+        <span class="text-2xl" aria-hidden="true">&#127812;</span>
+        <span>BienBon</span>
+      </a>
+
+      <!-- Desktop navigation -->
+      <div class="hidden md:flex items-center gap-1">
+        <a
+          href={getLocalizedPath(locale, '/')}
+          class="px-3 py-2 rounded-md text-sm font-semibold text-neutral-600 hover:text-green-700 hover:bg-green-100 transition-colors"
+          aria-current={currentPath === '/' ? 'page' : undefined}
+        >
+          {t(locale, 'nav.home')}
+        </a>
+        <a
+          href={locale === 'fr' ? '/comment-ca-marche' : locale === 'en' ? '/en/how-it-works' : '/kr/kouma-sa-marse'}
+          class="px-3 py-2 rounded-md text-sm font-semibold text-neutral-600 hover:text-green-700 hover:bg-green-100 transition-colors"
+        >
+          {t(locale, 'nav.howItWorks')}
+        </a>
+        <a
+          href={locale === 'fr' ? '/faq' : locale === 'en' ? '/en/faq' : '/kr/faq'}
+          class="px-3 py-2 rounded-md text-sm font-semibold text-neutral-600 hover:text-green-700 hover:bg-green-100 transition-colors"
+        >
+          {t(locale, 'nav.faq')}
+        </a>
+      </div>
+
+      <!-- Right side: language + CTA -->
+      <div class="flex items-center gap-3">
+        <LanguageSwitcher locale={locale} currentPath={currentPath} />
+
+        <a
+          href={locale === 'fr' ? '/devenir-partenaire' : locale === 'en' ? '/en/become-partner' : '/kr/vinn-partenaire'}
+          class="hidden sm:inline-flex items-center px-4 py-2 rounded-md text-sm font-bold text-green-700 border-2 border-green-700 hover:bg-green-700 hover:text-white transition-colors min-h-[44px]"
+        >
+          {t(locale, 'common.becomePartner')}
+        </a>
+
+        <!-- Mobile menu button -->
+        <button
+          id="mobile-menu-toggle"
+          type="button"
+          class="md:hidden p-2 rounded-md text-neutral-600 hover:text-green-700 hover:bg-green-100 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
+          aria-controls="mobile-menu"
+          aria-expanded="false"
+          aria-label={locale === 'fr' ? 'Ouvrir le menu' : 'Open menu'}
+        >
+          <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Mobile menu -->
+    <div id="mobile-menu" class="hidden md:hidden border-t border-neutral-200 py-3" role="navigation" aria-label="Mobile navigation">
+      <div class="flex flex-col gap-1">
+        <a
+          href={getLocalizedPath(locale, '/')}
+          class="px-4 py-3 rounded-md text-sm font-semibold text-neutral-600 hover:text-green-700 hover:bg-green-100 transition-colors min-h-[44px] flex items-center"
+        >
+          {t(locale, 'nav.home')}
+        </a>
+        <a
+          href={locale === 'fr' ? '/comment-ca-marche' : locale === 'en' ? '/en/how-it-works' : '/kr/kouma-sa-marse'}
+          class="px-4 py-3 rounded-md text-sm font-semibold text-neutral-600 hover:text-green-700 hover:bg-green-100 transition-colors min-h-[44px] flex items-center"
+        >
+          {t(locale, 'nav.howItWorks')}
+        </a>
+        <a
+          href={locale === 'fr' ? '/faq' : locale === 'en' ? '/en/faq' : '/kr/faq'}
+          class="px-4 py-3 rounded-md text-sm font-semibold text-neutral-600 hover:text-green-700 hover:bg-green-100 transition-colors min-h-[44px] flex items-center"
+        >
+          {t(locale, 'nav.faq')}
+        </a>
+        <a
+          href={locale === 'fr' ? '/devenir-partenaire' : locale === 'en' ? '/en/become-partner' : '/kr/vinn-partenaire'}
+          class="mt-2 mx-4 px-4 py-3 rounded-md text-sm font-bold text-center text-white bg-green-700 hover:bg-green-900 transition-colors min-h-[44px] flex items-center justify-center"
+        >
+          {t(locale, 'common.becomePartner')}
+        </a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<script>
+  const toggle = document.getElementById('mobile-menu-toggle');
+  const menu = document.getElementById('mobile-menu');
+
+  if (toggle && menu) {
+    toggle.addEventListener('click', () => {
+      const isOpen = !menu.classList.contains('hidden');
+      menu.classList.toggle('hidden');
+      toggle.setAttribute('aria-expanded', String(!isOpen));
+      const svg = toggle.querySelector('svg');
+      if (svg) {
+        if (isOpen) {
+          svg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />';
+        } else {
+          svg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />';
+        }
+      }
+    });
+  }
+</script>

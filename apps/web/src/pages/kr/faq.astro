@@ -1,0 +1,41 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import FaqAccordion from '../../components/FaqAccordion';
+import mfeTranslations from '../../i18n/mfe.json';
+
+const locale = 'mfe' as const;
+const faqData = mfeTranslations.faq;
+---
+
+<BaseLayout
+  title="Kestion — BienBon"
+  description="Trouv repons kestion ou lor BienBon dan lil Moris."
+  locale={locale}
+  canonicalPath="/faq"
+>
+  <Header locale={locale} currentPath="/kr/faq" />
+  <main id="main-content">
+    <section class="bg-gradient-to-br from-green-100 to-neutral-50 py-14 sm:py-20">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h1 class="text-4xl sm:text-5xl font-extrabold text-neutral-900">
+          {faqData.title}
+        </h1>
+      </div>
+    </section>
+
+    <section class="py-16 sm:py-20 bg-white">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <FaqAccordion
+          client:visible
+          items={faqData.items}
+          categories={faqData.categories}
+          searchPlaceholder={faqData.searchPlaceholder}
+          noResults={faqData.noResults}
+        />
+      </div>
+    </section>
+  </main>
+  <Footer locale={locale} />
+</BaseLayout>

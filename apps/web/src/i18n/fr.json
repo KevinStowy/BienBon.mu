@@ -1,0 +1,146 @@
+{
+  "common": {
+    "appName": "BienBon",
+    "openApp": "Ouvrir l'app",
+    "discoverBaskets": "Découvrir les paniers",
+    "becomePartner": "Devenir partenaire"
+  },
+  "nav": {
+    "home": "Accueil",
+    "howItWorks": "Comment ça marche",
+    "faq": "FAQ",
+    "blog": "Blog",
+    "becomePartner": "Devenir partenaire"
+  },
+  "home": {
+    "heroTitle": "Sauvez des repas, faites des économies !",
+    "heroSubtitle": "Des paniers surprise à prix réduit près de chez vous à l'île Maurice.",
+    "howItWorksTitle": "Comment ça marche ?",
+    "step1Title": "Explorez",
+    "step1Desc": "Trouvez des paniers anti-gaspi autour de vous",
+    "step2Title": "Réservez",
+    "step2Desc": "Choisissez un panier et payez en ligne",
+    "step3Title": "Récupérez",
+    "step3Desc": "Présentez votre QR code au commerce",
+    "step4Title": "Savourez",
+    "step4Desc": "Profitez de produits de qualité à petit prix",
+    "impactTitle": "Notre impact ensemble",
+    "mealsSaved": "repas sauvés",
+    "co2Saved": "kg de CO₂ évités",
+    "ctaTitle": "Prêt à sauver des repas ?",
+    "ctaButton": "Télécharger l'app"
+  },
+  "howItWorks": {
+    "title": "Comment ça marche ?",
+    "consumerTitle": "Pour les consommateurs",
+    "partnerTitle": "Pour les partenaires",
+    "consumerStep1Title": "Téléchargez l'app",
+    "consumerStep1Desc": "Disponible sur iOS et Android, gratuitement.",
+    "consumerStep2Title": "Explorez les paniers",
+    "consumerStep2Desc": "Parcourez les offres autour de vous sur la carte.",
+    "consumerStep3Title": "Réservez et payez",
+    "consumerStep3Desc": "Choisissez votre panier et réglez en ligne en quelques secondes.",
+    "consumerStep4Title": "Récupérez au commerce",
+    "consumerStep4Desc": "Présentez votre QR code au commerçant dans le créneau indiqué.",
+    "partnerStep1Title": "Inscrivez votre commerce",
+    "partnerStep1Desc": "Créez votre compte partenaire et configurez vos paniers.",
+    "partnerStep2Title": "Publiez vos paniers",
+    "partnerStep2Desc": "Indiquez le contenu, le prix et les créneaux de retrait.",
+    "partnerStep3Title": "Recevez les réservations",
+    "partnerStep3Desc": "Gérez vos commandes en temps réel depuis votre tableau de bord.",
+    "partnerStep4Title": "Remettez et encaissez",
+    "partnerStep4Desc": "Scannez le QR code du client et recevez votre paiement."
+  },
+  "partner": {
+    "title": "Devenez partenaire BienBon",
+    "subtitle": "Réduisez le gaspillage et augmentez vos revenus",
+    "benefit1": "Zéro invendu",
+    "benefit1Desc": "Écoulez vos invendus chaque jour plutôt que de les jeter.",
+    "benefit2": "Nouvelle clientèle",
+    "benefit2Desc": "Attirez de nouveaux clients grâce à notre communauté.",
+    "benefit3": "Revenus supplémentaires",
+    "benefit3Desc": "Monétisez ce qui aurait été perdu sans effort supplémentaire.",
+    "benefit4": "Impact environnemental",
+    "benefit4Desc": "Participez activement à la réduction du gaspillage alimentaire.",
+    "contactTitle": "Prêt à nous rejoindre ?",
+    "contactDesc": "Contactez-nous pour démarrer votre inscription partenaire.",
+    "contactEmail": "partenaires@bienbon.mu",
+    "testimonialQuote": "Depuis que j'utilise BienBon, je perds beaucoup moins de marchandise en fin de journée. C'est un vrai plus pour mon boulangerie !",
+    "testimonialAuthor": "Priya S., Boulangerie Flamboyant, Port-Louis"
+  },
+  "faq": {
+    "title": "Questions fréquentes",
+    "searchPlaceholder": "Rechercher une question...",
+    "noResults": "Aucun résultat pour votre recherche.",
+    "categories": {
+      "general": "Général",
+      "consumer": "Consommateur",
+      "partner": "Partenaire",
+      "payment": "Paiement"
+    },
+    "items": [
+      {
+        "category": "general",
+        "question": "Qu'est-ce que BienBon ?",
+        "answer": "BienBon est la première marketplace anti-gaspillage alimentaire à l'île Maurice. Elle permet aux consommateurs d'acheter des paniers surprise à prix réduit auprès de commerces locaux, réduisant ainsi le gaspillage alimentaire."
+      },
+      {
+        "category": "general",
+        "question": "BienBon est-il disponible partout à Maurice ?",
+        "answer": "BienBon est actuellement disponible dans les principales villes de Maurice : Port-Louis, Curepipe, Quatre Bornes, Rose-Hill et Vacoas. Nous étendons progressivement notre couverture à l'ensemble de l'île."
+      },
+      {
+        "category": "consumer",
+        "question": "Comment fonctionne un panier surprise ?",
+        "answer": "Un panier surprise contient des produits invendus du jour sélectionnés par le commerçant. Vous connaissez la catégorie (boulangerie, traiteur, etc.) et la valeur approximative, mais pas le contenu exact — c'est la surprise ! Le prix est réduit d'au moins 50% par rapport à la valeur réelle."
+      },
+      {
+        "category": "consumer",
+        "question": "Comment récupérer mon panier ?",
+        "answer": "Après votre réservation, vous recevez un QR code dans l'application. Présentez-le au commerçant dans le créneau horaire indiqué lors de votre achat. Le commerçant scanne votre code et vous remet votre panier."
+      },
+      {
+        "category": "consumer",
+        "question": "Puis-je annuler ma réservation ?",
+        "answer": "Les annulations sont possibles jusqu'à 2 heures avant le créneau de retrait. Passé ce délai, le paiement ne peut pas être remboursé car le commerçant a déjà préparé votre panier."
+      },
+      {
+        "category": "consumer",
+        "question": "L'application est-elle gratuite ?",
+        "answer": "Oui, l'application BienBon est totalement gratuite pour les consommateurs. Vous ne payez que le prix des paniers que vous réservez."
+      },
+      {
+        "category": "partner",
+        "question": "Comment devenir partenaire BienBon ?",
+        "answer": "Contactez-nous à partenaires@bienbon.mu ou remplissez le formulaire d'inscription partenaire. Notre équipe vous contactera sous 48h pour finaliser votre inscription et configurer votre compte."
+      },
+      {
+        "category": "partner",
+        "question": "Quels types de commerces peuvent participer ?",
+        "answer": "Tous les commerces alimentaires peuvent participer : boulangeries, restaurants, traiteurs, épiceries, supermarchés, fromageries, etc. Le seul prérequis est d'avoir des invendus réguliers en fin de journée."
+      },
+      {
+        "category": "partner",
+        "question": "Quelle commission prend BienBon ?",
+        "answer": "BienBon prend une commission de 20% sur chaque panier vendu. Vous conservez 80% du prix de vente. Il n'y a pas de frais d'inscription ni d'abonnement mensuel."
+      },
+      {
+        "category": "payment",
+        "question": "Quels moyens de paiement sont acceptés ?",
+        "answer": "BienBon accepte les cartes bancaires (Visa, Mastercard) et les paiements via Juice (MCB). D'autres méthodes de paiement locales seront ajoutées prochainement."
+      },
+      {
+        "category": "payment",
+        "question": "Quand les partenaires sont-ils payés ?",
+        "answer": "Les partenaires reçoivent leurs paiements chaque semaine, chaque lundi pour les ventes de la semaine précédente. Le virement est effectué sur le compte bancaire enregistré lors de l'inscription."
+      }
+    ]
+  },
+  "footer": {
+    "description": "BienBon est la première marketplace anti-gaspillage alimentaire à l'île Maurice.",
+    "legal": "Mentions légales",
+    "cgu": "CGU & CGV",
+    "privacy": "Politique de confidentialité",
+    "copyright": "© 2026 BienBon. Tous droits réservés."
+  }
+}

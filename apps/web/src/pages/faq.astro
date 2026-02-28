@@ -1,0 +1,62 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import FaqAccordion from '../components/FaqAccordion';
+import { t } from '../i18n/utils';
+import frTranslations from '../i18n/fr.json';
+
+const locale = 'fr' as const;
+const faqData = frTranslations.faq;
+---
+
+<BaseLayout
+  title="FAQ — Questions fréquentes — BienBon"
+  description="Trouvez les réponses à vos questions sur BienBon : paniers surprise, réservations, paiements, et comment devenir partenaire à l'île Maurice."
+  locale={locale}
+  canonicalPath="/faq"
+>
+  <Header locale={locale} currentPath="/faq" />
+  <main id="main-content">
+    <!-- Page header -->
+    <section class="bg-gradient-to-br from-green-100 to-neutral-50 py-14 sm:py-20">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h1 class="text-4xl sm:text-5xl font-extrabold text-neutral-900">
+          {t(locale, 'faq.title')}
+        </h1>
+        <p class="mt-4 text-lg text-neutral-600 max-w-xl mx-auto">
+          Tout ce que vous voulez savoir sur BienBon.
+        </p>
+      </div>
+    </section>
+
+    <!-- FAQ content -->
+    <section class="py-16 sm:py-20 bg-white">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <FaqAccordion
+          client:visible
+          items={faqData.items}
+          categories={faqData.categories}
+          searchPlaceholder={faqData.searchPlaceholder}
+          noResults={faqData.noResults}
+        />
+      </div>
+    </section>
+
+    <!-- Contact CTA -->
+    <section class="py-12 bg-neutral-50 text-center">
+      <div class="max-w-lg mx-auto px-4">
+        <p class="text-neutral-600 mb-4">
+          Vous ne trouvez pas la réponse à votre question ?
+        </p>
+        <a
+          href="mailto:contact@bienbon.mu"
+          class="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-green-700 text-white font-bold hover:bg-green-900 transition-colors min-h-[48px]"
+        >
+          Contacter le support
+        </a>
+      </div>
+    </section>
+  </main>
+  <Footer locale={locale} />
+</BaseLayout>

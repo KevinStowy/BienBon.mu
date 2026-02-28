@@ -1,0 +1,27 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import HeroSection from '../../components/HeroSection.astro';
+import HowItWorksSection from '../../components/HowItWorksSection.astro';
+import ImpactSection from '../../components/ImpactSection.astro';
+import CtaSection from '../../components/CtaSection.astro';
+
+const locale = 'en' as const;
+---
+
+<BaseLayout
+  title="BienBon — Save meals, save money in Mauritius"
+  description="BienBon is the first anti-food waste marketplace in Mauritius. Buy surprise baskets at discounted prices near you."
+  locale={locale}
+  canonicalPath="/"
+>
+  <Header locale={locale} currentPath="/en" />
+  <main id="main-content">
+    <HeroSection locale={locale} />
+    <HowItWorksSection locale={locale} />
+    <ImpactSection locale={locale} />
+    <CtaSection locale={locale} />
+  </main>
+  <Footer locale={locale} />
+</BaseLayout>

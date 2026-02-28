@@ -1,0 +1,65 @@
+---
+import type { Locale } from '../i18n/utils';
+import { t } from '../i18n/utils';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+---
+
+<section id="app-download" class="py-16 sm:py-24 bg-green-700" aria-labelledby="cta-heading">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <h2 id="cta-heading" class="text-3xl sm:text-4xl font-extrabold text-white">
+      {t(locale, 'home.ctaTitle')}
+    </h2>
+    <p class="mt-4 text-lg text-green-100 max-w-xl mx-auto">
+      {locale === 'fr'
+        ? 'Rejoignez des milliers de Mauriciens qui sauvent de la nourriture chaque jour.'
+        : locale === 'en'
+        ? 'Join thousands of Mauritians who save food every day.'
+        : 'Zwenn milye Morisyen ki sap manze sak zour.'}
+    </p>
+
+    <!-- App store buttons -->
+    <div class="mt-8 flex flex-col sm:flex-row justify-center gap-4">
+      <a
+        href="#"
+        class="inline-flex items-center gap-3 px-6 py-4 rounded-xl bg-white text-neutral-900 font-bold hover:bg-neutral-100 transition-colors shadow-lg min-h-[60px]"
+        aria-label={locale === 'fr' ? 'Télécharger sur App Store' : 'Download on App Store'}
+      >
+        <svg class="w-8 h-8 text-neutral-900" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+        </svg>
+        <div class="text-left">
+          <div class="text-xs text-neutral-500 leading-none">
+            {locale === 'fr' ? 'Télécharger sur' : 'Download on'}
+          </div>
+          <div class="text-base font-extrabold leading-tight">App Store</div>
+        </div>
+      </a>
+
+      <a
+        href="#"
+        class="inline-flex items-center gap-3 px-6 py-4 rounded-xl bg-white text-neutral-900 font-bold hover:bg-neutral-100 transition-colors shadow-lg min-h-[60px]"
+        aria-label={locale === 'fr' ? 'Télécharger sur Google Play' : 'Download on Google Play'}
+      >
+        <svg class="w-8 h-8" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M3.18 23.76c.39.22.82.24 1.25.03l12.87-7.19-2.84-2.85zm14.73-8.51L15.34 12l2.57-3.25 3.4 1.9a1.33 1.33 0 010 2.37zM2.31.46A1.32 1.32 0 002 1.36v21.28a1.32 1.32 0 00.31.9l.05.04 11.93-11.93v-.28zm9.88 10.9L2.31.46l14.4 8.04z" fill="#4CAF50"/>
+        </svg>
+        <div class="text-left">
+          <div class="text-xs text-neutral-500 leading-none">
+            {locale === 'fr' ? 'Disponible sur' : 'Available on'}
+          </div>
+          <div class="text-base font-extrabold leading-tight">Google Play</div>
+        </div>
+      </a>
+    </div>
+
+    <!-- Disclaimer -->
+    <p class="mt-6 text-xs text-green-200">
+      {locale === 'fr' ? 'App en cours de développement. Soyez parmi les premiers informés !' : locale === 'en' ? 'App under development. Be among the first to know!' : 'Laplikasyon pe devlope. Vinn parmi premie inform!'}
+    </p>
+  </div>
+</section>

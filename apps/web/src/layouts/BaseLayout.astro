@@ -1,0 +1,124 @@
+---
+import type { Locale } from '../i18n/utils';
+import { getAlternateUrls } from '../i18n/utils';
+
+interface Props {
+  title: string;
+  description: string;
+  locale?: Locale;
+  canonicalPath?: string;
+}
+
+const {
+  title,
+  description,
+  locale = 'fr',
+  canonicalPath = '/',
+} = Astro.props;
+
+const alternateUrls = getAlternateUrls(canonicalPath);
+const canonicalUrl = `https://bienbon.mu${canonicalPath}`;
+
+const orgSchema = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'BienBon',
+  url: 'https://bienbon.mu',
+  logo: 'https://bienbon.mu/logo.svg',
+  description: 'La première marketplace anti-gaspillage alimentaire à l\'île Maurice.',
+  contactPoint: {
+    '@type': 'ContactPoint',
+    email: 'contact@bienbon.mu',
+    contactType: 'customer service',
+  },
+  sameAs: [
+    'https://www.facebook.com/bienbon.mu',
+    'https://www.instagram.com/bienbon.mu',
+  ],
+});
+---
+
+<!doctype html>
+<html lang={locale} class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- Primary meta -->
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
+
+    <!-- hreflang -->
+    <link rel="alternate" hreflang="fr" href={alternateUrls.fr} />
+    <link rel="alternate" hreflang="en" href={alternateUrls.en} />
+    <link rel="alternate" hreflang="mfe" href={alternateUrls.kr} />
+    <link rel="alternate" hreflang="x-default" href={alternateUrls.fr} />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="BienBon" />
+    <meta property="og:locale" content={locale === 'fr' ? 'fr_MU' : locale === 'en' ? 'en_MU' : 'mfe_MU'} />
+    <meta property="og:image" content="https://bienbon.mu/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content="https://bienbon.mu/og-image.png" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Nunito font from Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- JSON-LD Organization schema -->
+    <script type="application/ld+json" set:html={orgSchema} />
+
+    <!-- prefers-reduced-motion global CSS -->
+    <style>
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+          scroll-behavior: auto !important;
+        }
+      }
+
+      /* Focus visible outline for all interactive elements */
+      :focus-visible {
+        outline: 3px solid #4CAF50;
+        outline-offset: 2px;
+        border-radius: 4px;
+      }
+    </style>
+  </head>
+  <body class="bg-neutral-50 text-neutral-900 font-sans antialiased">
+    <!-- Skip navigation link for accessibility -->
+    <a
+      href="#main-content"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-green-700 focus:text-white focus:rounded-md focus:font-semibold"
+    >
+      {locale === 'fr' ? 'Aller au contenu principal' : locale === 'en' ? 'Skip to main content' : 'Al konteni prinsipal'}
+    </a>
+
+    <slot />
+
+    <!-- prefers-reduced-motion: disable animations via JS for browsers that don't support the CSS media query -->
+  </body>
+</html>

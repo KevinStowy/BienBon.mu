@@ -1,0 +1,146 @@
+{
+  "common": {
+    "appName": "BienBon",
+    "openApp": "Open the app",
+    "discoverBaskets": "Discover baskets",
+    "becomePartner": "Become a partner"
+  },
+  "nav": {
+    "home": "Home",
+    "howItWorks": "How it works",
+    "faq": "FAQ",
+    "blog": "Blog",
+    "becomePartner": "Become a partner"
+  },
+  "home": {
+    "heroTitle": "Save meals, save money!",
+    "heroSubtitle": "Surprise baskets at discounted prices near you in Mauritius.",
+    "howItWorksTitle": "How does it work?",
+    "step1Title": "Explore",
+    "step1Desc": "Find anti-waste baskets near you",
+    "step2Title": "Reserve",
+    "step2Desc": "Choose a basket and pay online",
+    "step3Title": "Collect",
+    "step3Desc": "Show your QR code at the store",
+    "step4Title": "Enjoy",
+    "step4Desc": "Enjoy quality products at low prices",
+    "impactTitle": "Our impact together",
+    "mealsSaved": "meals saved",
+    "co2Saved": "kg of CO₂ avoided",
+    "ctaTitle": "Ready to save meals?",
+    "ctaButton": "Download the app"
+  },
+  "howItWorks": {
+    "title": "How does it work?",
+    "consumerTitle": "For consumers",
+    "partnerTitle": "For partners",
+    "consumerStep1Title": "Download the app",
+    "consumerStep1Desc": "Available on iOS and Android, for free.",
+    "consumerStep2Title": "Browse baskets",
+    "consumerStep2Desc": "Explore offers near you on the map.",
+    "consumerStep3Title": "Reserve and pay",
+    "consumerStep3Desc": "Choose your basket and pay online in a few seconds.",
+    "consumerStep4Title": "Collect at the store",
+    "consumerStep4Desc": "Show your QR code to the merchant in the indicated time slot.",
+    "partnerStep1Title": "Register your store",
+    "partnerStep1Desc": "Create your partner account and set up your baskets.",
+    "partnerStep2Title": "Publish your baskets",
+    "partnerStep2Desc": "Indicate the contents, price and collection slots.",
+    "partnerStep3Title": "Receive reservations",
+    "partnerStep3Desc": "Manage your orders in real time from your dashboard.",
+    "partnerStep4Title": "Hand over and collect",
+    "partnerStep4Desc": "Scan the customer's QR code and receive your payment."
+  },
+  "partner": {
+    "title": "Become a BienBon partner",
+    "subtitle": "Reduce waste and increase your revenue",
+    "benefit1": "Zero unsold stock",
+    "benefit1Desc": "Sell your unsold items each day rather than throwing them away.",
+    "benefit2": "New customers",
+    "benefit2Desc": "Attract new customers through our community.",
+    "benefit3": "Additional revenue",
+    "benefit3Desc": "Monetize what would have been lost without extra effort.",
+    "benefit4": "Environmental impact",
+    "benefit4Desc": "Actively participate in reducing food waste.",
+    "contactTitle": "Ready to join us?",
+    "contactDesc": "Contact us to start your partner registration.",
+    "contactEmail": "partners@bienbon.mu",
+    "testimonialQuote": "Since using BienBon, I lose much less merchandise at the end of the day. It's a real plus for my bakery!",
+    "testimonialAuthor": "Priya S., Flamboyant Bakery, Port-Louis"
+  },
+  "faq": {
+    "title": "Frequently asked questions",
+    "searchPlaceholder": "Search for a question...",
+    "noResults": "No results for your search.",
+    "categories": {
+      "general": "General",
+      "consumer": "Consumer",
+      "partner": "Partner",
+      "payment": "Payment"
+    },
+    "items": [
+      {
+        "category": "general",
+        "question": "What is BienBon?",
+        "answer": "BienBon is the first anti-food waste marketplace in Mauritius. It allows consumers to buy surprise baskets at reduced prices from local businesses, thus reducing food waste."
+      },
+      {
+        "category": "general",
+        "question": "Is BienBon available everywhere in Mauritius?",
+        "answer": "BienBon is currently available in the main cities of Mauritius: Port-Louis, Curepipe, Quatre Bornes, Rose-Hill and Vacoas. We are progressively extending our coverage across the island."
+      },
+      {
+        "category": "consumer",
+        "question": "How does a surprise basket work?",
+        "answer": "A surprise basket contains unsold products of the day selected by the merchant. You know the category (bakery, deli, etc.) and the approximate value, but not the exact contents — that's the surprise! The price is reduced by at least 50% compared to the actual value."
+      },
+      {
+        "category": "consumer",
+        "question": "How do I collect my basket?",
+        "answer": "After your reservation, you receive a QR code in the application. Show it to the merchant within the time slot indicated during your purchase. The merchant scans your code and hands you your basket."
+      },
+      {
+        "category": "consumer",
+        "question": "Can I cancel my reservation?",
+        "answer": "Cancellations are possible up to 2 hours before the collection slot. After this time, the payment cannot be refunded as the merchant has already prepared your basket."
+      },
+      {
+        "category": "consumer",
+        "question": "Is the app free?",
+        "answer": "Yes, the BienBon application is completely free for consumers. You only pay for the price of the baskets you reserve."
+      },
+      {
+        "category": "partner",
+        "question": "How do I become a BienBon partner?",
+        "answer": "Contact us at partners@bienbon.mu or fill in the partner registration form. Our team will contact you within 48 hours to finalize your registration and set up your account."
+      },
+      {
+        "category": "partner",
+        "question": "What types of businesses can participate?",
+        "answer": "All food businesses can participate: bakeries, restaurants, delicatessens, grocery stores, supermarkets, cheese shops, etc. The only requirement is to have regular unsold items at the end of the day."
+      },
+      {
+        "category": "partner",
+        "question": "What commission does BienBon take?",
+        "answer": "BienBon takes a 20% commission on each basket sold. You keep 80% of the sale price. There are no registration fees or monthly subscriptions."
+      },
+      {
+        "category": "payment",
+        "question": "What payment methods are accepted?",
+        "answer": "BienBon accepts bank cards (Visa, Mastercard) and payments via Juice (MCB). Other local payment methods will be added soon."
+      },
+      {
+        "category": "payment",
+        "question": "When are partners paid?",
+        "answer": "Partners receive their payments every week, every Monday for the previous week's sales. The transfer is made to the bank account registered during registration."
+      }
+    ]
+  },
+  "footer": {
+    "description": "BienBon is the first anti-food waste marketplace in Mauritius.",
+    "legal": "Legal notice",
+    "cgu": "Terms & Conditions",
+    "privacy": "Privacy policy",
+    "copyright": "© 2026 BienBon. All rights reserved."
+  }
+}

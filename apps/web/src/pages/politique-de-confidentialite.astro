@@ -1,0 +1,149 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+const locale = 'fr' as const;
+---
+
+<BaseLayout
+  title="Politique de confidentialité — BienBon"
+  description="Politique de confidentialité de BienBon. Comment nous collectons, utilisons et protégeons vos données personnelles conformément au Data Protection Act 2017 de l'île Maurice."
+  locale={locale}
+  canonicalPath="/politique-de-confidentialite"
+>
+  <Header locale={locale} currentPath="/politique-de-confidentialite" />
+  <main id="main-content">
+    <article class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-neutral-900 mb-4">
+        Politique de confidentialité
+      </h1>
+      <p class="text-sm text-neutral-500 mb-8">Dernière mise à jour : 28 février 2026</p>
+
+      <div class="space-y-8 text-neutral-700 text-sm leading-relaxed">
+
+        <section aria-labelledby="intro-privacy-heading">
+          <h2 id="intro-privacy-heading" class="text-xl font-extrabold text-neutral-900 mb-3">1. Introduction</h2>
+          <p>
+            BienBon Ltd s'engage à protéger votre vie privée. La présente politique de confidentialité explique comment nous collectons, utilisons, partageons et protégeons vos données personnelles, conformément au <strong>Data Protection Act 2017</strong> de l'île Maurice (DPA 2017).
+          </p>
+          <p class="mt-2">
+            En utilisant notre plateforme, vous acceptez les pratiques décrites dans la présente politique.
+          </p>
+        </section>
+
+        <section aria-labelledby="responsable-heading">
+          <h2 id="responsable-heading" class="text-xl font-extrabold text-neutral-900 mb-3">2. Responsable du traitement</h2>
+          <address class="not-italic space-y-1">
+            <p><strong>BienBon Ltd</strong></p>
+            <p>Port-Louis, Île Maurice</p>
+            <p>Email DPO : <a href="mailto:privacy@bienbon.mu" class="text-green-700 hover:underline">privacy@bienbon.mu</a></p>
+          </address>
+        </section>
+
+        <section aria-labelledby="donnees-collectees-heading">
+          <h2 id="donnees-collectees-heading" class="text-xl font-extrabold text-neutral-900 mb-3">3. Données collectées</h2>
+          <p>Nous collectons les catégories de données suivantes :</p>
+          <ul class="mt-2 space-y-2 list-disc list-inside">
+            <li><strong>Données d'identification :</strong> nom, prénom, adresse email, numéro de téléphone</li>
+            <li><strong>Données de paiement :</strong> informations nécessaires au traitement des paiements (nous ne stockons pas les données de carte bancaire complètes)</li>
+            <li><strong>Données de localisation :</strong> position approximative pour afficher les partenaires à proximité (uniquement si vous l'autorisez)</li>
+            <li><strong>Données d'utilisation :</strong> historique des commandes, interactions avec la plateforme</li>
+            <li><strong>Données techniques :</strong> adresse IP, type de navigateur, identifiant d'appareil</li>
+          </ul>
+        </section>
+
+        <section aria-labelledby="finalites-heading">
+          <h2 id="finalites-heading" class="text-xl font-extrabold text-neutral-900 mb-3">4. Finalités du traitement</h2>
+          <p>Vos données sont utilisées pour :</p>
+          <ul class="mt-2 space-y-1 list-disc list-inside">
+            <li>Créer et gérer votre compte utilisateur</li>
+            <li>Traiter vos réservations et paiements</li>
+            <li>Vous envoyer des confirmations de commande et notifications</li>
+            <li>Améliorer notre service et personnaliser votre expérience</li>
+            <li>Prévenir la fraude et assurer la sécurité</li>
+            <li>Respecter nos obligations légales</li>
+          </ul>
+        </section>
+
+        <section aria-labelledby="base-legale-heading">
+          <h2 id="base-legale-heading" class="text-xl font-extrabold text-neutral-900 mb-3">5. Base légale du traitement</h2>
+          <p>Nos traitements sont fondés sur :</p>
+          <ul class="mt-2 space-y-1 list-disc list-inside">
+            <li>L'exécution du contrat (traitement des commandes)</li>
+            <li>Votre consentement (notifications marketing, géolocalisation)</li>
+            <li>Nos intérêts légitimes (amélioration du service, lutte contre la fraude)</li>
+            <li>Le respect de nos obligations légales</li>
+          </ul>
+        </section>
+
+        <section aria-labelledby="partage-heading">
+          <h2 id="partage-heading" class="text-xl font-extrabold text-neutral-900 mb-3">6. Partage des données</h2>
+          <p>
+            Nous partageons vos données uniquement dans les cas suivants :
+          </p>
+          <ul class="mt-2 space-y-1 list-disc list-inside">
+            <li>Avec les Partenaires concernés (pour la gestion de vos commandes)</li>
+            <li>Avec nos prestataires de services (paiement, hébergement, analytics)</li>
+            <li>En cas d'obligation légale ou sur demande des autorités compétentes</li>
+          </ul>
+          <p class="mt-2">
+            Nous ne vendons jamais vos données personnelles à des tiers.
+          </p>
+        </section>
+
+        <section aria-labelledby="conservation-heading">
+          <h2 id="conservation-heading" class="text-xl font-extrabold text-neutral-900 mb-3">7. Durée de conservation</h2>
+          <p>
+            Vos données sont conservées pendant toute la durée de votre relation avec BienBon, puis pendant les délais légaux applicables (généralement 5 ans pour les données de facturation, conformément au droit mauricien).
+          </p>
+        </section>
+
+        <section aria-labelledby="droits-heading">
+          <h2 id="droits-heading" class="text-xl font-extrabold text-neutral-900 mb-3">8. Vos droits</h2>
+          <p>Conformément au DPA 2017, vous disposez des droits suivants :</p>
+          <ul class="mt-2 space-y-1 list-disc list-inside">
+            <li><strong>Droit d'accès :</strong> obtenir une copie de vos données</li>
+            <li><strong>Droit de rectification :</strong> corriger des données inexactes</li>
+            <li><strong>Droit à l'effacement :</strong> demander la suppression de vos données</li>
+            <li><strong>Droit d'opposition :</strong> vous opposer au traitement de vos données</li>
+            <li><strong>Droit à la portabilité :</strong> recevoir vos données dans un format structuré</li>
+            <li><strong>Droit au retrait du consentement :</strong> à tout moment pour les traitements basés sur le consentement</li>
+          </ul>
+          <p class="mt-2">
+            Pour exercer vos droits, contactez : <a href="mailto:privacy@bienbon.mu" class="text-green-700 hover:underline">privacy@bienbon.mu</a>
+          </p>
+        </section>
+
+        <section aria-labelledby="cookies-heading">
+          <h2 id="cookies-heading" class="text-xl font-extrabold text-neutral-900 mb-3">9. Cookies</h2>
+          <p>
+            Notre site utilise des cookies techniques nécessaires au fonctionnement du site. Nous utilisons également des cookies d'analytics (PostHog) pour comprendre comment notre site est utilisé. Vous pouvez configurer votre navigateur pour refuser les cookies, mais certaines fonctionnalités pourraient ne plus fonctionner.
+          </p>
+        </section>
+
+        <section aria-labelledby="securite-heading">
+          <h2 id="securite-heading" class="text-xl font-extrabold text-neutral-900 mb-3">10. Sécurité des données</h2>
+          <p>
+            Nous mettons en œuvre des mesures techniques et organisationnelles appropriées pour protéger vos données contre tout accès non autorisé, divulgation, altération ou destruction. Nos communications sont chiffrées via HTTPS/TLS.
+          </p>
+        </section>
+
+        <section aria-labelledby="contact-privacy-heading">
+          <h2 id="contact-privacy-heading" class="text-xl font-extrabold text-neutral-900 mb-3">11. Contact</h2>
+          <p>
+            Pour toute question relative à cette politique de confidentialité ou pour exercer vos droits, contactez notre Délégué à la Protection des Données (DPO) :
+          </p>
+          <address class="not-italic mt-2">
+            <a href="mailto:privacy@bienbon.mu" class="text-green-700 hover:underline">privacy@bienbon.mu</a>
+          </address>
+          <p class="mt-2">
+            Vous avez également le droit d'introduire une réclamation auprès de la Data Protection Office (DPO) de l'île Maurice.
+          </p>
+        </section>
+
+      </div>
+    </article>
+  </main>
+  <Footer locale={locale} />
+</BaseLayout>

@@ -1,0 +1,27 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import HeroSection from '../../components/HeroSection.astro';
+import HowItWorksSection from '../../components/HowItWorksSection.astro';
+import ImpactSection from '../../components/ImpactSection.astro';
+import CtaSection from '../../components/CtaSection.astro';
+
+const locale = 'mfe' as const;
+---
+
+<BaseLayout
+  title="BienBon — Sap repa, ekonomiz larzan dan lil Moris"
+  description="BienBon se premie marketplace anti-gaspi alimanter dan lil Moris. Aste panye sipriz a pri redrwi pre kot ou."
+  locale={locale}
+  canonicalPath="/"
+>
+  <Header locale={locale} currentPath="/kr" />
+  <main id="main-content">
+    <HeroSection locale={locale} />
+    <HowItWorksSection locale={locale} />
+    <ImpactSection locale={locale} />
+    <CtaSection locale={locale} />
+  </main>
+  <Footer locale={locale} />
+</BaseLayout>

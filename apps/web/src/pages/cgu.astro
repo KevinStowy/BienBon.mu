@@ -1,0 +1,130 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+const locale = 'fr' as const;
+---
+
+<BaseLayout
+  title="Conditions Générales d'Utilisation et de Vente — BienBon"
+  description="Consultez les Conditions Générales d'Utilisation et de Vente (CGU/CGV) de BienBon, la marketplace anti-gaspillage alimentaire à l'île Maurice."
+  locale={locale}
+  canonicalPath="/cgu"
+>
+  <Header locale={locale} currentPath="/cgu" />
+  <main id="main-content">
+    <article class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-neutral-900 mb-8">
+        Conditions Générales d'Utilisation et de Vente
+      </h1>
+
+      <div class="space-y-8 text-neutral-700 text-sm leading-relaxed">
+
+        <section aria-labelledby="objet-heading">
+          <h2 id="objet-heading" class="text-xl font-extrabold text-neutral-900 mb-3">1. Objet</h2>
+          <p>
+            Les présentes Conditions Générales d'Utilisation et de Vente (ci-après "CGU/CGV") régissent l'utilisation de la plateforme BienBon (application mobile et site web) éditée par BienBon Ltd, société mauricienne.
+          </p>
+          <p class="mt-2">
+            En accédant à la plateforme, vous acceptez sans réserve les présentes CGU/CGV. Si vous n'acceptez pas ces conditions, veuillez ne pas utiliser la plateforme.
+          </p>
+        </section>
+
+        <section aria-labelledby="definitions-heading">
+          <h2 id="definitions-heading" class="text-xl font-extrabold text-neutral-900 mb-3">2. Définitions</h2>
+          <dl class="space-y-2">
+            <div>
+              <dt class="font-bold">Plateforme :</dt>
+              <dd>L'application mobile et le site web BienBon, permettant la mise en relation entre Partenaires et Consommateurs.</dd>
+            </div>
+            <div>
+              <dt class="font-bold">Partenaire :</dt>
+              <dd>Tout commerce alimentaire inscrit sur la plateforme pour proposer des paniers surprise.</dd>
+            </div>
+            <div>
+              <dt class="font-bold">Consommateur :</dt>
+              <dd>Toute personne utilisant la plateforme pour réserver et acheter des paniers surprise.</dd>
+            </div>
+            <div>
+              <dt class="font-bold">Panier surprise :</dt>
+              <dd>Assortiment de produits alimentaires invendus proposé par un Partenaire à prix réduit.</dd>
+            </div>
+          </dl>
+        </section>
+
+        <section aria-labelledby="inscription-heading">
+          <h2 id="inscription-heading" class="text-xl font-extrabold text-neutral-900 mb-3">3. Inscription et compte utilisateur</h2>
+          <p>
+            L'inscription sur la plateforme est gratuite pour les Consommateurs. Pour créer un compte, vous devez fournir des informations exactes et complètes. Vous êtes responsable de la confidentialité de vos identifiants de connexion.
+          </p>
+          <p class="mt-2">
+            BienBon Ltd se réserve le droit de suspendre ou supprimer tout compte en cas de non-respect des présentes CGU/CGV.
+          </p>
+        </section>
+
+        <section aria-labelledby="reservations-heading">
+          <h2 id="reservations-heading" class="text-xl font-extrabold text-neutral-900 mb-3">4. Réservations et paiements</h2>
+          <p>
+            Toute réservation effectuée sur la plateforme constitue une commande ferme soumise à paiement immédiat. Le paiement est sécurisé et traité par nos prestataires de paiement agréés.
+          </p>
+          <p class="mt-2">
+            <strong>Annulation :</strong> Les annulations sont possibles jusqu'à 2 heures avant le créneau de retrait. Passé ce délai, le remboursement ne peut être accordé car le Partenaire a préparé le panier.
+          </p>
+          <p class="mt-2">
+            <strong>Retrait :</strong> Le Consommateur doit se présenter au commerce dans le créneau horaire indiqué et présenter son QR code de commande.
+          </p>
+        </section>
+
+        <section aria-labelledby="responsabilite-partneraires-heading">
+          <h2 id="responsabilite-partneraires-heading" class="text-xl font-extrabold text-neutral-900 mb-3">5. Responsabilité des Partenaires</h2>
+          <p>
+            Les Partenaires sont seuls responsables de la qualité, de la conformité et de la sécurité alimentaire des produits proposés dans leurs paniers surprise. BienBon Ltd agit uniquement comme intermédiaire technique et ne peut être tenu responsable de la qualité des produits.
+          </p>
+          <p class="mt-2">
+            Les Partenaires s'engagent à respecter toutes les réglementations sanitaires et alimentaires en vigueur à l'île Maurice, notamment le Food Act 1998 et ses amendements.
+          </p>
+        </section>
+
+        <section aria-labelledby="commission-heading">
+          <h2 id="commission-heading" class="text-xl font-extrabold text-neutral-900 mb-3">6. Commission BienBon</h2>
+          <p>
+            BienBon Ltd perçoit une commission de 20% sur le prix de vente hors taxes de chaque panier vendu. Cette commission couvre les frais de traitement des paiements, de maintenance de la plateforme et de service client.
+          </p>
+          <p class="mt-2">
+            Les Partenaires sont payés chaque semaine, chaque lundi, pour les ventes de la semaine précédente, après déduction de la commission.
+          </p>
+        </section>
+
+        <section aria-labelledby="propriete-intellectuelle-cgu-heading">
+          <h2 id="propriete-intellectuelle-cgu-heading" class="text-xl font-extrabold text-neutral-900 mb-3">7. Propriété intellectuelle</h2>
+          <p>
+            Tous les éléments de la plateforme (design, code, contenus) sont la propriété de BienBon Ltd et sont protégés par les lois mauriciennes relatives à la propriété intellectuelle.
+          </p>
+        </section>
+
+        <section aria-labelledby="litiges-heading">
+          <h2 id="litiges-heading" class="text-xl font-extrabold text-neutral-900 mb-3">8. Résolution des litiges</h2>
+          <p>
+            En cas de litige, nous vous invitons à contacter notre service client à <a href="mailto:contact@bienbon.mu" class="text-green-700 hover:underline">contact@bienbon.mu</a>.
+          </p>
+          <p class="mt-2">
+            En l'absence de résolution amiable, les litiges seront soumis à la compétence des juridictions mauriciennes conformément au droit de l'île Maurice.
+          </p>
+        </section>
+
+        <section aria-labelledby="modification-cgu-heading">
+          <h2 id="modification-cgu-heading" class="text-xl font-extrabold text-neutral-900 mb-3">9. Modification des CGU/CGV</h2>
+          <p>
+            BienBon Ltd se réserve le droit de modifier les présentes CGU/CGV à tout moment. Les modifications entrent en vigueur dès leur publication sur la plateforme. La poursuite de l'utilisation de la plateforme après modification vaut acceptation des nouvelles conditions.
+          </p>
+        </section>
+
+        <p class="text-xs text-neutral-400 border-t border-neutral-200 pt-6">
+          Dernière mise à jour : 28 février 2026
+        </p>
+      </div>
+    </article>
+  </main>
+  <Footer locale={locale} />
+</BaseLayout>

@@ -1,0 +1,85 @@
+---
+import type { Locale } from '../i18n/utils';
+import { t, getLocalizedPath } from '../i18n/utils';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+---
+
+<section
+  class="relative overflow-hidden bg-gradient-to-br from-green-100 via-neutral-50 to-orange-100 pt-16 pb-20 sm:pt-24 sm:pb-28"
+  aria-labelledby="hero-heading"
+>
+  <!-- Decorative background circles -->
+  <div class="absolute top-0 right-0 -translate-y-1/4 translate-x-1/4 w-96 h-96 rounded-full bg-green-500/10 blur-3xl pointer-events-none" aria-hidden="true"></div>
+  <div class="absolute bottom-0 left-0 translate-y-1/4 -translate-x-1/4 w-72 h-72 rounded-full bg-orange-500/10 blur-3xl pointer-events-none" aria-hidden="true"></div>
+
+  <div class="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="max-w-2xl">
+      <!-- Badge -->
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/20 border border-green-500/30 mb-6">
+        <span class="text-sm" aria-hidden="true">&#127812;</span>
+        <span class="text-xs font-bold text-green-700 uppercase tracking-wide">
+          {locale === 'fr' ? 'Anti-gaspillage alimentaire' : locale === 'en' ? 'Anti-food waste' : 'Anti-gaspi alimanter'}
+        </span>
+      </div>
+
+      <!-- Main heading -->
+      <h1
+        id="hero-heading"
+        class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-neutral-900 leading-tight tracking-tight"
+      >
+        {t(locale, 'home.heroTitle')}
+      </h1>
+
+      <!-- Subtitle -->
+      <p class="mt-4 text-lg sm:text-xl text-neutral-600 leading-relaxed max-w-lg">
+        {t(locale, 'home.heroSubtitle')}
+      </p>
+
+      <!-- CTA buttons -->
+      <div class="mt-8 flex flex-col sm:flex-row gap-4">
+        <a
+          href="#app-download"
+          class="inline-flex items-center justify-center gap-2 px-6 py-4 rounded-lg bg-green-700 text-white font-bold text-base hover:bg-green-900 transition-colors shadow-md min-h-[52px]"
+        >
+          <span aria-hidden="true">&#128247;</span>
+          {t(locale, 'common.discoverBaskets')}
+        </a>
+        <a
+          href={locale === 'fr' ? '/devenir-partenaire' : locale === 'en' ? '/en/become-partner' : '/kr/vinn-partenaire'}
+          class="inline-flex items-center justify-center gap-2 px-6 py-4 rounded-lg border-2 border-green-700 text-green-700 font-bold text-base hover:bg-green-700 hover:text-white transition-colors min-h-[52px]"
+        >
+          {t(locale, 'common.becomePartner')}
+        </a>
+      </div>
+
+      <!-- Trust indicators -->
+      <div class="mt-10 flex flex-wrap items-center gap-6">
+        <div class="flex items-center gap-2">
+          <span class="text-2xl font-extrabold text-green-700">-50%</span>
+          <span class="text-sm text-neutral-600">
+            {locale === 'fr' ? 'en moyenne' : locale === 'en' ? 'on average' : 'an mwayen'}
+          </span>
+        </div>
+        <div class="w-px h-6 bg-neutral-200" aria-hidden="true"></div>
+        <div class="flex items-center gap-2">
+          <span class="text-xl" aria-hidden="true">&#9989;</span>
+          <span class="text-sm text-neutral-600">
+            {locale === 'fr' ? 'Paiement sécurisé' : locale === 'en' ? 'Secure payment' : 'Peyman sekirize'}
+          </span>
+        </div>
+        <div class="w-px h-6 bg-neutral-200" aria-hidden="true"></div>
+        <div class="flex items-center gap-2">
+          <span class="text-xl" aria-hidden="true">&#127758;</span>
+          <span class="text-sm text-neutral-600">
+            {locale === 'fr' ? 'Impact positif' : locale === 'en' ? 'Positive impact' : 'Lenpak pozitif'}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

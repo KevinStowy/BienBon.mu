@@ -1,0 +1,92 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+const locale = 'fr' as const;
+---
+
+<BaseLayout
+  title="Mentions légales — BienBon"
+  description="Mentions légales de BienBon, la marketplace anti-gaspillage alimentaire à l'île Maurice."
+  locale={locale}
+  canonicalPath="/mentions-legales"
+>
+  <Header locale={locale} currentPath="/mentions-legales" />
+  <main id="main-content">
+    <article class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-neutral-900 mb-8">Mentions légales</h1>
+
+      <div class="prose prose-neutral max-w-none space-y-8 text-neutral-700">
+
+        <section aria-labelledby="editeur-heading">
+          <h2 id="editeur-heading" class="text-xl font-extrabold text-neutral-900 mb-3">Éditeur du site</h2>
+          <p>Le site <strong>bienbon.mu</strong> est édité par :</p>
+          <address class="not-italic mt-2 space-y-1 text-sm">
+            <p><strong>BienBon Ltd</strong></p>
+            <p>Société enregistrée à l'île Maurice conformément au Companies Act 2001</p>
+            <p>Numéro d'enregistrement : [En cours d'enregistrement]</p>
+            <p>Adresse : Port-Louis, Île Maurice</p>
+            <p>Email : <a href="mailto:contact@bienbon.mu" class="text-green-700 hover:underline">contact@bienbon.mu</a></p>
+          </address>
+        </section>
+
+        <section aria-labelledby="hebergement-heading">
+          <h2 id="hebergement-heading" class="text-xl font-extrabold text-neutral-900 mb-3">Hébergement</h2>
+          <p>Le site est hébergé par :</p>
+          <address class="not-italic mt-2 text-sm">
+            <p><strong>Railway Corporation</strong></p>
+            <p>340 S Lemon Ave #5210, Walnut, CA 91789, USA</p>
+            <p>Site web : <a href="https://railway.app" target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">railway.app</a></p>
+          </address>
+        </section>
+
+        <section aria-labelledby="propriete-heading">
+          <h2 id="propriete-heading" class="text-xl font-extrabold text-neutral-900 mb-3">Propriété intellectuelle</h2>
+          <p>
+            L'ensemble du contenu de ce site (textes, images, logos, graphismes, etc.) est la propriété exclusive de BienBon Ltd ou de ses partenaires et est protégé par les lois mauriciennes et internationales relatives à la propriété intellectuelle.
+          </p>
+          <p class="mt-2">
+            Toute reproduction, représentation, modification, publication, adaptation totale ou partielle des éléments du site, quel que soit le moyen ou le procédé utilisé, est interdite sans autorisation écrite préalable de BienBon Ltd.
+          </p>
+        </section>
+
+        <section aria-labelledby="responsabilite-heading">
+          <h2 id="responsabilite-heading" class="text-xl font-extrabold text-neutral-900 mb-3">Limitation de responsabilité</h2>
+          <p>
+            BienBon Ltd ne pourra être tenue responsable des dommages directs ou indirects causés au matériel de l'utilisateur lors de l'accès au site, résultant soit de l'utilisation d'un matériel ne répondant pas aux spécifications techniques requises, soit de l'apparition d'un bug ou d'une incompatibilité.
+          </p>
+          <p class="mt-2">
+            BienBon Ltd se réserve également le droit de modifier les informations contenues sur le site à tout moment et sans préavis.
+          </p>
+        </section>
+
+        <section aria-labelledby="donnees-heading">
+          <h2 id="donnees-heading" class="text-xl font-extrabold text-neutral-900 mb-3">Protection des données personnelles</h2>
+          <p>
+            Conformément au <strong>Data Protection Act 2017</strong> de l'île Maurice, vous disposez d'un droit d'accès, de rectification et de suppression de vos données personnelles.
+          </p>
+          <p class="mt-2">
+            Pour exercer ces droits ou pour toute question relative à la protection de vos données, contactez notre délégué à la protection des données à :
+            <a href="mailto:privacy@bienbon.mu" class="text-green-700 hover:underline">privacy@bienbon.mu</a>
+          </p>
+          <p class="mt-2">
+            Pour en savoir plus, consultez notre <a href="/politique-de-confidentialite" class="text-green-700 hover:underline">Politique de confidentialité</a>.
+          </p>
+        </section>
+
+        <section aria-labelledby="droit-applicable-heading">
+          <h2 id="droit-applicable-heading" class="text-xl font-extrabold text-neutral-900 mb-3">Droit applicable</h2>
+          <p>
+            Le présent site est soumis au droit mauricien. Tout litige relatif à l'utilisation du site sera soumis à la compétence exclusive des tribunaux de l'île Maurice.
+          </p>
+        </section>
+
+        <p class="text-xs text-neutral-400 border-t border-neutral-200 pt-6">
+          Dernière mise à jour : 28 février 2026
+        </p>
+      </div>
+    </article>
+  </main>
+  <Footer locale={locale} />
+</BaseLayout>

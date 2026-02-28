@@ -1,0 +1,87 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { t } from '../../i18n/utils';
+
+const locale = 'mfe' as const;
+
+const consumerSteps = [
+  { icon: '&#128247;', title: t(locale, 'howItWorks.consumerStep1Title'), desc: t(locale, 'howItWorks.consumerStep1Desc') },
+  { icon: '&#128269;', title: t(locale, 'howItWorks.consumerStep2Title'), desc: t(locale, 'howItWorks.consumerStep2Desc') },
+  { icon: '&#128203;', title: t(locale, 'howItWorks.consumerStep3Title'), desc: t(locale, 'howItWorks.consumerStep3Desc') },
+  { icon: '&#127860;', title: t(locale, 'howItWorks.consumerStep4Title'), desc: t(locale, 'howItWorks.consumerStep4Desc') },
+];
+
+const partnerSteps = [
+  { icon: '&#127981;', title: t(locale, 'howItWorks.partnerStep1Title'), desc: t(locale, 'howItWorks.partnerStep1Desc') },
+  { icon: '&#128218;', title: t(locale, 'howItWorks.partnerStep2Title'), desc: t(locale, 'howItWorks.partnerStep2Desc') },
+  { icon: '&#128241;', title: t(locale, 'howItWorks.partnerStep3Title'), desc: t(locale, 'howItWorks.partnerStep3Desc') },
+  { icon: '&#128176;', title: t(locale, 'howItWorks.partnerStep4Title'), desc: t(locale, 'howItWorks.partnerStep4Desc') },
+];
+---
+
+<BaseLayout
+  title="Kouma sa marse — BienBon"
+  description="Dekouver kouma BienBon marse pou konsomater ek partenere dan lil Moris."
+  locale={locale}
+  canonicalPath="/comment-ca-marche"
+>
+  <Header locale={locale} currentPath="/kr/kouma-sa-marse" />
+  <main id="main-content">
+    <section class="bg-gradient-to-br from-green-100 to-neutral-50 py-14 sm:py-20">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h1 class="text-4xl sm:text-5xl font-extrabold text-neutral-900">
+          {t(locale, 'howItWorks.title')}
+        </h1>
+      </div>
+    </section>
+
+    <section class="py-16 sm:py-20 bg-white" aria-labelledby="consumer-heading">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center gap-3 mb-10">
+          <span class="text-3xl" aria-hidden="true">&#128101;</span>
+          <h2 id="consumer-heading" class="text-2xl sm:text-3xl font-extrabold text-neutral-900">
+            {t(locale, 'howItWorks.consumerTitle')}
+          </h2>
+        </div>
+        <ol class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          {consumerSteps.map((step, i) => (
+            <li class="flex flex-col items-center text-center">
+              <div class="w-16 h-16 rounded-xl bg-green-100 flex items-center justify-center text-3xl mb-4">
+                <span set:html={step.icon} aria-hidden="true"></span>
+              </div>
+              <div class="text-xs font-black text-green-700 mb-1 tracking-widest">Etap {i + 1}</div>
+              <h3 class="text-base font-extrabold text-neutral-900 mb-2">{step.title}</h3>
+              <p class="text-sm text-neutral-600 leading-relaxed">{step.desc}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+
+    <section class="py-16 sm:py-20 bg-neutral-50" aria-labelledby="partner-heading">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center gap-3 mb-10">
+          <span class="text-3xl" aria-hidden="true">&#127981;</span>
+          <h2 id="partner-heading" class="text-2xl sm:text-3xl font-extrabold text-neutral-900">
+            {t(locale, 'howItWorks.partnerTitle')}
+          </h2>
+        </div>
+        <ol class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          {partnerSteps.map((step, i) => (
+            <li class="flex flex-col items-center text-center">
+              <div class="w-16 h-16 rounded-xl bg-orange-100 flex items-center justify-center text-3xl mb-4">
+                <span set:html={step.icon} aria-hidden="true"></span>
+              </div>
+              <div class="text-xs font-black text-orange-600 mb-1 tracking-widest">Etap {i + 1}</div>
+              <h3 class="text-base font-extrabold text-neutral-900 mb-2">{step.title}</h3>
+              <p class="text-sm text-neutral-600 leading-relaxed">{step.desc}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+  </main>
+  <Footer locale={locale} />
+</BaseLayout>

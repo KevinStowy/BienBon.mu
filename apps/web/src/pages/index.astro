@@ -1,0 +1,27 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import HeroSection from '../components/HeroSection.astro';
+import HowItWorksSection from '../components/HowItWorksSection.astro';
+import ImpactSection from '../components/ImpactSection.astro';
+import CtaSection from '../components/CtaSection.astro';
+
+const locale = 'fr' as const;
+---
+
+<BaseLayout
+  title="BienBon — Sauvez des repas, faites des économies à l'île Maurice"
+  description="BienBon est la première marketplace anti-gaspillage alimentaire à Maurice. Achetez des paniers surprise à prix réduit près de chez vous."
+  locale={locale}
+  canonicalPath="/"
+>
+  <Header locale={locale} currentPath="/" />
+  <main id="main-content">
+    <HeroSection locale={locale} />
+    <HowItWorksSection locale={locale} />
+    <ImpactSection locale={locale} />
+    <CtaSection locale={locale} />
+  </main>
+  <Footer locale={locale} />
+</BaseLayout>

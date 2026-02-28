@@ -1,0 +1,59 @@
+---
+import type { Locale } from '../i18n/utils';
+
+interface Props {
+  locale: Locale;
+  currentPath?: string;
+}
+
+const { locale, currentPath = '/' } = Astro.props;
+
+// Map current path to alternate locale paths
+// Simple heuristic: strip /en or /kr prefix if present, then add correct prefix
+function getTargetPath(targetLocale: Locale, path: string): string {
+  // Remove existing locale prefix
+  let cleanPath = path;
+  if (cleanPath.startsWith('/en')) cleanPath = cleanPath.replace(/^\/en/, '') || '/';
+  else if (cleanPath.startsWith('/kr')) cleanPath = cleanPath.replace(/^\/kr/, '') || '/';
+
+  if (targetLocale === 'fr') return cleanPath || '/';
+  if (targetLocale === 'en') return `/en${cleanPath === '/' ? '' : cleanPath}` || '/en';
+  return `/kr${cleanPath === '/' ? '' : cleanPath}` || '/kr';
+}
+
+const frPath = getTargetPath('fr', currentPath);
+const enPath = getTargetPath('en', currentPath);
+const krPath = getTargetPath('mfe', currentPath);
+---
+
+<div class="flex items-center gap-1 text-xs font-semibold" role="navigation" aria-label="Sélection de la langue">
+  <a
+    href={frPath}
+    class={`px-2 py-1 rounded transition-colors min-h-[32px] flex items-center ${locale === 'fr' ? 'bg-green-700 text-white' : 'text-neutral-600 hover:text-green-700 hover:bg-green-100'}`}
+    lang="fr"
+    aria-label="Français"
+    aria-current={locale === 'fr' ? 'true' : undefined}
+  >
+    FR
+  </a>
+  <span class="text-neutral-400" aria-hidden="true">|</span>
+  <a
+    href={enPath}
+    class={`px-2 py-1 rounded transition-colors min-h-[32px] flex items-center ${locale === 'en' ? 'bg-green-700 text-white' : 'text-neutral-600 hover:text-green-700 hover:bg-green-100'}`}
+    lang="en"
+    aria-label="English"
+    aria-current={locale === 'en' ? 'true' : undefined}
+  >
+    EN
+  </a>
+  <span class="text-neutral-400" aria-hidden="true">|</span>
+  <a
+    href={krPath}
+    class={`px-2 py-1 rounded transition-colors min-h-[32px] flex items-center ${locale === 'mfe' ? 'bg-green-700 text-white' : 'text-neutral-600 hover:text-green-700 hover:bg-green-100'}`}
+    lang="mfe"
+    aria-label="Kreol Morisien"
+    aria-current={locale === 'mfe' ? 'true' : undefined}
+  >
+    KR
+  </a>
+</div>

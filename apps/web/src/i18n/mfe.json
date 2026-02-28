@@ -1,0 +1,146 @@
+{
+  "common": {
+    "appName": "BienBon",
+    "openApp": "Uver laplikasyon",
+    "discoverBaskets": "Dekouver panye",
+    "becomePartner": "Vinn partenere"
+  },
+  "nav": {
+    "home": "Lakaz",
+    "howItWorks": "Kouma sa marse",
+    "faq": "Kestion",
+    "blog": "Blog",
+    "becomePartner": "Vinn partenere"
+  },
+  "home": {
+    "heroTitle": "Sap manze, ekonomiz larzan!",
+    "heroSubtitle": "Panye sipriz a pri redrwi pre kot ou dan lil Moris.",
+    "howItWorksTitle": "Kouma sa marse?",
+    "step1Title": "Explore",
+    "step1Desc": "Trouv panye anti-gaspi otour ou",
+    "step2Title": "Rezev",
+    "step2Desc": "Swazir enn panye ek peye anliny",
+    "step3Title": "Ramass",
+    "step3Desc": "Montre ou kode QR dan komers",
+    "step4Title": "Savourez",
+    "step4Desc": "Profite prodwi kalite a ti pri",
+    "impactTitle": "Nou lenpak ansam",
+    "mealsSaved": "repa sove",
+    "co2Saved": "kg CO₂ evite",
+    "ctaTitle": "Pare pou sap repa?",
+    "ctaButton": "Telecharge laplikasyon"
+  },
+  "howItWorks": {
+    "title": "Kouma sa marse?",
+    "consumerTitle": "Pou konsomater",
+    "partnerTitle": "Pou partenere",
+    "consumerStep1Title": "Telecharge laplikasyon",
+    "consumerStep1Desc": "Disponib lor iOS ek Android, gratis.",
+    "consumerStep2Title": "Sers panye",
+    "consumerStep2Desc": "Get bann ofr otour ou lor lakar.",
+    "consumerStep3Title": "Rezev ek peye",
+    "consumerStep3Desc": "Swazir ou panye ek peye anliny an kek segond.",
+    "consumerStep4Title": "Ramass dan komers",
+    "consumerStep4Desc": "Montre ou kode QR marsand dan kreno ler indike.",
+    "partnerStep1Title": "Anrezistre ou komers",
+    "partnerStep1Desc": "Kree ou kont partenere ek konfigire ou panye.",
+    "partnerStep2Title": "Pibliy ou panye",
+    "partnerStep2Desc": "Indike konteni, pri ek bann kreno ramassaz.",
+    "partnerStep3Title": "Resevwar rezervasyon",
+    "partnerStep3Desc": "Gere ou komand an tan reyel depi ou tablo de bord.",
+    "partnerStep4Title": "Done ek enkais",
+    "partnerStep4Desc": "Skan kode QR klyan ek resevwar ou peyman."
+  },
+  "partner": {
+    "title": "Vinn partenere BienBon",
+    "subtitle": "Redwir gaspi ek ogmant ou reveni",
+    "benefit1": "Zero invendu",
+    "benefit1Desc": "Vann ou prodwi pa vann sak zour olye zet zot.",
+    "benefit2": "Nouvo klyan",
+    "benefit2Desc": "Atir nouvo klyan gras a nou kominnote.",
+    "benefit3": "Reveni ansipleman",
+    "benefit3Desc": "Monetiz seki ti pou perdi san leffor siplemanter.",
+    "benefit4": "Lenpak anvironemantal",
+    "benefit4Desc": "Partisip aktivman dan redwir gaspi alimanter.",
+    "contactTitle": "Pare pou zwenn nou?",
+    "contactDesc": "Kontakte nou pou komannse ou anrezistrasyon partenere.",
+    "contactEmail": "partenaires@bienbon.mu",
+    "testimonialQuote": "Depi mo itiliz BienBon, mo perdi buku mwens marsandiz an lafin lazourne. Se enn vre pli pou mo boulangerie!",
+    "testimonialAuthor": "Priya S., Boulanzeriz Flamboyant, Port-Louis"
+  },
+  "faq": {
+    "title": "Kestion souvan",
+    "searchPlaceholder": "Sers enn kestion...",
+    "noResults": "Okenn rezilta pou ou resers.",
+    "categories": {
+      "general": "Zeneral",
+      "consumer": "Konsomater",
+      "partner": "Partenere",
+      "payment": "Peyman"
+    },
+    "items": [
+      {
+        "category": "general",
+        "question": "Ki sa BienBon?",
+        "answer": "BienBon se premie marketplace anti-gaspi alimanter dan lil Moris. Li permet konsomater aste panye sipriz a pri redrwi kotot komers lokal, sa redwir gaspi alimanter."
+      },
+      {
+        "category": "general",
+        "question": "BienBon disponib partou dan Moris?",
+        "answer": "BienBon kurrentman disponib dan bann lavil prinsipal Moris : Port-Louis, Curepipe, Kat Bornes, Rose-Hill ek Vacoas. Nou pe grandi nou kouvertir traverse zil."
+      },
+      {
+        "category": "consumer",
+        "question": "Kouma enn panye sipriz marse?",
+        "answer": "Enn panye sipriz kontenir prodwi pa vann zour la swazir par marsand. Ou kone kategori (boulanzeriz, trater, etc.) ek valer aproksimatif, me pa egzakteman konteni — se sipriz! Pri redwir o-mwins 50% par rapor a valer reyel."
+      },
+      {
+        "category": "consumer",
+        "question": "Kouma mo ramass mo panye?",
+        "answer": "Apre ou rezervasyon, ou resevwar enn kode QR dan laplikasyon. Montre li marsand dan kreno ler indike pandan ou aste. Marsand skan ou kode ek done ou panye."
+      },
+      {
+        "category": "consumer",
+        "question": "Mo kapav anile mo rezervasyon?",
+        "answer": "Anilasyon posib ziska 2 er avan kreno ramassaz. Apre sa ler-la, peyman pa kapav ranbourse parski marsand finn deza prepare ou panye."
+      },
+      {
+        "category": "consumer",
+        "question": "Laplikasyon li gratis?",
+        "answer": "Wi, laplikasyon BienBon totalman gratis pou konsomater. Ou peye zis pri panye ou rezervir."
+      },
+      {
+        "category": "partner",
+        "question": "Kouma mo vinn partenere BienBon?",
+        "answer": "Kontakte nou a partenaires@bienbon.mu ou ranpli formuler anrezistrasyon partenere. Nou lekip kontakte ou dan 48 er pou finalize ou anrezistrasyon ek konfigure ou kont."
+      },
+      {
+        "category": "partner",
+        "question": "Ki kalite komers kapav partisipe?",
+        "answer": "Tou komers alimanter kapav partisipe: boulanzeriz, restoran, trater, episkri, sipermarse, fromazeri, etc. Sel kondisyon se ena prodwi pa vann regilye an lafin lazourne."
+      },
+      {
+        "category": "partner",
+        "question": "Ki komisyon BienBon pran?",
+        "answer": "BienBon pran enn komisyon 20% lor sak panye vann. Ou gard 80% pri vant. Pa ena fre anrezistrasyon ni abonman mansyel."
+      },
+      {
+        "category": "payment",
+        "question": "Ki mwayen peyman aksepte?",
+        "answer": "BienBon aksepte kart bankir (Visa, Mastercard) ek peyman via Juice (MCB). Lezot metod peyman lokal zot pou azwute biento."
+      },
+      {
+        "category": "payment",
+        "question": "Kan partenere resevwar peyman?",
+        "answer": "Partenere resevwar zot peyman sak semenn, sak Lindi pou bann vant semenn pase. Virmant fer lor kont bankir anrezistre pandan anrezistrasyon."
+      }
+    ]
+  },
+  "footer": {
+    "description": "BienBon se premie marketplace anti-gaspi alimanter dan lil Moris.",
+    "legal": "Mansyon legal",
+    "cgu": "CGU & CGV",
+    "privacy": "Politik konfidansyalite",
+    "copyright": "© 2026 BienBon. Tou drwa rezervir."
+  }
+}
