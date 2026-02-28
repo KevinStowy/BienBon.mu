@@ -9,6 +9,13 @@ build/
 .next/
 .nuxt/
 .output/
+*.tsbuildinfo
+
+# Turbo
+.turbo/
+
+# Coverage
+coverage/
 
 # Environment
 .env

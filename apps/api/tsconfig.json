@@ -1,0 +1,12 @@
+{
+  "extends": "@bienbon/tsconfig/nestjs.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "baseUrl": "./",
+    "paths": {
+      "@api/*": ["src/*"]
+    }
+  },
+  "include": ["src/**/*"]
+}

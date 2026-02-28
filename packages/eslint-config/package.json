@@ -1,0 +1,13 @@
+{
+  "name": "@bienbon/eslint-config",
+  "version": "0.1.0",
+  "private": true,
+  "main": "index.mjs",
+  "type": "module",
+  "dependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.25.0",
+    "@typescript-eslint/parser": "^8.25.0",
+    "eslint": "^9.21.0",
+    "typescript-eslint": "^8.25.0"
+  }
+}

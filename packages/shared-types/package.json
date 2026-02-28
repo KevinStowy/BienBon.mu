@@ -1,0 +1,19 @@
+{
+  "name": "@bienbon/shared-types",
+  "version": "0.1.0",
+  "private": true,
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "build": "tsc --project tsconfig.build.json",
+    "lint": "eslint 'src/**/*.ts'"
+  },
+  "dependencies": {
+    "@bienbon/tsconfig": "*"
+  },
+  "devDependencies": {
+    "@bienbon/eslint-config": "*",
+    "eslint": "^9.21.0",
+    "typescript": "^5.7.3"
+  }
+}
