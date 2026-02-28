@@ -1,0 +1,74 @@
+name: Deploy Production
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type "deploy" to confirm production deployment'
+        required: true
+        type: string
+
+# Never run two production deployments in parallel
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy to Railway (Production)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    # Guard: only proceed if the user typed "deploy" in the confirmation input
+    if: github.event.inputs.confirm == 'deploy'
+    environment: production
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Prisma client
+        working-directory: apps/api
+        run: npx prisma generate
+
+      - name: Build
+        run: npm run build --workspaces --if-present
+        env:
+          NODE_ENV: production
+
+      # TODO: Replace this placeholder with Railway CLI deployment once the Railway
+      # project is created and RAILWAY_TOKEN_PROD is added as a GitHub secret.
+      # Example:
+      #   - name: Install Railway CLI
+      #     run: npm install -g @railway/cli
+      #   - name: Deploy to Railway Production
+      #     run: railway up --service api --environment production
+      #     env:
+      #       RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN_PROD }}
+      #   - name: Run database migrations
+      #     run: railway run --service api --environment production npx prisma migrate deploy
+      #     env:
+      #       RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN_PROD }}
+      - name: Deploy to Railway (placeholder)
+        run: echo "TODO - Railway production deployment will be configured when Railway project is created"
+
+      # TODO: Add health check + smoke tests once production URL is known
+      # - name: Health check
+      #   run: |
+      #     for i in {1..10}; do
+      #       curl -f https://api.bienbon.mu/health && break || sleep 15
+      #     done
+      # - name: Smoke tests
+      #   run: curl -f https://api.bienbon.mu/health | jq '.status == "ok"'
+
+      - name: Notify on failure
+        if: failure()
+        run: echo "Production deployment FAILED for commit ${{ github.sha }} — investigate immediately"

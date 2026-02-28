@@ -1,0 +1,66 @@
+name: Deploy Staging
+
+on:
+  push:
+    branches: [main]
+
+# Only one staging deployment at a time
+concurrency:
+  group: deploy-staging
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy to Railway (Staging)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: staging
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Prisma client
+        working-directory: apps/api
+        run: npx prisma generate
+
+      - name: Build
+        run: npm run build --workspaces --if-present
+        env:
+          NODE_ENV: production
+
+      # TODO: Replace this placeholder with Railway CLI deployment once the Railway
+      # project is created and RAILWAY_TOKEN is added as a GitHub secret.
+      # Example:
+      #   - name: Install Railway CLI
+      #     run: npm install -g @railway/cli
+      #   - name: Deploy to Railway Staging
+      #     run: railway up --service api --environment staging
+      #     env:
+      #       RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+      #   - name: Run database migrations
+      #     run: railway run --service api --environment staging npx prisma migrate deploy
+      #     env:
+      #       RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+      - name: Deploy to Railway (placeholder)
+        run: echo "TODO - Railway staging deployment will be configured when Railway project is created"
+
+      # TODO: Add health check once staging URL is known
+      # - name: Health check
+      #   run: |
+      #     for i in {1..5}; do
+      #       curl -f https://api-staging.bienbon.mu/health && break || sleep 10
+      #     done
+
+      - name: Notify on failure
+        if: failure()
+        run: echo "Staging deployment failed for commit ${{ github.sha }}"

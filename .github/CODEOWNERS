@@ -1,0 +1,5 @@
+# Global ownership — all files require review from @KevinStowy
+* @KevinStowy
+
+# CI/CD and infrastructure changes
+.github/ @KevinStowy

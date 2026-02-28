@@ -1,0 +1,52 @@
+version: 2
+updates:
+  # Root workspace and all npm packages
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "08:00"
+      timezone: "Indian/Mauritius"
+    open-pull-requests-limit: 10
+    # Group related packages into single PRs to reduce noise
+    groups:
+      nestjs:
+        patterns:
+          - "@nestjs/*"
+      prisma:
+        patterns:
+          - "prisma"
+          - "@prisma/*"
+      vitest:
+        patterns:
+          - "vitest"
+          - "@vitest/*"
+      eslint:
+        patterns:
+          - "eslint"
+          - "@eslint/*"
+          - "eslint-*"
+      typescript:
+        patterns:
+          - "typescript"
+          - "@types/*"
+      astro:
+        patterns:
+          - "astro"
+          - "@astrojs/*"
+      github-actions:
+        patterns:
+          - "actions/*"
+    # Security-only updates get their own PRs immediately
+    ignore: []
+
+  # GitHub Actions versions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "08:00"
+      timezone: "Indian/Mauritius"
+    open-pull-requests-limit: 5
