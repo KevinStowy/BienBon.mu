@@ -18,19 +18,40 @@ describe('HealthController', () => {
     expect(controller).toBeDefined();
   });
 
-  it('should return health status', () => {
-    const result = controller.getHealth();
+  describe('getHealth', () => {
+    it('should return health status', () => {
+      const result = controller.getHealth();
 
-    expect(result.status).toBe('ok');
-    expect(result.service).toBe('bienbon-api');
-    expect(result.version).toBe('0.1.0');
-    expect(result.timestamp).toBeDefined();
+      expect(result.status).toBe('ok');
+      expect(result.service).toBe('bienbon-api');
+      expect(result.version).toBe('0.1.0');
+      expect(result.timestamp).toBeDefined();
+    });
+
+    it('should return a valid ISO timestamp', () => {
+      const result = controller.getHealth();
+      const date = new Date(result.timestamp);
+
+      expect(date.toISOString()).toBe(result.timestamp);
+    });
   });
 
-  it('should return a valid ISO timestamp', () => {
-    const result = controller.getHealth();
-    const date = new Date(result.timestamp);
+  describe('getReadiness', () => {
+    it('should return readiness status with checks', () => {
+      const result = controller.getReadiness();
 
-    expect(date.toISOString()).toBe(result.timestamp);
+      expect(result.status).toBe('ok');
+      expect(result.timestamp).toBeDefined();
+      expect(result.checks).toBeDefined();
+      expect(result.checks.database).toBe('ok');
+      expect(result.checks.redis).toBe('ok');
+    });
+
+    it('should return a valid ISO timestamp', () => {
+      const result = controller.getReadiness();
+      const date = new Date(result.timestamp);
+
+      expect(date.toISOString()).toBe(result.timestamp);
+    });
   });
 });

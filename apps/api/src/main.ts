@@ -4,6 +4,9 @@ import type { NestFastifyApplication } from '@nestjs/platform-fastify';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { DomainErrorFilter } from './shared/filters/domain-error.filter';
+import { AllExceptionsFilter } from './shared/filters/all-exceptions.filter';
+import { LoggingInterceptor } from './shared/interceptors/logging.interceptor';
 
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter());
@@ -12,6 +15,13 @@ async function bootstrap(): Promise<void> {
     origin: process.env['CORS_ORIGINS']?.split(',') ?? ['http://localhost:3000'],
     credentials: true,
   });
+
+  // Global exception filters (order matters: last registered = first executed)
+  // AllExceptionsFilter is the fallback, DomainErrorFilter handles domain errors specifically.
+  app.useGlobalFilters(new AllExceptionsFilter(), new DomainErrorFilter());
+
+  // Global interceptors
+  app.useGlobalInterceptors(new LoggingInterceptor());
 
   app.useGlobalPipes(
     new ValidationPipe({
