@@ -13,7 +13,7 @@ meta:
   project: BienBon.mu
   last_updated: "2026-02-28"
   workers:
-    alpha: { status: idle, current_task: null }
+    alpha: { status: working, current_task: "5.1" }
     beta: { status: working, current_task: "2.2" }
 
 # ============================================================================
@@ -451,8 +451,8 @@ phases:
         name: "Flutter Consumer App — setup + navigation + écrans principaux"
         agent: flutter-dev
         assigned_to: alpha
-        status: pending
-        worker: null
+        status: claimed
+        worker: alpha
         blocked_by: ["4.4"]
         needs_human: "Créer le projet Firebase (pour FCM + crashlytics), fournir google-services.json + GoogleService-Info.plist"
         description: |
