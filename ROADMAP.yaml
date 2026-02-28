@@ -12,7 +12,7 @@ meta:
   project: BienBon.mu
   last_updated: null
   workers:
-    alpha: { status: idle, current_task: null }
+    alpha: { status: working, current_task: "1.1" }
     beta: { status: idle, current_task: null }
 
 # ============================================================================
@@ -27,8 +27,8 @@ phases:
       - id: "1.1"
         name: Setup monorepo NestJS
         agent: foundation
-        status: pending          # pending | claimed | in_progress | done | blocked_human
-        worker: null             # alpha | beta
+        status: claimed
+        worker: alpha
         blocked_by: []
         needs_human: null
         description: |
