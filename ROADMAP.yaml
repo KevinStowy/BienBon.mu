@@ -13,7 +13,7 @@ meta:
   project: BienBon.mu
   last_updated: "2026-02-28"
   workers:
-    alpha: { status: idle, current_task: null }
+    alpha: { status: working, current_task: "3.1" }
     beta: { status: working, current_task: "2.3" }
 
 # ============================================================================
@@ -308,8 +308,8 @@ phases:
         name: "BC Ordering — reservation state machine, orchestration"
         agent: nestjs-module
         assigned_to: alpha
-        status: pending
-        worker: null
+        status: claimed
+        worker: alpha
         blocked_by: ["2.1", "2.2"]
         needs_human: null
         description: |
