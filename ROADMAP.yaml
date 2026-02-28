@@ -1,0 +1,491 @@
+# ROADMAP.yaml — Source de vérité pour l'orchestration autonome
+# Chaque Claude lit ce fichier, claim une tâche, bosse, marque done, loop.
+#
+# Règles :
+# - Un worker ne peut claim qu'une tâche à la fois
+# - Une tâche "blocked_by" ne peut pas être claim tant que ses deps ne sont pas "done"
+# - Si "needs_human" est rempli, le worker notifie l'humain et passe à la tâche suivante
+# - Après chaque tâche : git add ROADMAP.yaml && git commit && git push
+# - Avant de claim : git pull pour voir l'état à jour
+
+meta:
+  project: BienBon.mu
+  last_updated: null
+  workers:
+    alpha: { status: idle, current_task: null }
+    beta: { status: idle, current_task: null }
+
+# ============================================================================
+# PHASE 1 — FONDATIONS (séquentiel, un seul worker)
+# ============================================================================
+phases:
+  - id: phase-1
+    name: Fondations
+    parallel: false
+    tasks:
+
+      - id: "1.1"
+        name: Setup monorepo NestJS
+        agent: foundation
+        status: pending          # pending | claimed | in_progress | done | blocked_human
+        worker: null             # alpha | beta
+        blocked_by: []
+        needs_human: null
+        description: |
+          Créer le monorepo avec Turborepo/npm workspaces.
+          Structure : apps/api (NestJS+Fastify), packages/shared-types, packages/eslint-config.
+          Configurer : TypeScript strict, ESLint 9, Prettier, .editorconfig.
+          Créer le main.ts NestJS avec Fastify adapter, CORS, ValidationPipe global.
+          ADR : 001, 002, 025.
+        done_criteria:
+          - npm install réussit
+          - npm run build compile
+          - npm run lint clean
+          - apps/api démarre sur /health → 200
+
+      - id: "1.2"
+        name: Schema Prisma complet
+        agent: foundation
+        status: pending
+        worker: null
+        blocked_by: ["1.1"]
+        needs_human: null
+        description: |
+          Créer le schema.prisma avec TOUTES les tables des 16 bounded contexts.
+          Tables principales : users, stores, baskets, basket_items, reservations, payments,
+          ledger_entries, claims, reviews, notifications, fraud_alerts, media, categories.
+          Enums : Role, ReservationStatus, PaymentStatus, PaymentMethod, ClaimStatus, etc.
+          PostGIS : extension pour les coordonnées géographiques des stores.
+          ADR : 003, 024.
+        done_criteria:
+          - npx prisma validate OK
+          - npx prisma generate OK
+          - Toutes les tables des 16 BCs présentes
+
+      - id: "1.3"
+        name: Créer le projet Supabase + configurer auth
+        agent: foundation
+        status: pending
+        worker: null
+        blocked_by: ["1.2"]
+        needs_human: "Créer un projet sur supabase.com, fournir SUPABASE_URL + SUPABASE_ANON_KEY + SUPABASE_SERVICE_ROLE_KEY + DATABASE_URL"
+        description: |
+          Configurer Supabase Auth : email+password, magic link, OAuth Google.
+          Créer le JwtAuthGuard NestJS qui vérifie les tokens Supabase.
+          Créer le RolesGuard + décorateur @Roles().
+          Créer le module identity-access complet.
+          Appliquer les migrations Prisma sur la DB Supabase.
+          ADR : 010, 011.
+        done_criteria:
+          - JwtAuthGuard fonctionne avec un vrai token Supabase
+          - RolesGuard bloque les accès non autorisés
+          - Tests unitaires passent (avec mock Supabase pour CI)
+          - Migration appliquée sur la DB
+
+      - id: "1.4"
+        name: Interfaces publiques des modules (ports)
+        agent: foundation
+        status: pending
+        worker: null
+        blocked_by: ["1.2"]
+        needs_human: null
+        description: |
+          Définir les interfaces TypeScript (ports) de chaque bounded context complexe.
+          Fichiers dans packages/shared-types/src/ports/ :
+          - ICatalogService (getBasket, decrementStock, getAvailableBaskets...)
+          - IPaymentService (preAuthorize, capture, refund, getBalance...)
+          - IOrderingService (createReservation, cancelReservation, getReservation...)
+          - IPartnerService (getStore, updateStore, getStoreBaskets...)
+          - INotificationService (send, schedule, getPreferences...)
+          Aussi : shared DTOs, enums, error codes.
+          ADR : 024.
+        done_criteria:
+          - Toutes les interfaces des 5 BCs complexes définies
+          - Types partagés (DTOs, enums) exportés
+          - npm run build compile sans erreur
+
+      - id: "1.5"
+        name: CI/CD GitHub Actions
+        agent: devops-engineer
+        status: pending
+        worker: null
+        blocked_by: ["1.1"]
+        needs_human: "Créer le repo GitHub, configurer les secrets (SUPABASE_URL, etc.)"
+        description: |
+          Créer les workflows GitHub Actions :
+          - ci.yml : lint → typecheck → test → build (sur chaque PR)
+          - deploy-staging.yml : deploy Railway staging (sur merge develop)
+          - deploy-prod.yml : deploy Railway prod (sur merge main, approval)
+          Configurer branch protection sur main et develop.
+          ADR : 025.
+        done_criteria:
+          - ci.yml fonctionne sur une PR
+          - Branch protection activée
+
+      - id: "1.6"
+        name: Module shared (decorators, filters, pipes, interceptors)
+        agent: foundation
+        status: pending
+        worker: null
+        blocked_by: ["1.3"]
+        needs_human: null
+        description: |
+          Créer les éléments partagés NestJS :
+          - DomainErrorFilter (catch DomainError → JSON structuré)
+          - LoggingInterceptor (structured JSON logging avec correlation ID)
+          - Décorateur @CurrentUser() pour extraire l'user du JWT
+          - Décorateur @Roles() pour le RBAC
+          - Pagination DTO (page, limit, sort)
+          - Health check controller (/health avec DB + Redis check)
+          ADR : 001, 022.
+        done_criteria:
+          - Tous les shared elements créés et testés
+          - /health endpoint fonctionne
+          - Logging structuré actif
+
+  # ============================================================================
+  # PHASE 2 — BOUNDED CONTEXTS INDÉPENDANTS (parallèle, 2 workers)
+  # ============================================================================
+  - id: phase-2
+    name: Bounded contexts indépendants
+    parallel: true
+    tasks:
+
+      - id: "2.1"
+        name: "BC Catalog — paniers, stock, créneaux"
+        agent: nestjs-module
+        status: pending
+        worker: null
+        blocked_by: ["1.2", "1.3", "1.4", "1.6"]
+        needs_human: null
+        description: |
+          Implémenter le bounded context Catalog (hexagonal).
+          Entités : Basket, BasketItem, Category, PickupSlot, Tag.
+          Use cases : CreateBasket, UpdateBasket, DecrementStock (atomique, ADR-008),
+          GetAvailableBaskets (avec filtres geo, catégorie, prix), ManageRecurrence.
+          State machine basket : DRAFT → PUBLISHED → SOLD_OUT → EXPIRED.
+          Stock atomique avec optimistic locking (version field).
+          Controllers avec OpenAPI + guards.
+          Tests : unit (domain), integration (Prisma), property-based (stock jamais < 0).
+          ADR : 008, 017, 024 (BC-4).
+        done_criteria:
+          - Module compile et lint clean
+          - CRUD complet pour baskets
+          - Stock atomique testé sous concurrence
+          - State machine testée (toutes transitions)
+          - ">= 90% coverage"
+
+      - id: "2.2"
+        name: "BC Payment — ledger, Peach Payments, commissions"
+        agent: nestjs-module
+        status: pending
+        worker: null
+        blocked_by: ["1.2", "1.3", "1.4", "1.6"]
+        needs_human: "Obtenir les clés API Peach Payments (sandbox) : PEACH_API_KEY + PEACH_WEBHOOK_SECRET"
+        description: |
+          Implémenter le bounded context Payment (hexagonal).
+          Entités : Payment, LedgerEntry, Commission, Payout.
+          Ledger double-entry : chaque transaction a un debit ET un credit (ADR-007).
+          Intégration Peach Payments : pré-autorisation, capture, refund.
+          Webhook handler avec HMAC + anti-replay + idempotence.
+          Calcul commissions : 25% du prix réduit (configurable).
+          Payout mensuel aux partenaires.
+          Tests : unit, integration, property-based (ledger toujours balancé).
+          ADR : 005, 006, 007, 024 (BC-6).
+        done_criteria:
+          - Ledger double-entry fonctionne
+          - "sum(debits) == sum(credits) pour toute séquence"
+          - Webhook Peach Payments vérifié HMAC
+          - ">= 90% coverage"
+
+      - id: "2.3"
+        name: "BC Partner — onboarding, stores, modification requests"
+        agent: nestjs-module
+        status: pending
+        worker: null
+        blocked_by: ["1.2", "1.3", "1.4", "1.6"]
+        needs_human: null
+        description: |
+          Implémenter le bounded context Partner (hexagonal).
+          Entités : Partner, Store, StoreHours, ModificationRequest.
+          State machine partner : PENDING_REVIEW → APPROVED → ACTIVE → SUSPENDED.
+          State machine modification request : PENDING → APPROVED → REJECTED.
+          Multi-commerce : un partner peut avoir N stores.
+          Onboarding flow : inscription → soumission docs → review admin → activation.
+          Controllers avec OpenAPI + guards (PARTNER + ADMIN roles).
+          ADR : 017, 018, 024 (BC-3).
+        done_criteria:
+          - Module compile et lint clean
+          - State machines testées
+          - Multi-store fonctionne
+          - ">= 80% coverage"
+
+      - id: "2.4"
+        name: "BC Consumer — profil, favoris, gamification"
+        agent: nestjs-module
+        status: pending
+        worker: null
+        blocked_by: ["1.2", "1.3", "1.6"]
+        needs_human: null
+        description: |
+          Implémenter le bounded context Consumer (CRUD simple).
+          Entités : ConsumerProfile, Favorite, Badge, ReferralCode.
+          CRUD profil : mise à jour préférences, avatar, adresses.
+          Favoris : ajouter/retirer un store des favoris.
+          Gamification : badges (premier achat, 10 paniers sauvés, etc.).
+          Parrainage : code unique, bonus parrain + filleul.
+          ADR : 024 (BC-2).
+        done_criteria:
+          - CRUD profil complet
+          - Favoris toggle fonctionne
+          - Système de badges
+          - ">= 70% coverage"
+
+      - id: "2.5"
+        name: "BC Notification — push FCM, email Resend, in-app"
+        agent: nestjs-module
+        status: pending
+        worker: null
+        blocked_by: ["1.2", "1.3", "1.6"]
+        needs_human: "Obtenir : RESEND_API_KEY (resend.com), FCM_SERVICE_ACCOUNT (Firebase)"
+        description: |
+          Implémenter le bounded context Notification (CRUD simple).
+          3 canaux : push (FCM), email (Resend), in-app (DB).
+          Templates email avec React Email (14 templates transactionnels).
+          Préférences utilisateur (opt-in/opt-out par canal).
+          Scheduled notifications (BullMQ delayed jobs).
+          Domain event listeners pour déclencher les notifs.
+          ADR : 009, 014, 024 (BC-9).
+        done_criteria:
+          - 3 canaux fonctionnels (push, email, in-app)
+          - Templates email créés
+          - Préférences respectées
+          - ">= 70% coverage"
+
+      - id: "2.6"
+        name: "BC Fraud — règles, compteurs, alertes"
+        agent: nestjs-module
+        status: pending
+        worker: null
+        blocked_by: ["1.2", "1.3", "1.6"]
+        needs_human: null
+        description: |
+          Implémenter le bounded context Fraud (CRUD simple).
+          Règles configurables : comptes multiples, réclamations excessives,
+          no-shows récurrents, réservations massives, annulations excessives.
+          Compteurs Redis avec fenêtre glissante.
+          Alertes admin quand un seuil est dépassé.
+          Actions : FLAG, BLOCK, SUSPEND.
+          ADR : 019, 024 (BC-10).
+        done_criteria:
+          - Règles configurables
+          - Compteurs Redis fonctionnels
+          - Alertes émises
+          - ">= 70% coverage"
+
+  # ============================================================================
+  # PHASE 3 — MODULES DÉPENDANTS (séquentiel avec dépendances)
+  # ============================================================================
+  - id: phase-3
+    name: Modules dépendants
+    parallel: true
+    tasks:
+
+      - id: "3.1"
+        name: "BC Ordering — reservation state machine, orchestration"
+        agent: nestjs-module
+        status: pending
+        worker: null
+        blocked_by: ["2.1", "2.2"]
+        needs_human: null
+        description: |
+          Implémenter le bounded context Ordering (hexagonal).
+          State machine réservation 8 états : PENDING → CONFIRMED → READY →
+          PICKED_UP → COMPLETED + CANCELLED, NO_SHOW, EXPIRED.
+          Orchestration : Catalog.decrementStock + Payment.preAuthorize.
+          Hold 5 minutes (BullMQ delayed job pour expiration).
+          Concurrence : 10 users réservent le même panier → seul stock premiers réussissent.
+          QR code / PIN pour le retrait.
+          ADR : 008, 017, 024 (BC-5).
+        done_criteria:
+          - State machine 8 états complète
+          - Concurrence testée (pas de sur-réservation)
+          - QR/PIN generation + validation
+          - ">= 90% coverage"
+
+      - id: "3.2"
+        name: "BC Review-Claims — réclamations, remboursements, avis"
+        agent: nestjs-module
+        status: pending
+        worker: null
+        blocked_by: ["3.1", "2.2"]
+        needs_human: null
+        description: |
+          Implémenter le bounded context Review-Claims (hexagonal).
+          Réclamations : state machine OPEN → UNDER_REVIEW → RESOLVED/REJECTED.
+          Photos de preuve (media upload).
+          Remboursement via Payment.refund().
+          Avis : notes 1-5, commentaire, fenêtre 24h après retrait.
+          Modération admin.
+          ADR : 017, 024 (BC-8).
+        done_criteria:
+          - State machine réclamations
+          - Intégration Payment.refund()
+          - Avis avec fenêtre temporelle
+          - ">= 80% coverage"
+
+  # ============================================================================
+  # PHASE 4 — ADMIN, TEMPS RÉEL, TRANSVERSAL (parallèle)
+  # ============================================================================
+  - id: phase-4
+    name: Admin et transversal
+    parallel: true
+    tasks:
+
+      - id: "4.1"
+        name: "Admin dashboard React"
+        agent: react-dev
+        status: pending
+        worker: null
+        blocked_by: ["3.1", "3.2"]
+        needs_human: null
+        description: |
+          Dashboard admin React avec TanStack Router/Query/Table.
+          Pages : dashboard KPI, gestion partenaires (approbation), gestion consumers,
+          réservations, réclamations, finance (ledger), fraude, settings.
+          Charts recharts pour les KPIs.
+          RBAC : seuls ADMIN et SUPER_ADMIN accèdent.
+          ADR : 018, 024 (BC-11).
+        done_criteria:
+          - Toutes les pages admin fonctionnelles
+          - Data tables avec tri/filtres/pagination
+          - Charts KPI
+          - RBAC enforced
+
+      - id: "4.2"
+        name: "Temps réel SSE + pg_notify"
+        agent: nestjs-module
+        status: pending
+        worker: null
+        blocked_by: ["2.1", "3.1"]
+        needs_human: null
+        description: |
+          Implémenter le temps réel via SSE + pg_notify.
+          Channels : stock updates (pour l'app consumer), reservation updates (pour le partner),
+          notification stream (in-app notifications).
+          Multiplexage par user ID.
+          Reconnexion avec Last-Event-ID.
+          ADR : 009.
+        done_criteria:
+          - SSE endpoints fonctionnels
+          - pg_notify émet correctement
+          - Multiplexage par user
+          - Reconnexion testée
+
+      - id: "4.3"
+        name: "Site vitrine Astro"
+        agent: react-dev
+        status: pending
+        worker: null
+        blocked_by: ["1.1"]
+        needs_human: null
+        description: |
+          Site vitrine bienbon.mu en Astro.
+          Pages : homepage, comment ça marche, devenir partenaire, FAQ, blog, mentions légales.
+          SEO : meta tags, Open Graph, JSON-LD, sitemap.
+          CSP headers, performance (0 JS sauf React islands).
+          i18n : fr/en/mfe.
+          ADR : 013, 015.
+        done_criteria:
+          - Toutes les pages créées
+          - SEO meta complet
+          - Lighthouse score > 90
+          - i18n 3 locales
+
+      - id: "4.4"
+        name: "API contract OpenAPI + client Dart"
+        agent: foundation
+        status: pending
+        worker: null
+        blocked_by: ["3.1", "3.2"]
+        needs_human: null
+        description: |
+          Générer la spec OpenAPI depuis les décorateurs NestJS.
+          Générer un client Dart typé depuis la spec OpenAPI (pour Flutter).
+          Générer un client TypeScript typé (pour l'admin React).
+          Publier la spec dans packages/api-contract/.
+          ADR : 004.
+        done_criteria:
+          - Spec OpenAPI complète
+          - Client Dart généré et compile
+          - Client TypeScript généré
+
+  # ============================================================================
+  # PHASE 5 — FLUTTER APPS (parallèle)
+  # ============================================================================
+  - id: phase-5
+    name: Flutter apps
+    parallel: true
+    tasks:
+
+      - id: "5.1"
+        name: "Flutter Consumer App — setup + navigation + écrans principaux"
+        agent: flutter-dev
+        status: pending
+        worker: null
+        blocked_by: ["4.4"]
+        needs_human: "Créer le projet Firebase (pour FCM + crashlytics), fournir google-services.json + GoogleService-Info.plist"
+        description: |
+          Setup Flutter consumer app.
+          Architecture : feature-first, Riverpod, GoRouter, Drift.
+          Écrans : splash, onboarding, home, explore (carte + liste), détail store,
+          détail basket, réservation, paiement, confirmation, QR retrait, profil, favoris.
+          Theme : DESIGN_SYSTEM.md tokens.
+          i18n : slang (fr/en/mfe).
+          Offline-first : cache Drift.
+          ADR : 012, 015, 029, 030, 032.
+        done_criteria:
+          - App compile et démarre
+          - Navigation complète (tous les écrans)
+          - Offline-first fonctionne
+          - i18n 3 locales
+          - flutter analyze clean
+
+      - id: "5.2"
+        name: "Flutter Partner App — gestion commerce + paniers"
+        agent: flutter-dev
+        status: pending
+        worker: null
+        blocked_by: ["4.4"]
+        needs_human: null
+        description: |
+          Setup Flutter partner app.
+          Écrans : login, dashboard (stats), mes commerces, créer/éditer panier,
+          gérer stock, valider retrait (scanner QR), historique réservations,
+          mes reversements, paramètres.
+          ADR : 012, 015, 029, 030.
+        done_criteria:
+          - App compile et démarre
+          - Flux complet : créer panier → stock → valider retrait
+          - flutter analyze clean
+
+      - id: "5.3"
+        name: "Tests E2E — flux complet réservation"
+        agent: test-engineer
+        status: pending
+        worker: null
+        blocked_by: ["3.1", "3.2", "2.5"]
+        needs_human: null
+        description: |
+          Tests E2E du flux complet :
+          1. Consumer : explorer → réserver → payer → recevoir QR
+          2. Partner : voir réservation → préparer → valider retrait (scan QR)
+          3. Consumer : noter + commenter
+          4. Admin : voir dans le dashboard
+          Tests de charge : 50 réservations simultanées.
+          Tests sécurité : OWASP checks.
+          ADR : 023.
+        done_criteria:
+          - Flux E2E complet passe
+          - Test de charge OK (pas de sur-réservation)
+          - Security audit clean

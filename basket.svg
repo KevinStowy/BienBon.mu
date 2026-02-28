@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <!-- Masque pour l'ombre du bord du panier -->
+    <clipPath id="basketClip">
+      <path d="M100 256 L150 450 C150 460, 160 470, 170 470 L342 470 C352 470, 362 460, 362 450 L412 256 Z" />
+    </clipPath>
+  </defs>
+
+  <!-- Arrière-plan (un cercle doux pour faire ressortir les éléments) -->
+  <circle cx="256" cy="256" r="240" fill="#E8F4F8"/>
+  <ellipse cx="256" cy="480" rx="160" ry="20" fill="#D4E6F1"/> <!-- Ombre portée globale -->
+
+  <!-- Anse du panier (Arrière) -->
+  <path d="M120 256 C120 80, 392 80, 392 256" fill="none" stroke="#BA4A00" stroke-width="24" stroke-linecap="round" />
+  <path d="M256 109.5 C320 109.5, 375 160, 392 256" fill="none" stroke="#873600" stroke-width="24" stroke-linecap="round" />
+
+  <!-- Légumes et Victuailles -->
+
+  <!-- Salade / Laitue (Arrière-plan des légumes) -->
+  <circle cx="340" cy="230" r="55" fill="#8BC34A" />
+  <circle cx="300" cy="190" r="60" fill="#7CB342" />
+  <circle cx="380" cy="180" r="45" fill="#689F38" />
+
+  <!-- Baguette de Pain -->
+  <path d="M120 320 C140 120, 240 70, 280 90 C320 110, 320 150, 220 360 Z" fill="#F39C12" />
+  <!-- Traits sur la baguette -->
+  <path d="M175 185 L200 210" stroke="#D35400" stroke-width="8" stroke-linecap="round" />
+  <path d="M210 145 L235 170" stroke="#D35400" stroke-width="8" stroke-linecap="round" />
+  <path d="M150 235 L165 250" stroke="#D35400" stroke-width="8" stroke-linecap="round" />
+
+  <!-- Bouteille de Vin -->
+  <rect x="300" y="80" width="30" height="80" rx="4" fill="#2E4053" />
+  <rect x="290" y="150" width="50" height="150" rx="15" fill="#212F3D" />
+  <rect x="300" y="70" width="30" height="20" rx="2" fill="#C0392B" />
+  <!-- Étiquette -->
+  <rect x="290" y="200" width="50" height="40" fill="#FDFEFE" />
+  <rect x="300" y="210" width="30" height="4" fill="#E74C3C" />
+
+  <!-- Tomates -->
+  <circle cx="180" cy="240" r="40" fill="#E74C3C" />
+  <circle cx="190" cy="225" r="10" fill="#C0392B" />
+  <!-- Tige Tomate -->
+  <path d="M180 190 C190 200, 170 200, 180 210" fill="#27AE60" />
+
+  <circle cx="240" cy="250" r="35" fill="#E74C3C" />
+  <circle cx="250" cy="235" r="8" fill="#C0392B" />
+  <path d="M240 205 C250 215, 230 215, 240 225" fill="#2ECC71" />
+
+  <!-- Fromage (Emmental) -->
+  <path d="M270 280 L380 210 L410 260 L300 330 Z" fill="#F1C40F" />
+  <path d="M270 280 L300 330 L290 330 L260 280 Z" fill="#F39C12" />
+  <!-- Trous du fromage -->
+  <circle cx="340" cy="260" r="10" fill="#F39C12" />
+  <circle cx="370" cy="235" r="6" fill="#F39C12" />
+  <circle cx="310" cy="290" r="8" fill="#F39C12" />
+
+  <!-- Corps du Panier (Avant) -->
+  <path d="M100 256 L150 450 C150 460, 160 470, 170 470 L342 470 C352 470, 362 460, 362 450 L412 256 Z" fill="#E67E22" />
+  
+  <!-- Ombre du Panier (Moitié droite) -->
+  <path d="M256 256 L256 470 L342 470 C352 470, 362 460, 362 450 L412 256 Z" fill="#D35400" />
+
+  <!-- Bord du Panier -->
+  <rect x="80" y="240" width="352" height="30" rx="15" fill="#D35400" />
+  <!-- Moitié droite du bord (ombre) -->
+  <rect x="256" y="240" width="176" height="30" fill="#A04000" />
+  <rect x="256" y="240" width="176" height="30" rx="15" fill="#A04000" clip-path="url(#basketClip)" />
+  
+  <!-- Lignes du tressage du panier -->
+  <path d="M120 300 L392 300" stroke="#CA6F1E" stroke-width="8" stroke-linecap="round" />
+  <path d="M130 350 L382 350" stroke="#CA6F1E" stroke-width="8" stroke-linecap="round" />
+  <path d="M140 400 L372 400" stroke="#CA6F1E" stroke-width="8" stroke-linecap="round" />
+  <path d="M145 440 L367 440" stroke="#CA6F1E" stroke-width="8" stroke-linecap="round" />
+
+</svg>
