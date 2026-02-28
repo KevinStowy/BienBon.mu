@@ -1,6 +1,7 @@
 ---
 import type { Locale } from '../i18n/utils';
 import { t, getLocalizedPath } from '../i18n/utils';
+import Icon from './Icon.astro';
 
 interface Props {
   locale: Locale;
@@ -18,10 +19,10 @@ const { locale } = Astro.props;
   <div class="absolute bottom-0 left-0 translate-y-1/4 -translate-x-1/4 w-72 h-72 rounded-full bg-orange-500/10 blur-3xl pointer-events-none" aria-hidden="true"></div>
 
   <div class="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="max-w-2xl">
+    <div class="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
+    <div class="flex-1 max-w-2xl">
       <!-- Badge -->
       <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/20 border border-green-500/30 mb-6">
-        <span class="text-sm" aria-hidden="true">&#127812;</span>
         <span class="text-xs font-bold text-green-700 uppercase tracking-wide">
           {locale === 'fr' ? 'Anti-gaspillage alimentaire' : locale === 'en' ? 'Anti-food waste' : 'Anti-gaspi alimanter'}
         </span>
@@ -46,7 +47,6 @@ const { locale } = Astro.props;
           href="#app-download"
           class="inline-flex items-center justify-center gap-2 px-6 py-4 rounded-lg bg-green-700 text-white font-bold text-base hover:bg-green-900 transition-colors shadow-md min-h-[52px]"
         >
-          <span aria-hidden="true">&#128247;</span>
           {t(locale, 'common.discoverBaskets')}
         </a>
         <a
@@ -67,19 +67,30 @@ const { locale } = Astro.props;
         </div>
         <div class="w-px h-6 bg-neutral-200" aria-hidden="true"></div>
         <div class="flex items-center gap-2">
-          <span class="text-xl" aria-hidden="true">&#9989;</span>
+          <Icon name="CircleCheck" size={20} class="text-green-700" />
           <span class="text-sm text-neutral-600">
             {locale === 'fr' ? 'Paiement sécurisé' : locale === 'en' ? 'Secure payment' : 'Peyman sekirize'}
           </span>
         </div>
         <div class="w-px h-6 bg-neutral-200" aria-hidden="true"></div>
         <div class="flex items-center gap-2">
-          <span class="text-xl" aria-hidden="true">&#127758;</span>
+          <Icon name="Globe" size={20} class="text-green-700" />
           <span class="text-sm text-neutral-600">
             {locale === 'fr' ? 'Impact positif' : locale === 'en' ? 'Positive impact' : 'Lenpak pozitif'}
           </span>
         </div>
       </div>
+    </div>
+
+    <!-- Hero illustration -->
+    <div class="flex-shrink-0 w-full lg:w-auto">
+      <img
+        src="/images/illustrations/hero-accueil.png"
+        alt="BienBon — sauvez des paniers surprise"
+        class="w-full max-w-lg mx-auto"
+        loading="eager"
+      />
+    </div>
     </div>
   </div>
 </section>

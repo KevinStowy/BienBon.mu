@@ -2,6 +2,7 @@
 import type { Locale } from '../i18n/utils';
 import { t, getLocalizedPath } from '../i18n/utils';
 import LanguageSwitcher from './LanguageSwitcher.astro';
+import Icon from './Icon.astro';
 
 interface Props {
   locale: Locale;
@@ -23,8 +24,7 @@ const { locale, currentPath = '/' } = Astro.props;
         class="flex items-center gap-2 font-extrabold text-xl text-green-700 hover:text-green-900 transition-colors"
         aria-label="BienBon — Retour à l'accueil"
       >
-        <span class="text-2xl" aria-hidden="true">&#127812;</span>
-        <span>BienBon</span>
+        <img src="/images/logos/logo-principal.png" alt="BienBon" class="h-8 w-auto" />
       </a>
 
       <!-- Desktop navigation -->
@@ -70,9 +70,7 @@ const { locale, currentPath = '/' } = Astro.props;
           aria-expanded="false"
           aria-label={locale === 'fr' ? 'Ouvrir le menu' : 'Open menu'}
         >
-          <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
+          <Icon name="Menu" size={24} />
         </button>
       </div>
     </nav>
@@ -121,9 +119,9 @@ const { locale, currentPath = '/' } = Astro.props;
       const svg = toggle.querySelector('svg');
       if (svg) {
         if (isOpen) {
-          svg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />';
+          svg.innerHTML = '<path d="M4 5h16" /><path d="M4 12h16" /><path d="M4 19h16" />';
         } else {
-          svg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />';
+          svg.innerHTML = '<path d="M18 6 6 18" /><path d="m6 6 12 12" />';
         }
       }
     });

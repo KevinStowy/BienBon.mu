@@ -1,6 +1,7 @@
 ---
 import type { Locale } from '../i18n/utils';
 import { t } from '../i18n/utils';
+import Icon from './Icon.astro';
 
 interface Props {
   locale: Locale;
@@ -10,32 +11,36 @@ const { locale } = Astro.props;
 
 const steps = [
   {
-    icon: '&#128269;',
+    img: '/images/illustrations/vitrine-etape-1-cherche.png',
+    imgAlt: '',
     titleKey: 'home.step1Title',
     descKey: 'home.step1Desc',
     number: '01',
-    color: 'bg-green-100 text-green-700',
+    color: 'bg-green-100',
   },
   {
-    icon: '&#128203;',
+    img: '/images/illustrations/vitrine-etape-2-reserve.png',
+    imgAlt: '',
     titleKey: 'home.step2Title',
     descKey: 'home.step2Desc',
     number: '02',
-    color: 'bg-orange-100 text-orange-600',
+    color: 'bg-orange-100',
   },
   {
-    icon: '&#128241;',
+    img: '/images/illustrations/vitrine-etape-3-retire.png',
+    imgAlt: '',
     titleKey: 'home.step3Title',
     descKey: 'home.step3Desc',
     number: '03',
-    color: 'bg-green-100 text-green-700',
+    color: 'bg-green-100',
   },
   {
-    icon: '&#127860;',
+    img: null,
+    imgAlt: '',
     titleKey: 'home.step4Title',
     descKey: 'home.step4Desc',
     number: '04',
-    color: 'bg-orange-100 text-orange-600',
+    color: 'bg-orange-100',
   },
 ];
 ---
@@ -56,12 +61,16 @@ const steps = [
             {step.number}
           </div>
 
-          <!-- Icon circle -->
+          <!-- Step illustration -->
           <div
-            class={`w-16 h-16 rounded-xl flex items-center justify-center text-3xl mb-4 ${step.color}`}
+            class={`w-16 h-16 rounded-xl flex items-center justify-center mb-4 overflow-hidden ${step.color}`}
             aria-hidden="true"
           >
-            <span set:html={step.icon}></span>
+            {step.img ? (
+              <img src={step.img} alt={step.imgAlt} class="w-full h-full object-contain p-1" />
+            ) : (
+              <Icon name="UtensilsCrossed" size={32} class="text-orange-600" />
+            )}
           </div>
 
           <!-- Content -->

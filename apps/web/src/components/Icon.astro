@@ -1,0 +1,33 @@
+---
+import * as icons from 'lucide-static';
+
+interface Props {
+  name: keyof typeof icons;
+  size?: number;
+  class?: string;
+  color?: string;
+  strokeWidth?: number;
+}
+
+const { name, size = 24, class: className = '', color, strokeWidth } = Astro.props;
+let svg = icons[name] as string;
+
+// Apply size
+svg = svg.replace(/width="\d+"/, `width="${size}"`).replace(/height="\d+"/, `height="${size}"`);
+
+// Apply class (append to existing lucide class)
+if (className) {
+  svg = svg.replace(/class="([^"]*)"/, `class="$1 ${className}"`);
+}
+
+// Apply color
+if (color) {
+  svg = svg.replace(/stroke="[^"]*"/, `stroke="${color}"`);
+}
+
+// Apply stroke width
+if (strokeWidth) {
+  svg = svg.replace(/stroke-width="[^"]*"/, `stroke-width="${strokeWidth}"`);
+}
+---
+<Fragment set:html={svg} />

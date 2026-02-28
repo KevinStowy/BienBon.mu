@@ -2,15 +2,40 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
+import Icon from '../../components/Icon.astro';
 import { t } from '../../i18n/utils';
 
 const locale = 'mfe' as const;
 
 const benefits = [
-  { icon: '&#128682;', titleKey: 'partner.benefit1', descKey: 'partner.benefit1Desc', color: 'bg-green-100 text-green-700' },
-  { icon: '&#128101;', titleKey: 'partner.benefit2', descKey: 'partner.benefit2Desc', color: 'bg-orange-100 text-orange-600' },
-  { icon: '&#128176;', titleKey: 'partner.benefit3', descKey: 'partner.benefit3Desc', color: 'bg-green-100 text-green-700' },
-  { icon: '&#127757;', titleKey: 'partner.benefit4', descKey: 'partner.benefit4Desc', color: 'bg-orange-100 text-orange-600' },
+  {
+    iconName: 'TrendingUp' as const,
+    titleKey: 'partner.benefit1',
+    descKey: 'partner.benefit1Desc',
+    iconClass: 'text-green-700',
+    bgClass: 'bg-green-100',
+  },
+  {
+    iconName: 'Users' as const,
+    titleKey: 'partner.benefit2',
+    descKey: 'partner.benefit2Desc',
+    iconClass: 'text-orange-600',
+    bgClass: 'bg-orange-100',
+  },
+  {
+    iconName: 'Banknote' as const,
+    titleKey: 'partner.benefit3',
+    descKey: 'partner.benefit3Desc',
+    iconClass: 'text-green-700',
+    bgClass: 'bg-green-100',
+  },
+  {
+    iconName: 'Sprout' as const,
+    titleKey: 'partner.benefit4',
+    descKey: 'partner.benefit4Desc',
+    iconClass: 'text-orange-600',
+    bgClass: 'bg-orange-100',
+  },
 ];
 ---
 
@@ -23,13 +48,24 @@ const benefits = [
   <Header locale={locale} currentPath="/kr/vinn-partenaire" />
   <main id="main-content">
     <section class="bg-gradient-to-br from-orange-100 to-neutral-50 py-14 sm:py-20">
-      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <h1 class="text-4xl sm:text-5xl font-extrabold text-neutral-900">
-          {t(locale, 'partner.title')}
-        </h1>
-        <p class="mt-4 text-lg text-neutral-600 max-w-xl mx-auto">
-          {t(locale, 'partner.subtitle')}
-        </p>
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
+          <div class="flex-1 text-center lg:text-left">
+            <h1 class="text-4xl sm:text-5xl font-extrabold text-neutral-900">
+              {t(locale, 'partner.title')}
+            </h1>
+            <p class="mt-4 text-lg text-neutral-600 max-w-xl mx-auto lg:mx-0">
+              {t(locale, 'partner.subtitle')}
+            </p>
+          </div>
+          <div class="flex-shrink-0">
+            <img
+              src="/images/illustrations/vitrine-page-partenaire.png"
+              alt=""
+              class="w-full max-w-md mx-auto"
+            />
+          </div>
+        </div>
       </div>
     </section>
 
@@ -41,8 +77,8 @@ const benefits = [
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {benefits.map((benefit) => (
             <article class="bg-neutral-50 rounded-xl p-6 text-center">
-              <div class={`w-14 h-14 rounded-xl flex items-center justify-center text-2xl mx-auto mb-4 ${benefit.color}`}>
-                <span set:html={benefit.icon} aria-hidden="true"></span>
+              <div class={`w-14 h-14 rounded-xl flex items-center justify-center mx-auto mb-4 ${benefit.bgClass} ${benefit.iconClass}`} aria-hidden="true">
+                <Icon name={benefit.iconName} size={32} class={benefit.iconClass} />
               </div>
               <h3 class="text-base font-extrabold text-neutral-900 mb-2">{t(locale, benefit.titleKey)}</h3>
               <p class="text-sm text-neutral-600 leading-relaxed">{t(locale, benefit.descKey)}</p>

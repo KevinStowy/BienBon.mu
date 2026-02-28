@@ -1,6 +1,7 @@
 ---
 import type { Locale } from '../i18n/utils';
 import { t } from '../i18n/utils';
+import Icon from './Icon.astro';
 
 interface Props {
   locale: Locale;
@@ -12,22 +13,26 @@ const stats = [
   {
     value: '12 450',
     labelKey: 'home.mealsSaved',
-    icon: '&#127812;',
+    iconName: 'Leaf' as const,
+    iconClass: 'text-green-600',
   },
   {
     value: '3 740',
     labelKey: 'home.co2Saved',
-    icon: '&#127757;',
+    iconName: 'Globe' as const,
+    iconClass: 'text-green-600',
   },
   {
     value: '87',
     label: locale === 'fr' ? 'partenaires actifs' : locale === 'en' ? 'active partners' : 'partenere aktif',
-    icon: '&#127981;',
+    iconName: 'Store' as const,
+    iconClass: 'text-orange-500',
   },
   {
     value: '4.8/5',
     label: locale === 'fr' ? 'note moyenne' : locale === 'en' ? 'average rating' : 'not mwayen',
-    icon: '&#11088;',
+    iconName: 'Star' as const,
+    iconClass: 'text-orange-500',
   },
 ];
 ---
@@ -43,8 +48,8 @@ const stats = [
     <dl class="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
       {stats.map((stat) => (
         <div class="bg-white rounded-xl p-6 shadow-sm text-center">
-          <div class="text-3xl mb-3" aria-hidden="true">
-            <span set:html={stat.icon}></span>
+          <div class={`w-10 h-10 mx-auto mb-3 flex items-center justify-center ${stat.iconClass}`} aria-hidden="true">
+            <Icon name={stat.iconName} size={32} class={stat.iconClass} />
           </div>
           <dt class="text-3xl sm:text-4xl font-extrabold text-green-700">
             {stat.value}

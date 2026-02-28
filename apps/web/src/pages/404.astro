@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import Icon from '../components/Icon.astro';
 
 const locale = 'fr' as const;
 ---
@@ -17,7 +18,7 @@ const locale = 'fr' as const;
     <section class="min-h-[60vh] flex items-center justify-center py-20 px-4">
       <div class="text-center max-w-md">
         <!-- Illustration -->
-        <div class="text-8xl mb-6" aria-hidden="true">&#127812;</div>
+        <img src="/images/illustrations/empty-state-404.png" alt="Page non trouvée" class="w-64 h-64 mx-auto mb-6" />
 
         <!-- 404 -->
         <p class="text-7xl font-black text-green-700 leading-none mb-4" aria-hidden="true">404</p>
@@ -35,7 +36,7 @@ const locale = 'fr' as const;
             href="/"
             class="inline-flex items-center justify-center gap-2 px-6 py-4 rounded-lg bg-green-700 text-white font-bold hover:bg-green-900 transition-colors min-h-[52px]"
           >
-            <span aria-hidden="true">&#8592;</span>
+            <Icon name="ArrowLeft" size={20} />
             Retour à l'accueil
           </a>
           <a
