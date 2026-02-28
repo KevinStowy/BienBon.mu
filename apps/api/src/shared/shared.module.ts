@@ -1,11 +1,16 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
+import { PrismaService } from './prisma/prisma.service';
 
 /**
  * SharedModule exports shared providers, filters, and interceptors.
  *
  * Filters and interceptors are registered globally in main.ts.
- * This module exists as a central import point and can host shared
- * services in the future (e.g., a PaginationService, a CacheService).
+ * PrismaService is provided globally so all modules can inject it
+ * without explicit imports.
  */
-@Module({})
+@Global()
+@Module({
+  providers: [PrismaService],
+  exports: [PrismaService],
+})
 export class SharedModule {}
