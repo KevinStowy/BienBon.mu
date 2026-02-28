@@ -1,0 +1,1241 @@
+// =============================================================================
+// BienBon.mu — Complete Prisma Schema
+// =============================================================================
+// ADR-003: Database schema conventions
+// - Table names: snake_case plural
+// - Column names: snake_case
+// - Enums: PascalCase
+// - Relations: named explicitly
+// - Soft delete: deleted_at DateTime? on main entities
+// - Audit: created_at, updated_at on all tables
+// - UUID v7 for IDs (using gen_random_uuid() as Prisma default)
+// - Timestamptz for all timestamp fields
+// - Decimal(10,2) for money, Decimal(12,2) for ledger amounts
+// - VarChar(3) for currency codes (default "MUR")
+// =============================================================================
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// =============================================================================
+// ENUMS
+// =============================================================================
+
+enum UserStatus {
+  ACTIVE
+  PENDING_VERIFICATION
+  SUSPENDED
+  BANNED
+  DELETED
+}
+
+enum Role {
+  CONSUMER
+  PARTNER
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum PartnerStatus {
+  PENDING
+  ACTIVE
+  SUSPENDED
+  REJECTED
+  BANNED
+}
+
+enum StoreStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+enum StoreType {
+  BAKERY
+  RESTAURANT
+  SUPERMARKET
+  CAFE
+  HOTEL
+  DELI
+  OTHER
+}
+
+enum BasketStatus {
+  DRAFT
+  PUBLISHED
+  SOLD_OUT
+  PICKUP_WINDOW
+  ENDED
+  CANCELLED
+  ARCHIVED
+}
+
+enum ReservationStatus {
+  PENDING_PAYMENT
+  CONFIRMED
+  READY
+  PICKED_UP
+  NO_SHOW
+  CANCELLED_CONSUMER
+  CANCELLED_PARTNER
+  EXPIRED
+}
+
+enum PaymentType {
+  PRE_AUTH
+  CAPTURE
+  REFUND
+  VOID
+}
+
+enum PaymentStatus {
+  PENDING
+  PROCESSING
+  SUCCEEDED
+  FAILED
+  CANCELLED
+}
+
+enum PaymentMethod {
+  CARD
+  MCB_JUICE
+  BLINK
+  MYT_MONEY
+}
+
+enum ClaimStatus {
+  OPEN
+  IN_REVIEW
+  RESOLVED
+  REJECTED
+}
+
+enum ResolutionType {
+  FULL_REFUND
+  PARTIAL_REFUND
+  STORE_CREDIT
+  REJECTED
+}
+
+enum ApprovalStatus {
+  PENDING
+  IN_REVIEW
+  APPROVED
+  REJECTED
+  CANCELLED
+  SUPERSEDED
+}
+
+enum LedgerAccountType {
+  ASSET
+  LIABILITY
+  REVENUE
+  EXPENSE
+}
+
+enum NormalBalance {
+  DEBIT
+  CREDIT
+}
+
+enum NotificationType {
+  FAVORITE_NEW_BASKET
+  RESERVATION_CONFIRMED
+  PICKUP_REMINDER
+  PARTNER_CANCELLED
+  REFUND_PROCESSED
+  NO_SHOW
+  CLAIM_RESOLVED
+  REFERRAL_VALIDATED
+  BADGE_EARNED
+}
+
+enum FraudAlertSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum FraudAlertStatus {
+  NEW
+  INVESTIGATED
+  FALSE_POSITIVE
+  RESOLVED
+}
+
+enum SuspensionStatus {
+  ACTIVE
+  LIFTED
+  ESCALATED_TO_BAN
+}
+
+enum StoreRole {
+  OWNER
+  MANAGER
+  STAFF
+}
+
+enum RecurringTemplateStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum ReferralStatus {
+  PENDING
+  VALIDATED
+  EXPIRED
+  CANCELLED
+}
+
+enum PayoutStatementStatus {
+  DRAFT
+  GENERATED
+  VALIDATED
+  PAYOUT_INITIATED
+  PAID
+  ERROR
+  DEFERRED
+}
+
+enum ReconAlertType {
+  BALANCE_MISMATCH
+  TRANSACTION_MISSING
+  TRANSACTION_EXTRA
+  AMOUNT_MISMATCH
+  STATUS_MISMATCH
+  LEDGER_IMBALANCE
+}
+
+enum ReconAlertSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum RegistrationChannel {
+  WEB_FORM
+  ADMIN_INVITE
+  PARTNER_REFERRAL
+}
+
+// =============================================================================
+// BC: Identity & Access (ADR-010, ADR-011)
+// =============================================================================
+
+/// Application user profile, linked to Supabase Auth via supabase_id.
+/// Soft delete via status=DELETED + deleted_at. Anonymization at deleted_at + 30 days.
+model User {
+  id           String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  supabaseId   String     @unique @map("supabase_id")
+  email        String?    @unique
+  phone        String?    @unique
+  firstName    String     @map("first_name")
+  lastName     String     @map("last_name")
+  avatarUrl    String?    @map("avatar_url")
+  status       UserStatus @default(ACTIVE)
+  deletedAt    DateTime?  @map("deleted_at") @db.Timestamptz(6)
+  anonymizedAt DateTime?  @map("anonymized_at") @db.Timestamptz(6)
+  createdAt    DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime   @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  // Relations
+  roles              UserRole[]
+  consumerProfile    ConsumerProfile?
+  partnerProfile     PartnerProfile?
+  adminProfile       AdminProfile?
+  favorites          Favorite[]
+  reservations       Reservation[]       @relation("ConsumerReservations")
+  reviewsWritten     Review[]            @relation("ConsumerReviews")
+  reviewsReceived    Review[]            @relation("PartnerReviews")
+  claimsFiled        Claim[]             @relation("ConsumerClaims")
+  notifications      Notification[]
+  referralsMade      Referral[]          @relation("ReferrerReferrals")
+  referralsReceived  Referral[]          @relation("RefereeReferrals")
+  badges             UserBadge[]
+  fraudAlerts        FraudAlert[]
+  fraudSuspensions   FraudSuspension[]
+  deviceFingerprints DeviceFingerprint[]
+  consentRecords     ConsentRecord[]
+  supportTickets     SupportTicket[]
+
+  @@map("users")
+}
+
+/// User roles (multi-role support). A user can have multiple roles simultaneously.
+model UserRole {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId    String    @map("user_id") @db.Uuid
+  role      Role
+  grantedAt DateTime  @default(now()) @map("granted_at") @db.Timestamptz(6)
+  grantedBy String?   @map("granted_by") @db.Uuid
+  revokedAt DateTime? @map("revoked_at") @db.Timestamptz(6)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, role])
+  @@index([userId])
+  @@map("user_roles")
+}
+
+/// Consumer-specific profile data.
+model ConsumerProfile {
+  id                      String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId                  String   @unique @map("user_id") @db.Uuid
+  dietaryPreferences      String[] @map("dietary_preferences")
+  referralCode            String?  @unique @map("referral_code")
+  notificationPreferences Json?    @map("notification_preferences")
+  createdAt               DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt               DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("consumer_profiles")
+}
+
+/// Partner-specific profile data. Tracks partner lifecycle (pending -> active -> etc).
+model PartnerProfile {
+  id                  String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId              String               @unique @map("user_id") @db.Uuid
+  status              PartnerStatus        @default(PENDING)
+  statusReason        String?              @map("status_reason")
+  statusChangedAt     DateTime?            @map("status_changed_at") @db.Timestamptz(6)
+  statusChangedBy     String?              @map("status_changed_by") @db.Uuid
+  submittedAt         DateTime             @default(now()) @map("submitted_at") @db.Timestamptz(6)
+  validatedAt         DateTime?            @map("validated_at") @db.Timestamptz(6)
+  validatedBy         String?              @map("validated_by") @db.Uuid
+  registrationChannel RegistrationChannel? @map("registration_channel")
+  createdAt           DateTime             @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt           DateTime             @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  partnerStores PartnerStore[]
+
+  @@map("partner_profiles")
+}
+
+/// Admin-specific profile data.
+model AdminProfile {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId     String   @unique @map("user_id") @db.Uuid
+  department String?
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdBy  String?  @map("created_by") @db.Uuid
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("admin_profiles")
+}
+
+// =============================================================================
+// BC: Partner / Stores (ADR-011, ADR-018)
+// =============================================================================
+
+/// Physical store/commerce. Can be managed by multiple partners via partner_stores.
+/// PostGIS: The `location` column (GEOMETRY(Point, 4326)) is managed via raw SQL migration
+/// and a trigger that syncs from latitude/longitude. See ADR-003, Q5.
+model Store {
+  id           String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name         String
+  type         StoreType
+  address      String
+  city         String
+  postalCode   String?     @map("postal_code")
+  latitude     Decimal     @db.Decimal(10, 7)
+  longitude    Decimal     @db.Decimal(10, 7)
+  description  String?
+  phone        String?
+  brn          String?     @map("brn")
+  foodLicence  String?     @map("food_licence")
+  avgRating    Decimal     @default(0) @map("avg_rating") @db.Decimal(3, 2)
+  totalReviews Int         @default(0) @map("total_reviews")
+  status       StoreStatus @default(ACTIVE)
+  createdAt    DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime    @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  // Relations
+  partnerStores             PartnerStore[]
+  storeHours                StoreHour[]
+  storePhotos               StorePhoto[]
+  baskets                   Basket[]                   @relation("StoreBaskets")
+  recurringTemplates        RecurringTemplate[]        @relation("StoreRecurringTemplates")
+  favorites                 Favorite[]
+  storeModificationRequests StoreModificationRequest[]
+
+  @@index([city])
+  @@index([status])
+  @@index([type])
+  @@map("stores")
+}
+
+/// Many-to-many between partners and stores with role information.
+model PartnerStore {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  partnerId String    @map("partner_id") @db.Uuid
+  storeId   String    @map("store_id") @db.Uuid
+  storeRole StoreRole @map("store_role")
+  grantedAt DateTime  @default(now()) @map("granted_at") @db.Timestamptz(6)
+  grantedBy String?   @map("granted_by") @db.Uuid
+  revokedAt DateTime? @map("revoked_at") @db.Timestamptz(6)
+
+  partner PartnerProfile @relation(fields: [partnerId], references: [id], onDelete: Cascade)
+  store   Store          @relation(fields: [storeId], references: [id], onDelete: Cascade)
+
+  @@unique([partnerId, storeId])
+  @@index([storeId])
+  @@map("partner_stores")
+}
+
+/// Store operating hours per day of week.
+model StoreHour {
+  id        String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  storeId   String  @map("store_id") @db.Uuid
+  dayOfWeek Int     @map("day_of_week")
+  openTime  String  @map("open_time")
+  closeTime String  @map("close_time")
+  isClosed  Boolean @default(false) @map("is_closed")
+
+  store Store @relation(fields: [storeId], references: [id], onDelete: Cascade)
+
+  @@index([storeId])
+  @@map("store_hours")
+}
+
+/// Store photos.
+model StorePhoto {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  storeId   String   @map("store_id") @db.Uuid
+  url       String
+  position  Int      @default(0)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  store Store @relation(fields: [storeId], references: [id], onDelete: Cascade)
+
+  @@index([storeId])
+  @@map("store_photos")
+}
+
+/// Store modification requests requiring admin approval (ADR-018).
+model StoreModificationRequest {
+  id                String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  storeId           String         @map("store_id") @db.Uuid
+  submittedBy       String         @map("submitted_by") @db.Uuid
+  requestType       String         @map("request_type")
+  fieldChanges      Json           @map("field_changes")
+  status            ApprovalStatus @default(PENDING)
+  reviewedBy        String?        @map("reviewed_by") @db.Uuid
+  decision          Json?
+  previousRequestId String?        @map("previous_request_id") @db.Uuid
+  createdAt         DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime       @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  store           Store                      @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  previousRequest StoreModificationRequest?  @relation("StoreModificationRequestChain", fields: [previousRequestId], references: [id])
+  nextRequests    StoreModificationRequest[] @relation("StoreModificationRequestChain")
+
+  @@index([storeId])
+  @@index([status])
+  @@map("store_modification_requests")
+}
+
+/// Partner registration requests requiring admin approval (ADR-018).
+model PartnerRegistrationRequest {
+  id                  String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId              String              @map("user_id") @db.Uuid
+  businessData        Json                @map("business_data")
+  documentUrls        Json                @map("document_urls")
+  registrationChannel RegistrationChannel @map("registration_channel")
+  status              ApprovalStatus      @default(PENDING)
+  reviewedBy          String?             @map("reviewed_by") @db.Uuid
+  assignedAt          DateTime?           @map("assigned_at") @db.Timestamptz(6)
+  rejectionReasons    String[]            @map("rejection_reasons")
+  adminComment        String?             @map("admin_comment")
+  internalNote        String?             @map("internal_note")
+  resolvedAt          DateTime?           @map("resolved_at") @db.Timestamptz(6)
+  previousRequestId   String?             @map("previous_request_id") @db.Uuid
+  createdAt           DateTime            @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt           DateTime            @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  previousRequest PartnerRegistrationRequest?  @relation("PartnerRegistrationRequestChain", fields: [previousRequestId], references: [id])
+  nextRequests    PartnerRegistrationRequest[] @relation("PartnerRegistrationRequestChain")
+
+  @@index([userId])
+  @@index([status])
+  @@map("partner_registration_requests")
+}
+
+// =============================================================================
+// BC: Catalog
+// =============================================================================
+
+/// Basket categories (e.g., bakery, restaurant, mixed).
+model Category {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  slug      String   @unique
+  namesFr   String   @map("names_fr")
+  namesEn   String?  @map("names_en")
+  namesKr   String?  @map("names_kr")
+  icon      String?
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  baskets            Basket[]
+  recurringTemplates RecurringTemplate[]
+
+  @@map("categories")
+}
+
+/// Tags for baskets (e.g., vegan, halal, organic).
+model Tag {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  slug        String   @unique
+  namesFr     String   @map("names_fr")
+  namesEn     String?  @map("names_en")
+  namesKr     String?  @map("names_kr")
+  icon        String?
+  description String?
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  baskets BasketTag[]
+
+  @@map("tags")
+}
+
+/// Surprise basket for sale. Core entity of the marketplace.
+/// Constraint: selling_price <= original_price * 0.50 (enforced via raw SQL CHECK constraint in migration)
+model Basket {
+  id            String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  storeId       String       @map("store_id") @db.Uuid
+  templateId    String?      @map("template_id") @db.Uuid
+  title         String       @db.VarChar(60)
+  description   String?
+  originalPrice Decimal      @map("original_price") @db.Decimal(10, 2)
+  sellingPrice  Decimal      @map("selling_price") @db.Decimal(10, 2)
+  quantity      Int
+  stock         Int
+  categoryId    String       @map("category_id") @db.Uuid
+  photoUrl      String?      @map("photo_url")
+  pickupStart   DateTime     @map("pickup_start") @db.Timestamptz(6)
+  pickupEnd     DateTime     @map("pickup_end") @db.Timestamptz(6)
+  status        BasketStatus @default(DRAFT)
+  createdAt     DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime     @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  store        Store              @relation("StoreBaskets", fields: [storeId], references: [id], onDelete: Cascade)
+  template     RecurringTemplate? @relation("TemplateBaskets", fields: [templateId], references: [id], onDelete: SetNull)
+  category     Category           @relation(fields: [categoryId], references: [id])
+  tags         BasketTag[]
+  reservations Reservation[]
+
+  @@index([storeId])
+  @@index([status])
+  @@index([pickupStart])
+  @@index([categoryId])
+  @@map("baskets")
+}
+
+/// Many-to-many between baskets and tags.
+model BasketTag {
+  basketId String @map("basket_id") @db.Uuid
+  tagId    String @map("tag_id") @db.Uuid
+
+  basket Basket @relation(fields: [basketId], references: [id], onDelete: Cascade)
+  tag    Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([basketId, tagId])
+  @@index([tagId])
+  @@map("basket_tags")
+}
+
+/// Recurring basket templates for automatic daily basket creation.
+model RecurringTemplate {
+  id              String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  storeId         String                  @map("store_id") @db.Uuid
+  title           String
+  description     String?
+  originalPrice   Decimal                 @map("original_price") @db.Decimal(10, 2)
+  sellingPrice    Decimal                 @map("selling_price") @db.Decimal(10, 2)
+  quantityPerDay  Int                     @map("quantity_per_day")
+  categoryId      String                  @map("category_id") @db.Uuid
+  photoUrl        String?                 @map("photo_url")
+  pickupStartTime String                  @map("pickup_start_time")
+  pickupEndTime   String                  @map("pickup_end_time")
+  daysOfWeek      Int[]                   @map("days_of_week")
+  status          RecurringTemplateStatus @default(ACTIVE)
+  createdAt       DateTime                @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime                @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  store      Store                @relation("StoreRecurringTemplates", fields: [storeId], references: [id], onDelete: Cascade)
+  category   Category             @relation(fields: [categoryId], references: [id])
+  baskets    Basket[]             @relation("TemplateBaskets")
+  exceptions RecurringException[]
+
+  @@index([storeId])
+  @@index([status])
+  @@map("recurring_templates")
+}
+
+/// Exceptions to recurring templates (e.g., holidays, one-off cancellations).
+model RecurringException {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  templateId    String   @map("template_id") @db.Uuid
+  exceptionDate DateTime @map("exception_date") @db.Date
+  isCancelled   Boolean  @map("is_cancelled")
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  template RecurringTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+
+  @@index([templateId])
+  @@map("recurring_exceptions")
+}
+
+// =============================================================================
+// BC: Ordering (ADR-008, ADR-017)
+// =============================================================================
+
+/// A consumer's reservation of a basket. Core transactional entity.
+/// Lifecycle managed by state machine (ADR-017).
+model Reservation {
+  id          String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  basketId    String            @map("basket_id") @db.Uuid
+  consumerId  String            @map("consumer_id") @db.Uuid
+  quantity    Int               @default(1)
+  unitPrice   Decimal           @map("unit_price") @db.Decimal(10, 2)
+  totalPrice  Decimal           @map("total_price") @db.Decimal(10, 2)
+  status      ReservationStatus @default(PENDING_PAYMENT)
+  qrCode      String            @map("qr_code")
+  pinCode     String            @map("pin_code") @db.VarChar(6)
+  expiresAt   DateTime?         @map("expires_at") @db.Timestamptz(6)
+  confirmedAt DateTime?         @map("confirmed_at") @db.Timestamptz(6)
+  readyAt     DateTime?         @map("ready_at") @db.Timestamptz(6)
+  pickedUpAt  DateTime?         @map("picked_up_at") @db.Timestamptz(6)
+  cancelledAt DateTime?         @map("cancelled_at") @db.Timestamptz(6)
+  noShowAt    DateTime?         @map("no_show_at") @db.Timestamptz(6)
+  expiredAt   DateTime?         @map("expired_at") @db.Timestamptz(6)
+  createdAt   DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime          @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  basket              Basket                     @relation(fields: [basketId], references: [id])
+  consumer            User                       @relation("ConsumerReservations", fields: [consumerId], references: [id])
+  statusHistory       ReservationStatusHistory[]
+  paymentTransactions PaymentTransaction[]
+  review              Review?
+  claims              Claim[]
+
+  @@index([basketId])
+  @@index([consumerId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("reservations")
+}
+
+/// Reservation status change history for audit trail.
+model ReservationStatusHistory {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  reservationId String   @map("reservation_id") @db.Uuid
+  fromStatus    String   @map("from_status")
+  toStatus      String   @map("to_status")
+  event         String
+  actorId       String?  @map("actor_id") @db.Uuid
+  actorRole     String?  @map("actor_role")
+  metadata      Json?
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  reservation Reservation @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+
+  @@index([reservationId])
+  @@map("reservation_status_history")
+}
+
+// =============================================================================
+// BC: Payment / Ledger (ADR-005, ADR-007)
+// =============================================================================
+
+/// Payment transactions linked to reservations via payment gateway (Peach Payments).
+model PaymentTransaction {
+  id             String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  reservationId  String        @map("reservation_id") @db.Uuid
+  type           PaymentType
+  status         PaymentStatus @default(PENDING)
+  amount         Decimal       @db.Decimal(10, 2)
+  currency       String        @default("MUR") @db.VarChar(3)
+  paymentMethod  PaymentMethod @map("payment_method")
+  providerTxId   String?       @map("provider_tx_id")
+  providerStatus String?       @map("provider_status")
+  metadata       Json?
+  createdAt      DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime      @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  reservation          Reservation           @relation(fields: [reservationId], references: [id])
+  ledgerEntries        LedgerEntry[]         @relation("TransactionLedgerEntries")
+  payoutStatementLines PayoutStatementLine[]
+  reconciliationAlerts ReconciliationAlert[]
+
+  @@index([reservationId])
+  @@index([status])
+  @@index([providerTxId])
+  @@map("payment_transactions")
+}
+
+/// Ledger accounts for double-entry bookkeeping (ADR-005).
+model LedgerAccount {
+  id            String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  code          String            @unique
+  name          String
+  type          LedgerAccountType
+  normalBalance NormalBalance     @map("normal_balance")
+  entityType    String            @map("entity_type")
+  entityId      String?           @map("entity_id") @db.Uuid
+  currency      String            @default("MUR") @db.VarChar(3)
+  isActive      Boolean           @default(true) @map("is_active")
+  description   String?
+  createdAt     DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime          @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  debitEntries  LedgerEntry[] @relation("DebitAccount")
+  creditEntries LedgerEntry[] @relation("CreditAccount")
+
+  @@index([entityType, entityId])
+  @@map("ledger_accounts")
+}
+
+/// Immutable ledger entries for double-entry bookkeeping (ADR-005).
+/// NO updated_at — ledger entries are IMMUTABLE. Corrections use compensating entries.
+model LedgerEntry {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  journalId       String   @map("journal_id")
+  transactionId   String?  @map("transaction_id") @db.Uuid
+  sequenceNumber  Int      @map("sequence_number")
+  debitAccountId  String   @map("debit_account_id") @db.Uuid
+  creditAccountId String   @map("credit_account_id") @db.Uuid
+  amount          Decimal  @db.Decimal(12, 2)
+  currency        String   @default("MUR") @db.VarChar(3)
+  vatRate         Decimal  @default(0) @map("vat_rate") @db.Decimal(5, 4)
+  vatAmount       Decimal  @default(0) @map("vat_amount") @db.Decimal(10, 2)
+  description     String
+  entryType       String   @map("entry_type")
+  reservationId   String?  @map("reservation_id") @db.Uuid
+  partnerId       String?  @map("partner_id") @db.Uuid
+  createdBy       String   @map("created_by")
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  transaction   PaymentTransaction? @relation("TransactionLedgerEntries", fields: [transactionId], references: [id])
+  debitAccount  LedgerAccount       @relation("DebitAccount", fields: [debitAccountId], references: [id])
+  creditAccount LedgerAccount       @relation("CreditAccount", fields: [creditAccountId], references: [id])
+
+  @@index([journalId])
+  @@index([transactionId])
+  @@index([debitAccountId])
+  @@index([creditAccountId])
+  @@index([createdAt])
+  @@map("ledger_entries")
+}
+
+/// Commission configuration per scope/partner/basket type (ADR-007).
+model CommissionConfig {
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  scope          String
+  partnerId      String?   @map("partner_id") @db.Uuid
+  basketTypeId   String?   @map("basket_type_id") @db.Uuid
+  commissionRate Decimal   @map("commission_rate") @db.Decimal(5, 4)
+  feeMinimum     Decimal   @map("fee_minimum") @db.Decimal(10, 2)
+  effectiveFrom  DateTime  @map("effective_from") @db.Timestamptz(6)
+  effectiveTo    DateTime? @map("effective_to") @db.Timestamptz(6)
+  createdBy      String    @map("created_by")
+  createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  notes          String?
+
+  @@index([scope])
+  @@index([partnerId])
+  @@index([effectiveFrom])
+  @@map("commission_configs")
+}
+
+/// Monthly payout statements for partners (ADR-007).
+model PayoutStatement {
+  id                         String                @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  statementNumber            String                @unique @map("statement_number")
+  partnerId                  String                @map("partner_id") @db.Uuid
+  periodStart                DateTime              @map("period_start") @db.Date
+  periodEnd                  DateTime              @map("period_end") @db.Date
+  totalSalesGross            Decimal               @map("total_sales_gross") @db.Decimal(12, 2)
+  totalCommission            Decimal               @map("total_commission") @db.Decimal(12, 2)
+  totalVatOnCommission       Decimal               @map("total_vat_on_commission") @db.Decimal(10, 2)
+  totalRefunds               Decimal               @map("total_refunds") @db.Decimal(12, 2)
+  totalCommissionAdjustments Decimal               @map("total_commission_adjustments") @db.Decimal(12, 2)
+  totalPartnerAdjustments    Decimal               @map("total_partner_adjustments") @db.Decimal(12, 2)
+  netPayoutAmount            Decimal               @map("net_payout_amount") @db.Decimal(12, 2)
+  previousBalance            Decimal               @map("previous_balance") @db.Decimal(12, 2)
+  commissionRate             Decimal               @map("commission_rate") @db.Decimal(5, 4)
+  feeMinimum                 Decimal               @map("fee_minimum") @db.Decimal(10, 2)
+  feeMinimumAppliedCount     Int                   @map("fee_minimum_applied_count")
+  status                     PayoutStatementStatus @default(DRAFT)
+  payoutDate                 DateTime?             @map("payout_date") @db.Date
+  payoutExecutedAt           DateTime?             @map("payout_executed_at") @db.Timestamptz(6)
+  payoutReference            String?               @map("payout_reference")
+  bankAccountDisplay         String?               @map("bank_account_display")
+  pdfUrl                     String?               @map("pdf_url")
+  generatedAt                DateTime              @map("generated_at") @db.Timestamptz(6)
+  validatedBy                String?               @map("validated_by") @db.Uuid
+  validatedAt                DateTime?             @map("validated_at") @db.Timestamptz(6)
+  createdAt                  DateTime              @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt                  DateTime              @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  lines PayoutStatementLine[]
+
+  @@unique([partnerId, periodStart])
+  @@index([status])
+  @@map("payout_statements")
+}
+
+/// Individual line items in a payout statement (ADR-007).
+model PayoutStatementLine {
+  id                   String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  statementId          String   @map("statement_id") @db.Uuid
+  paymentTransactionId String   @map("payment_transaction_id") @db.Uuid
+  reservationId        String   @map("reservation_id") @db.Uuid
+  transactionDate      DateTime @map("transaction_date") @db.Timestamptz(6)
+  basketTitle          String   @map("basket_title")
+  quantity             Int
+  unitPrice            Decimal  @map("unit_price") @db.Decimal(10, 2)
+  grossAmount          Decimal  @map("gross_amount") @db.Decimal(10, 2)
+  commissionRate       Decimal  @map("commission_rate") @db.Decimal(5, 4)
+  commissionAmount     Decimal  @map("commission_amount") @db.Decimal(10, 2)
+  feeMinimumApplied    Boolean  @map("fee_minimum_applied")
+  netAmount            Decimal  @map("net_amount") @db.Decimal(10, 2)
+  lineType             String   @map("line_type")
+  refundId             String?  @map("refund_id") @db.Uuid
+  createdAt            DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  statement          PayoutStatement    @relation(fields: [statementId], references: [id], onDelete: Cascade)
+  paymentTransaction PaymentTransaction @relation(fields: [paymentTransactionId], references: [id])
+
+  @@index([statementId])
+  @@map("payout_statement_lines")
+}
+
+/// Reconciliation alerts for discrepancies between ledger and payment provider (ADR-007).
+model ReconciliationAlert {
+  id                   String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  type                 ReconAlertType
+  severity             ReconAlertSeverity
+  description          String
+  details              Json
+  paymentTransactionId String?            @map("payment_transaction_id") @db.Uuid
+  resolved             Boolean            @default(false)
+  resolvedAt           DateTime?          @map("resolved_at") @db.Timestamptz(6)
+  resolvedBy           String?            @map("resolved_by") @db.Uuid
+  resolutionNotes      String?            @map("resolution_notes")
+  createdAt            DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  paymentTransaction PaymentTransaction? @relation(fields: [paymentTransactionId], references: [id])
+
+  @@index([resolved])
+  @@index([severity])
+  @@map("reconciliation_alerts")
+}
+
+// =============================================================================
+// BC: Review & Claims
+// =============================================================================
+
+/// Consumer review of a reservation/partner.
+model Review {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  reservationId String   @unique @map("reservation_id") @db.Uuid
+  consumerId    String   @map("consumer_id") @db.Uuid
+  partnerId     String   @map("partner_id") @db.Uuid
+  rating        Int
+  comment       String?
+  editableUntil DateTime @map("editable_until") @db.Timestamptz(6)
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  reservation Reservation @relation(fields: [reservationId], references: [id])
+  consumer    User        @relation("ConsumerReviews", fields: [consumerId], references: [id])
+  partner     User        @relation("PartnerReviews", fields: [partnerId], references: [id])
+
+  @@index([consumerId])
+  @@index([partnerId])
+  @@map("reviews")
+}
+
+/// Consumer claim/complaint about a reservation.
+model Claim {
+  id               String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  reservationId    String          @map("reservation_id") @db.Uuid
+  consumerId       String          @map("consumer_id") @db.Uuid
+  reasonSlug       String          @map("reason_slug")
+  description      String
+  status           ClaimStatus     @default(OPEN)
+  resolutionType   ResolutionType? @map("resolution_type")
+  resolutionAmount Decimal?        @map("resolution_amount") @db.Decimal(10, 2)
+  adminComment     String?         @map("admin_comment")
+  resolvedBy       String?         @map("resolved_by") @db.Uuid
+  resolvedAt       DateTime?       @map("resolved_at") @db.Timestamptz(6)
+  createdAt        DateTime        @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime        @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  reservation   Reservation          @relation(fields: [reservationId], references: [id])
+  consumer      User                 @relation("ConsumerClaims", fields: [consumerId], references: [id])
+  reason        ClaimReason          @relation(fields: [reasonSlug], references: [slug])
+  photos        ClaimPhoto[]
+  statusHistory ClaimStatusHistory[]
+
+  @@index([reservationId])
+  @@index([consumerId])
+  @@index([status])
+  @@map("claims")
+}
+
+/// Claim photo evidence.
+model ClaimPhoto {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  claimId   String   @map("claim_id") @db.Uuid
+  url       String
+  position  Int      @default(0)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  claim Claim @relation(fields: [claimId], references: [id], onDelete: Cascade)
+
+  @@index([claimId])
+  @@map("claim_photos")
+}
+
+/// Predefined claim reasons.
+model ClaimReason {
+  slug      String   @id
+  labelFr   String   @map("label_fr")
+  labelEn   String?  @map("label_en")
+  labelKr   String?  @map("label_kr")
+  isActive  Boolean  @default(true) @map("is_active")
+  position  Int      @default(0)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  claims Claim[]
+
+  @@map("claim_reasons")
+}
+
+/// Claim status change history for audit trail.
+model ClaimStatusHistory {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  claimId    String   @map("claim_id") @db.Uuid
+  fromStatus String   @map("from_status")
+  toStatus   String   @map("to_status")
+  event      String
+  actorId    String?  @map("actor_id") @db.Uuid
+  actorRole  String?  @map("actor_role")
+  metadata   Json?
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  claim Claim @relation(fields: [claimId], references: [id], onDelete: Cascade)
+
+  @@index([claimId])
+  @@map("claim_status_history")
+}
+
+// =============================================================================
+// BC: Consumer (favorites, gamification, referrals)
+// =============================================================================
+
+/// Consumer's favorite stores.
+model Favorite {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  storeId   String   @map("store_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  store Store @relation(fields: [storeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, storeId])
+  @@index([storeId])
+  @@map("favorites")
+}
+
+/// Gamification badges definitions.
+model Badge {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  slug          String   @unique
+  namesFr       String   @map("names_fr")
+  namesEn       String?  @map("names_en")
+  threshold     Int
+  thresholdType String   @map("threshold_type")
+  iconUrl       String?  @map("icon_url")
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  userBadges UserBadge[]
+
+  @@map("badges")
+}
+
+/// User's earned badges.
+model UserBadge {
+  id       String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId   String   @map("user_id") @db.Uuid
+  badgeId  String   @map("badge_id") @db.Uuid
+  earnedAt DateTime @map("earned_at") @db.Timestamptz(6)
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badge Badge @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("user_badges")
+}
+
+/// Referral tracking.
+model Referral {
+  id              String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  referrerId      String         @map("referrer_id") @db.Uuid
+  referralCode    String         @map("referral_code")
+  refereeId       String?        @map("referee_id") @db.Uuid
+  status          ReferralStatus @default(PENDING)
+  rewardGrantedAt DateTime?      @map("reward_granted_at") @db.Timestamptz(6)
+  createdAt       DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  referrer User  @relation("ReferrerReferrals", fields: [referrerId], references: [id])
+  referee  User? @relation("RefereeReferrals", fields: [refereeId], references: [id])
+
+  @@index([referrerId])
+  @@index([referralCode])
+  @@map("referrals")
+}
+
+// =============================================================================
+// BC: Notification
+// =============================================================================
+
+/// Push/in-app notifications sent to users.
+model Notification {
+  id          String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  recipientId String           @map("recipient_id") @db.Uuid
+  type        NotificationType
+  title       String
+  body        String
+  data        Json?
+  readAt      DateTime?        @map("read_at") @db.Timestamptz(6)
+  createdAt   DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  recipient User @relation(fields: [recipientId], references: [id], onDelete: Cascade)
+
+  @@index([recipientId])
+  @@index([createdAt])
+  @@map("notifications")
+}
+
+// =============================================================================
+// BC: Fraud (ADR-019)
+// =============================================================================
+
+/// Configurable fraud detection rules.
+model FraudRule {
+  id            String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  slug          String             @unique
+  nameFr        String             @map("name_fr")
+  nameEn        String?            @map("name_en")
+  descriptionFr String?            @map("description_fr")
+  descriptionEn String?            @map("description_en")
+  actorType     String             @map("actor_type")
+  metric        String
+  operator      String
+  threshold     Decimal            @db.Decimal(10, 2)
+  windowDays    Int?               @map("window_days")
+  windowHours   Int?               @map("window_hours")
+  windowMinutes Int?               @map("window_minutes")
+  minSampleSize Int                @default(1) @map("min_sample_size")
+  action        String
+  severity      FraudAlertSeverity
+  isActive      Boolean            @default(true) @map("is_active")
+  cooldownHours Int                @default(24) @map("cooldown_hours")
+  createdAt     DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime           @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  alerts      FraudAlert[]
+  suspensions FraudSuspension[]
+
+  @@map("fraud_rules")
+}
+
+/// Fraud alerts generated by the detection engine.
+model FraudAlert {
+  id               String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  alertType        String             @map("alert_type")
+  actorType        String             @map("actor_type")
+  actorId          String             @map("actor_id") @db.Uuid
+  severity         FraudAlertSeverity
+  details          Json
+  status           FraudAlertStatus   @default(NEW)
+  adminComment     String?            @map("admin_comment")
+  resolvedBy       String?            @map("resolved_by") @db.Uuid
+  ruleId           String?            @map("rule_id") @db.Uuid
+  metricValue      Decimal?           @map("metric_value") @db.Decimal(10, 2)
+  thresholdValue   Decimal?           @map("threshold_value") @db.Decimal(10, 2)
+  actionTaken      String?            @map("action_taken")
+  autoSuspensionId String?            @map("auto_suspension_id") @db.Uuid
+  createdAt        DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime           @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  actor User       @relation(fields: [actorId], references: [id])
+  rule  FraudRule? @relation(fields: [ruleId], references: [id])
+
+  @@index([actorId])
+  @@index([status])
+  @@index([severity])
+  @@index([createdAt])
+  @@map("fraud_alerts")
+}
+
+/// Automatic or manual suspensions triggered by fraud detection.
+model FraudSuspension {
+  id                    String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId                String           @map("user_id") @db.Uuid
+  alertId               String           @map("alert_id") @db.Uuid
+  ruleId                String           @map("rule_id") @db.Uuid
+  suspensionType        String           @map("suspension_type")
+  durationHours         Int?             @map("duration_hours")
+  reasonFr              String           @map("reason_fr")
+  reasonEn              String?          @map("reason_en")
+  status                SuspensionStatus @default(ACTIVE)
+  liftedAt              DateTime?        @map("lifted_at") @db.Timestamptz(6)
+  liftedBy              String?          @map("lifted_by") @db.Uuid
+  liftComment           String?          @map("lift_comment")
+  reservationsCancelled Int              @default(0) @map("reservations_cancelled")
+  refundsIssued         Int              @default(0) @map("refunds_issued")
+  createdAt             DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt             DateTime         @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  user User      @relation(fields: [userId], references: [id])
+  rule FraudRule @relation(fields: [ruleId], references: [id])
+
+  @@index([userId])
+  @@index([status])
+  @@map("fraud_suspensions")
+}
+
+/// Device fingerprints for fraud detection (retained 90 days per DPA 2017).
+model DeviceFingerprint {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId       String   @map("user_id") @db.Uuid
+  ipHash       String   @map("ip_hash")
+  deviceIdHash String?  @map("device_id_hash")
+  userAgent    String?  @map("user_agent")
+  screenInfo   String?  @map("screen_info")
+  locale       String?
+  eventType    String   @map("event_type")
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([ipHash])
+  @@index([createdAt])
+  @@map("device_fingerprints")
+}
+
+// =============================================================================
+// BC: System / Admin
+// =============================================================================
+
+/// Immutable audit log for all significant actions.
+/// NO updated_at — audit logs are IMMUTABLE.
+model AuditLog {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  actorId    String?  @map("actor_id") @db.Uuid
+  actorType  String   @map("actor_type")
+  action     String
+  entityType String   @map("entity_type")
+  entityId   String?  @map("entity_id") @db.Uuid
+  changes    Json?
+  metadata   Json?
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@index([actorId])
+  @@index([entityType, entityId])
+  @@index([action])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
+
+/// Application-level key-value settings.
+model AppSetting {
+  key         String   @id
+  value       Json
+  description String
+  updatedBy   String?  @map("updated_by") @db.Uuid
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@map("app_settings")
+}
+
+/// Email templates for transactional emails (i18n).
+model EmailTemplate {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  slug      String   @unique
+  subjectFr String   @map("subject_fr")
+  subjectEn String?  @map("subject_en")
+  bodyFr    String   @map("body_fr")
+  bodyEn    String?  @map("body_en")
+  variables Json?
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@map("email_templates")
+}
+
+/// Public holidays in Mauritius (affects recurring templates).
+model Holiday {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  date        DateTime @db.Date
+  nameFr      String   @map("name_fr")
+  nameEn      String?  @map("name_en")
+  isRecurring Boolean  @default(false) @map("is_recurring")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@map("holidays")
+}
+
+/// User consent records for DPA 2017 compliance (ADR-021).
+/// IMMUTABLE — no updated_at.
+model ConsentRecord {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  type      String
+  version   String?
+  choice    Boolean
+  ip        String?
+  userAgent String?  @map("user_agent")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("consent_records")
+}
+
+/// Support tickets from users.
+model SupportTicket {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId      String   @map("user_id") @db.Uuid
+  subject     String
+  description String
+  screenshots Json?
+  status      String   @default("open")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+  @@map("support_tickets")
+}
