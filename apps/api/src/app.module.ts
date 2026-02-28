@@ -13,6 +13,7 @@ import { OrderingModule } from './modules/ordering/ordering.module';
 import { SseModule } from './modules/sse/sse.module';
 import { SharedModule } from './shared/shared.module';
 import { PaymentsModule } from './modules/payments/payments.module';
+import { ReviewClaimsModule } from './modules/review-claims/review-claims.module';
 import { HealthController } from './health/health.controller';
 
 @Module({
@@ -30,6 +31,7 @@ import { HealthController } from './health/health.controller';
     PartnerModule,
     OrderingModule,
     PaymentsModule,
+    ReviewClaimsModule,
     SseModule,
   ],
   controllers: [HealthController],

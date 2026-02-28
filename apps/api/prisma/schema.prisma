@@ -916,6 +916,7 @@ model Claim {
   reasonSlug       String          @map("reason_slug")
   description      String
   status           ClaimStatus     @default(OPEN)
+  assignedAdminId  String?         @map("assigned_admin_id") @db.Uuid
   resolutionType   ResolutionType? @map("resolution_type")
   resolutionAmount Decimal?        @map("resolution_amount") @db.Decimal(10, 2)
   adminComment     String?         @map("admin_comment")
