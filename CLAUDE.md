@@ -7,7 +7,7 @@ Quand l'humain dit **"BOSSE"** (ou "go", "travaille", "lance-toi") :
 1. **Lis `ROADMAP.yaml`** à la racine du projet
 2. **Identifie ton worker** : lis `.claude/worker-id` (alpha ou beta). Si absent, demande.
 3. **`git pull origin main`** pour synchroniser
-4. **Trouve la prochaine tâche** : status=pending, blocked_by toutes "done", plus petit ID d'abord
+4. **Trouve la prochaine tâche** : status=pending, assigned_to=<toi>, blocked_by toutes "done", plus petit ID d'abord
 5. **Si `needs_human`** non null → affiche le besoin, marque `blocked_human`, passe à la suivante
 6. **Claim** : mets status=claimed + worker=<toi>, commit+push ROADMAP.yaml
 7. **Exécute** : lis la description, les ADR, spawne l'agent indiqué dans le champ `agent`

@@ -2,15 +2,16 @@
 # Chaque Claude lit ce fichier, claim une tâche, bosse, marque done, loop.
 #
 # Règles :
-# - Un worker ne peut claim qu'une tâche à la fois
+# - Les tâches sont PRÉ-ASSIGNÉES (champ "assigned_to") pour éviter les race conditions
+# - Un worker ne claim QUE les tâches qui lui sont assignées
 # - Une tâche "blocked_by" ne peut pas être claim tant que ses deps ne sont pas "done"
-# - Si "needs_human" est rempli, le worker notifie l'humain et passe à la tâche suivante
+# - Si "needs_human" est rempli, le worker notifie l'humain et passe à la suivante
 # - Après chaque tâche : git add ROADMAP.yaml && git commit && git push
 # - Avant de claim : git pull pour voir l'état à jour
 
 meta:
   project: BienBon.mu
-  last_updated: null
+  last_updated: "2026-02-28"
   workers:
     alpha: { status: working, current_task: "1.1" }
     beta: { status: idle, current_task: null }
@@ -27,6 +28,7 @@ phases:
       - id: "1.1"
         name: Setup monorepo NestJS
         agent: foundation
+        assigned_to: alpha
         status: claimed
         worker: alpha
         blocked_by: []
@@ -46,6 +48,7 @@ phases:
       - id: "1.2"
         name: Schema Prisma complet
         agent: foundation
+        assigned_to: alpha
         status: pending
         worker: null
         blocked_by: ["1.1"]
@@ -65,6 +68,7 @@ phases:
       - id: "1.3"
         name: Créer le projet Supabase + configurer auth
         agent: foundation
+        assigned_to: alpha
         status: pending
         worker: null
         blocked_by: ["1.2"]
@@ -85,6 +89,7 @@ phases:
       - id: "1.4"
         name: Interfaces publiques des modules (ports)
         agent: foundation
+        assigned_to: beta
         status: pending
         worker: null
         blocked_by: ["1.2"]
@@ -107,6 +112,7 @@ phases:
       - id: "1.5"
         name: CI/CD GitHub Actions
         agent: devops-engineer
+        assigned_to: beta
         status: pending
         worker: null
         blocked_by: ["1.1"]
@@ -125,6 +131,7 @@ phases:
       - id: "1.6"
         name: Module shared (decorators, filters, pipes, interceptors)
         agent: foundation
+        assigned_to: alpha
         status: pending
         worker: null
         blocked_by: ["1.3"]
@@ -154,6 +161,7 @@ phases:
       - id: "2.1"
         name: "BC Catalog — paniers, stock, créneaux"
         agent: nestjs-module
+        assigned_to: alpha
         status: pending
         worker: null
         blocked_by: ["1.2", "1.3", "1.4", "1.6"]
@@ -178,6 +186,7 @@ phases:
       - id: "2.2"
         name: "BC Payment — ledger, Peach Payments, commissions"
         agent: nestjs-module
+        assigned_to: beta
         status: pending
         worker: null
         blocked_by: ["1.2", "1.3", "1.4", "1.6"]
@@ -201,6 +210,7 @@ phases:
       - id: "2.3"
         name: "BC Partner — onboarding, stores, modification requests"
         agent: nestjs-module
+        assigned_to: beta
         status: pending
         worker: null
         blocked_by: ["1.2", "1.3", "1.4", "1.6"]
@@ -223,6 +233,7 @@ phases:
       - id: "2.4"
         name: "BC Consumer — profil, favoris, gamification"
         agent: nestjs-module
+        assigned_to: alpha
         status: pending
         worker: null
         blocked_by: ["1.2", "1.3", "1.6"]
@@ -244,6 +255,7 @@ phases:
       - id: "2.5"
         name: "BC Notification — push FCM, email Resend, in-app"
         agent: nestjs-module
+        assigned_to: beta
         status: pending
         worker: null
         blocked_by: ["1.2", "1.3", "1.6"]
@@ -265,6 +277,7 @@ phases:
       - id: "2.6"
         name: "BC Fraud — règles, compteurs, alertes"
         agent: nestjs-module
+        assigned_to: alpha
         status: pending
         worker: null
         blocked_by: ["1.2", "1.3", "1.6"]
@@ -294,6 +307,7 @@ phases:
       - id: "3.1"
         name: "BC Ordering — reservation state machine, orchestration"
         agent: nestjs-module
+        assigned_to: alpha
         status: pending
         worker: null
         blocked_by: ["2.1", "2.2"]
@@ -316,6 +330,7 @@ phases:
       - id: "3.2"
         name: "BC Review-Claims — réclamations, remboursements, avis"
         agent: nestjs-module
+        assigned_to: beta
         status: pending
         worker: null
         blocked_by: ["3.1", "2.2"]
@@ -345,6 +360,7 @@ phases:
       - id: "4.1"
         name: "Admin dashboard React"
         agent: react-dev
+        assigned_to: beta
         status: pending
         worker: null
         blocked_by: ["3.1", "3.2"]
@@ -365,6 +381,7 @@ phases:
       - id: "4.2"
         name: "Temps réel SSE + pg_notify"
         agent: nestjs-module
+        assigned_to: alpha
         status: pending
         worker: null
         blocked_by: ["2.1", "3.1"]
@@ -385,6 +402,7 @@ phases:
       - id: "4.3"
         name: "Site vitrine Astro"
         agent: react-dev
+        assigned_to: beta
         status: pending
         worker: null
         blocked_by: ["1.1"]
@@ -405,6 +423,7 @@ phases:
       - id: "4.4"
         name: "API contract OpenAPI + client Dart"
         agent: foundation
+        assigned_to: alpha
         status: pending
         worker: null
         blocked_by: ["3.1", "3.2"]
@@ -431,6 +450,7 @@ phases:
       - id: "5.1"
         name: "Flutter Consumer App — setup + navigation + écrans principaux"
         agent: flutter-dev
+        assigned_to: alpha
         status: pending
         worker: null
         blocked_by: ["4.4"]
@@ -454,6 +474,7 @@ phases:
       - id: "5.2"
         name: "Flutter Partner App — gestion commerce + paniers"
         agent: flutter-dev
+        assigned_to: beta
         status: pending
         worker: null
         blocked_by: ["4.4"]
@@ -472,6 +493,7 @@ phases:
       - id: "5.3"
         name: "Tests E2E — flux complet réservation"
         agent: test-engineer
+        assigned_to: alpha
         status: pending
         worker: null
         blocked_by: ["3.1", "3.2", "2.5"]
