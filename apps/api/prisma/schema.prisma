@@ -260,11 +260,12 @@ model User {
   referralsMade      Referral[]          @relation("ReferrerReferrals")
   referralsReceived  Referral[]          @relation("RefereeReferrals")
   badges             UserBadge[]
-  fraudAlerts        FraudAlert[]
-  fraudSuspensions   FraudSuspension[]
-  deviceFingerprints DeviceFingerprint[]
-  consentRecords     ConsentRecord[]
-  supportTickets     SupportTicket[]
+  fraudAlerts         FraudAlert[]
+  fraudSuspensions    FraudSuspension[]
+  deviceFingerprints  DeviceFingerprint[]
+  consentRecords      ConsentRecord[]
+  supportTickets      SupportTicket[]
+  savedPaymentMethods SavedPaymentMethod[] @relation("ConsumerSavedMethods")
 
   @@map("users")
 }
@@ -663,28 +664,65 @@ model ReservationStatusHistory {
 
 /// Payment transactions linked to reservations via payment gateway (Peach Payments).
 model PaymentTransaction {
-  id             String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  reservationId  String        @map("reservation_id") @db.Uuid
-  type           PaymentType
-  status         PaymentStatus @default(PENDING)
-  amount         Decimal       @db.Decimal(10, 2)
-  currency       String        @default("MUR") @db.VarChar(3)
-  paymentMethod  PaymentMethod @map("payment_method")
-  providerTxId   String?       @map("provider_tx_id")
-  providerStatus String?       @map("provider_status")
-  metadata       Json?
-  createdAt      DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt      DateTime      @updatedAt @map("updated_at") @db.Timestamptz(6)
+  id                String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  reservationId     String        @map("reservation_id") @db.Uuid
+  type              PaymentType
+  status            PaymentStatus @default(PENDING)
+  amount            Decimal       @db.Decimal(10, 2)
+  currency          String        @default("MUR") @db.VarChar(3)
+  paymentMethod     PaymentMethod @map("payment_method")
+  providerTxId      String?       @map("provider_tx_id")
+  providerStatus    String?       @map("provider_status")
+  metadata          Json?
+  // Commission fields (populated on CAPTURE)
+  commissionRate    Decimal?      @map("commission_rate") @db.Decimal(5, 4)
+  commissionAmount  Decimal?      @map("commission_amount") @db.Decimal(10, 2)
+  partnerNetAmount  Decimal?      @map("partner_net_amount") @db.Decimal(10, 2)
+  feeMinimumApplied Boolean       @default(false) @map("fee_minimum_applied")
+  // Actor references
+  consumerId        String?       @map("consumer_id") @db.Uuid
+  partnerId         String?       @map("partner_id") @db.Uuid
+  // Parent transaction (for refunds linking back to captures)
+  parentTxId        String?       @map("parent_tx_id") @db.Uuid
+  // Idempotency key for deduplication
+  idempotencyKey    String?       @unique @map("idempotency_key")
+  createdAt         DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime      @updatedAt @map("updated_at") @db.Timestamptz(6)
 
-  reservation          Reservation           @relation(fields: [reservationId], references: [id])
-  ledgerEntries        LedgerEntry[]         @relation("TransactionLedgerEntries")
+  reservation          Reservation            @relation(fields: [reservationId], references: [id])
+  parentTx             PaymentTransaction?    @relation("RefundParent", fields: [parentTxId], references: [id])
+  childTxs             PaymentTransaction[]   @relation("RefundParent")
+  ledgerEntries        LedgerEntry[]          @relation("TransactionLedgerEntries")
   payoutStatementLines PayoutStatementLine[]
   reconciliationAlerts ReconciliationAlert[]
 
   @@index([reservationId])
   @@index([status])
   @@index([providerTxId])
+  @@index([consumerId])
+  @@index([partnerId])
   @@map("payment_transactions")
+}
+
+/// Saved payment methods (tokenized card/wallet references).
+model SavedPaymentMethod {
+  id              String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  consumerId      String        @map("consumer_id") @db.Uuid
+  paymentMethod   PaymentMethod @map("payment_method")
+  token           String        @unique
+  last4           String?       @map("last4") @db.VarChar(4)
+  brand           String?       @db.VarChar(32)
+  expiryMonth     Int?          @map("expiry_month")
+  expiryYear      Int?          @map("expiry_year")
+  isDefault       Boolean       @default(false) @map("is_default")
+  providerRef     String?       @map("provider_ref")
+  createdAt       DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime      @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  consumer User @relation("ConsumerSavedMethods", fields: [consumerId], references: [id])
+
+  @@index([consumerId])
+  @@map("saved_payment_methods")
 }
 
 /// Ledger accounts for double-entry bookkeeping (ADR-005).

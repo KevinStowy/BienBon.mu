@@ -12,6 +12,7 @@ import { PartnerModule } from './modules/partner/partner.module';
 import { OrderingModule } from './modules/ordering/ordering.module';
 import { SseModule } from './modules/sse/sse.module';
 import { SharedModule } from './shared/shared.module';
+import { PaymentsModule } from './modules/payments/payments.module';
 import { HealthController } from './health/health.controller';
 
 @Module({
@@ -28,6 +29,7 @@ import { HealthController } from './health/health.controller';
     FraudModule,
     PartnerModule,
     OrderingModule,
+    PaymentsModule,
     SseModule,
   ],
   controllers: [HealthController],
