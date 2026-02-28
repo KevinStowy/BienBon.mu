@@ -14,7 +14,7 @@ meta:
   last_updated: "2026-02-28"
   workers:
     alpha: { status: working, current_task: "5.1" }
-    beta: { status: idle, current_task: null }
+    beta: { status: working, current_task: "3.2" }
 
 # ============================================================================
 # PHASE 1 — FONDATIONS (séquentiel, un seul worker)
@@ -331,8 +331,8 @@ phases:
         name: "BC Review-Claims — réclamations, remboursements, avis"
         agent: nestjs-module
         assigned_to: beta
-        status: pending
-        worker: null
+        status: claimed
+        worker: beta
         blocked_by: ["3.1", "2.2"]
         needs_human: null
         description: |
