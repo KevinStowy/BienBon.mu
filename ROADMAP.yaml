@@ -13,7 +13,7 @@ meta:
   project: BienBon.mu
   last_updated: "2026-02-28"
   workers:
-    alpha: { status: working, current_task: "1.1" }
+    alpha: { status: working, current_task: "1.2" }
     beta: { status: idle, current_task: null }
 
 # ============================================================================
@@ -29,7 +29,7 @@ phases:
         name: Setup monorepo NestJS
         agent: foundation
         assigned_to: alpha
-        status: claimed
+        status: done
         worker: alpha
         blocked_by: []
         needs_human: null
@@ -49,8 +49,8 @@ phases:
         name: Schema Prisma complet
         agent: foundation
         assigned_to: alpha
-        status: pending
-        worker: null
+        status: claimed
+        worker: alpha
         blocked_by: ["1.1"]
         needs_human: null
         description: |
