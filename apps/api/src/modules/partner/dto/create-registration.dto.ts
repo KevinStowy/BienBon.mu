@@ -80,6 +80,7 @@ export class CreateRegistrationDto {
 
   @ApiPropertyOptional({
     enum: RegistrationChannel,
+    enumName: 'RegistrationChannel',
     description: 'How the partner registered',
     default: RegistrationChannel.WEB_FORM,
   })

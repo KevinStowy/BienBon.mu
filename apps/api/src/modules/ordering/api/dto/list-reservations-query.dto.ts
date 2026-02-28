@@ -14,6 +14,7 @@ export class ListReservationsQueryDto extends PaginationQueryDto {
   @ApiPropertyOptional({
     description: 'Filter by reservation status',
     enum: ReservationStatus,
+    enumName: 'ReservationStatus',
     example: ReservationStatus.CONFIRMED,
   })
   @IsOptional()

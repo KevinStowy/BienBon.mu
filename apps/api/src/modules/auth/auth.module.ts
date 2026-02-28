@@ -16,13 +16,15 @@ import { RolesGuard } from './guards/roles.guard';
 @Global()
 @Module({
   providers: [
+    JwtAuthGuard,
+    RolesGuard,
     {
       provide: APP_GUARD,
-      useClass: JwtAuthGuard,
+      useExisting: JwtAuthGuard,
     },
     {
       provide: APP_GUARD,
-      useClass: RolesGuard,
+      useExisting: RolesGuard,
     },
   ],
   exports: [JwtAuthGuard, RolesGuard],

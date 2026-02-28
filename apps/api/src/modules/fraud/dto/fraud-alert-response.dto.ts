@@ -27,6 +27,7 @@ export class FraudAlertResponseDto {
   @ApiProperty({
     description: 'Severity of the alert',
     enum: FraudAlertSeverity,
+    enumName: 'FraudAlertSeverity',
     example: FraudAlertSeverity.HIGH,
   })
   severity!: FraudAlertSeverity;
@@ -40,6 +41,7 @@ export class FraudAlertResponseDto {
   @ApiProperty({
     description: 'Current status of the alert',
     enum: FraudAlertStatus,
+    enumName: 'FraudAlertStatus',
     example: FraudAlertStatus.NEW,
   })
   status!: FraudAlertStatus;

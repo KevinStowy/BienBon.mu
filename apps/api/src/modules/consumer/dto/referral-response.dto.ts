@@ -41,6 +41,7 @@ export class ReferralResponseDto {
   @ApiProperty({
     description: 'Current referral status',
     enum: ReferralStatusEnum,
+    enumName: 'ReferralStatus',
     example: ReferralStatusEnum.PENDING,
   })
   status!: string;

@@ -45,7 +45,7 @@ export class PartnerAdminController {
     summary: 'List all partners',
     description: 'Returns paginated list of all partners with optional status filter.',
   })
-  @ApiQuery({ name: 'status', enum: PartnerStatus, required: false })
+  @ApiQuery({ name: 'status', enum: PartnerStatus, enumName: 'PartnerStatus', required: false })
   @ApiQuery({ name: 'page', required: false, type: Number })
   @ApiQuery({ name: 'limit', required: false, type: Number })
   @ApiResponse({ status: 200, description: 'Partners returned' })

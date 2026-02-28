@@ -65,6 +65,7 @@ export class FraudRuleResponseDto {
   @ApiProperty({
     description: 'Severity of generated alerts',
     enum: FraudAlertSeverity,
+    enumName: 'FraudAlertSeverity',
     example: FraudAlertSeverity.MEDIUM,
   })
   severity!: FraudAlertSeverity;

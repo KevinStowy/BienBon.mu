@@ -53,6 +53,7 @@ export class FraudSuspensionResponseDto {
   @ApiProperty({
     description: 'Current suspension status',
     enum: SuspensionStatus,
+    enumName: 'SuspensionStatus',
     example: SuspensionStatus.ACTIVE,
   })
   status!: SuspensionStatus;

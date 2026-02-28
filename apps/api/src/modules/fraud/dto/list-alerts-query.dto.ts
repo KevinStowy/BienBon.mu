@@ -11,6 +11,7 @@ export class ListAlertsQueryDto extends PaginationQueryDto {
   @ApiPropertyOptional({
     description: 'Filter by alert status',
     enum: FraudAlertStatus,
+    enumName: 'FraudAlertStatus',
     example: FraudAlertStatus.NEW,
   })
   @IsOptional()
@@ -20,6 +21,7 @@ export class ListAlertsQueryDto extends PaginationQueryDto {
   @ApiPropertyOptional({
     description: 'Filter by alert severity',
     enum: FraudAlertSeverity,
+    enumName: 'FraudAlertSeverity',
     example: FraudAlertSeverity.HIGH,
   })
   @IsOptional()

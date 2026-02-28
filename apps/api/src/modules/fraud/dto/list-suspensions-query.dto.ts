@@ -11,6 +11,7 @@ export class ListSuspensionsQueryDto extends PaginationQueryDto {
   @ApiPropertyOptional({
     description: 'Filter by suspension status',
     enum: SuspensionStatus,
+    enumName: 'SuspensionStatus',
     example: SuspensionStatus.ACTIVE,
   })
   @IsOptional()

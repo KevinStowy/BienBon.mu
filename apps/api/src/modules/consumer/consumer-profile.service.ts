@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Prisma } from '../../generated/prisma/client';
 import { PrismaService } from '../../shared/prisma/prisma.service';
 import { NotFoundError } from '../../shared/errors/domain-error';
-import type { ProfileResponseDto } from './dto/profile-response.dto';
+import type { ConsumerProfileResponseDto } from './dto/profile-response.dto';
 import type { UpdateProfileDto } from './dto/update-profile.dto';
 
 /**
@@ -20,7 +20,7 @@ export class ConsumerProfileService {
    * Get the authenticated consumer's profile.
    * If no profile exists yet, one is created with default values.
    */
-  async getOrCreateProfile(userId: string): Promise<ProfileResponseDto> {
+  async getOrCreateProfile(userId: string): Promise<ConsumerProfileResponseDto> {
     const existing = await this.prisma.consumerProfile.findUnique({
       where: { userId },
     });
@@ -47,7 +47,7 @@ export class ConsumerProfileService {
    * Update the authenticated consumer's profile.
    * Throws NotFoundError if the profile does not exist.
    */
-  async updateProfile(userId: string, dto: UpdateProfileDto): Promise<ProfileResponseDto> {
+  async updateProfile(userId: string, dto: UpdateProfileDto): Promise<ConsumerProfileResponseDto> {
     const existing = await this.prisma.consumerProfile.findUnique({
       where: { userId },
     });
@@ -81,7 +81,7 @@ export class ConsumerProfileService {
     notificationPreferences: unknown;
     createdAt: Date;
     updatedAt: Date;
-  }): ProfileResponseDto {
+  }): ConsumerProfileResponseDto {
     return {
       id: record.id,
       userId: record.userId,
