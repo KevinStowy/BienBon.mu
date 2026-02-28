@@ -13,7 +13,7 @@ meta:
   project: BienBon.mu
   last_updated: "2026-02-28"
   workers:
-    alpha: { status: working, current_task: "2.1" }
+    alpha: { status: working, current_task: "2.4" }
     beta: { status: working, current_task: "2.3" }
 
 # ============================================================================
@@ -162,7 +162,7 @@ phases:
         name: "BC Catalog — paniers, stock, créneaux"
         agent: nestjs-module
         assigned_to: alpha
-        status: claimed
+        status: done
         worker: alpha
         blocked_by: ["1.2", "1.3", "1.4", "1.6"]
         needs_human: null
@@ -234,8 +234,8 @@ phases:
         name: "BC Consumer — profil, favoris, gamification"
         agent: nestjs-module
         assigned_to: alpha
-        status: pending
-        worker: null
+        status: claimed
+        worker: alpha
         blocked_by: ["1.2", "1.3", "1.6"]
         needs_human: null
         description: |
@@ -278,8 +278,8 @@ phases:
         name: "BC Fraud — règles, compteurs, alertes"
         agent: nestjs-module
         assigned_to: alpha
-        status: pending
-        worker: null
+        status: claimed
+        worker: alpha
         blocked_by: ["1.2", "1.3", "1.6"]
         needs_human: null
         description: |
