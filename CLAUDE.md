@@ -33,19 +33,24 @@ BienBon.mu — mobile-first food waste reduction app for Mauritius. Surprise bas
 - **`.claude/agents/`** — 9 agents (orchestrator + 8 specialized)
 - **`.claude/skills/`** — 53 reusable skills (backend, flutter, react, testing, quality, crosscutting)
 
-## Agents
+## Agents — Règle modèle OBLIGATOIRE
+
+**TOUT le code (backend, frontend, Flutter, tests, infra) DOIT être produit par Opus.**
+Sonnet est UNIQUEMENT autorisé pour la lecture/recherche (Explore agent, lecture de docs, recherche de fichiers).
+Ne JAMAIS spawner un agent de code (nestjs-module, react-dev, flutter-dev, test-engineer, devops-engineer, foundation) en modèle sonnet.
 
 | Agent | Model | Role |
 |-------|-------|------|
 | `orchestrator` | opus | Reads ROADMAP, claims tasks, spawns agents, loops autonomously |
-| `foundation` | opus | Scaffolding monorepo, Prisma, auth, CI/CD |
-| `nestjs-module` | sonnet | Implements one NestJS bounded context |
-| `flutter-dev` | sonnet | Flutter features (screens, widgets, providers) |
-| `react-dev` | sonnet | Admin React + Astro site vitrine |
-| `code-reviewer` | opus | Code quality review (read-only) |
-| `security-auditor` | opus | OWASP security audit (read-only) |
-| `test-engineer` | sonnet | Writes meaningful tests |
-| `devops-engineer` | sonnet | CI/CD, Docker, Railway |
+| `foundation` | **opus** | Scaffolding monorepo, Prisma, auth, CI/CD |
+| `nestjs-module` | **opus** | Implements one NestJS bounded context |
+| `flutter-dev` | **opus** | Flutter features (screens, widgets, providers) |
+| `react-dev` | **opus** | Admin React + Astro site vitrine |
+| `code-reviewer` | **opus** | Code quality review (read-only) |
+| `security-auditor` | **opus** | OWASP security audit (read-only) |
+| `test-engineer` | **opus** | Writes meaningful tests |
+| `devops-engineer` | **opus** | CI/CD, Docker, Railway |
+| `Explore` | sonnet | Recherche/lecture docs UNIQUEMENT (pas de code) |
 
 ## Tech Stack
 
