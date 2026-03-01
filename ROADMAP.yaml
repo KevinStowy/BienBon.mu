@@ -13,7 +13,7 @@ meta:
   project: BienBon.mu
   last_updated: "2026-02-28"
   workers:
-    alpha: { status: idle, current_task: null }
+    alpha: { status: working, current_task: "5.2" }
     beta: { status: working, current_task: "4.1" }
 
 # ============================================================================
@@ -474,9 +474,9 @@ phases:
       - id: "5.2"
         name: "Flutter Partner App — gestion commerce + paniers"
         agent: flutter-dev
-        assigned_to: beta
-        status: pending
-        worker: null
+        assigned_to: alpha
+        status: claimed
+        worker: alpha
         blocked_by: ["4.4"]
         needs_human: null
         description: |
