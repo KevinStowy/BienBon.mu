@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../features/auth/providers/auth_provider.dart';
 import '../../features/auth/screens/login_screen.dart';
+import '../analytics/analytics_observer.dart';
+import '../analytics/analytics_provider.dart';
 import '../../features/baskets/screens/basket_detail_screen.dart';
 import '../../features/baskets/screens/basket_form_screen.dart';
 import '../../features/baskets/screens/basket_list_screen.dart';
@@ -21,10 +23,12 @@ import 'route_names.dart';
 
 final goRouterProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authStateProvider);
+  final analytics = ref.read(analyticsProvider);
 
   return GoRouter(
     initialLocation: RoutePaths.dashboard,
     debugLogDiagnostics: false,
+    observers: [AnalyticsRouteObserver(analytics)],
     redirect: (context, state) {
       final isAuthenticated = authState.isAuthenticated;
       final location = state.uri.toString();

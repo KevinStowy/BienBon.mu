@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/analytics/analytics_provider.dart';
+import '../../../../core/analytics/analytics_service.dart';
 import '../../../../core/router/route_names.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_theme.dart';
 
-class PaymentScreen extends StatefulWidget {
+class PaymentScreen extends ConsumerStatefulWidget {
   const PaymentScreen({super.key, required this.reservationId});
 
   final String reservationId;
 
   @override
-  State<PaymentScreen> createState() => _PaymentScreenState();
+  ConsumerState<PaymentScreen> createState() => _PaymentScreenState();
 }
 
-class _PaymentScreenState extends State<PaymentScreen> {
+class _PaymentScreenState extends ConsumerState<PaymentScreen> {
   int _selectedMethod = 0;
   bool _isLoading = false;
 
@@ -39,11 +42,30 @@ class _PaymentScreenState extends State<PaymentScreen> {
     ),
   ];
 
+  @override
+  void initState() {
+    super.initState();
+    // Log payment_started when screen is first displayed.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(analyticsProvider).logEvent(
+        AnalyticsEvents.paymentStarted,
+        {'reservation_id': widget.reservationId},
+      );
+    });
+  }
+
   Future<void> _onPay() async {
     setState(() => _isLoading = true);
     // Simulate payment processing
     await Future.delayed(const Duration(seconds: 1));
     if (mounted) {
+      ref.read(analyticsProvider).logEvent(
+        AnalyticsEvents.paymentCompleted,
+        {
+          'reservation_id': widget.reservationId,
+          'payment_method': _paymentMethods[_selectedMethod].id,
+        },
+      );
       setState(() => _isLoading = false);
       context.goNamed(
         RouteNames.confirmation,

@@ -27,6 +27,12 @@ dependencies:
   cached_network_image: ^3.4.1
   qr_flutter: ^4.1.0
 
+  # Offline-first database (ADR-012)
+  drift: ^2.22.1
+  sqlite3_flutter_libs: ^0.5.0
+  path_provider: ^2.1.0
+  path: ^1.9.0
+
   # Storage
   shared_preferences: ^2.5.3
 
@@ -41,6 +47,10 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
+
+  # Code generation for Drift (ADR-012)
+  drift_dev: ^2.22.1
+  build_runner: ^2.4.0
 
 flutter:
   uses-material-design: true

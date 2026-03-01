@@ -1,3 +1,4 @@
+import 'package:consumer_app/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -37,43 +38,45 @@ class _BienBonBottomNav extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onTap;
 
-  static const _items = [
-    _NavItem(
-      label: 'Accueil',
-      icon: Icons.home_outlined,
-      activeIcon: Icons.home,
-    ),
-    _NavItem(
-      label: 'Explorer',
-      icon: Icons.search_outlined,
-      activeIcon: Icons.search,
-    ),
-    _NavItem(
-      label: 'Commandes',
-      icon: Icons.receipt_long_outlined,
-      activeIcon: Icons.receipt_long,
-    ),
-    _NavItem(
-      label: 'Favoris',
-      icon: Icons.favorite_outline,
-      activeIcon: Icons.favorite,
-    ),
-    _NavItem(
-      label: 'Profil',
-      icon: Icons.person_outline,
-      activeIcon: Icons.person,
-    ),
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
+    final items = [
+      _NavItem(
+        label: l10n.tabHome,
+        icon: Icons.home_outlined,
+        activeIcon: Icons.home,
+      ),
+      _NavItem(
+        label: l10n.tabExplore,
+        icon: Icons.search_outlined,
+        activeIcon: Icons.search,
+      ),
+      _NavItem(
+        label: l10n.tabOrders,
+        icon: Icons.receipt_long_outlined,
+        activeIcon: Icons.receipt_long,
+      ),
+      _NavItem(
+        label: l10n.tabFavorites,
+        icon: Icons.favorite_outline,
+        activeIcon: Icons.favorite,
+      ),
+      _NavItem(
+        label: l10n.tabProfile,
+        icon: Icons.person_outline,
+        activeIcon: Icons.person,
+      ),
+    ];
+
     return NavigationBar(
       selectedIndex: currentIndex,
       onDestinationSelected: onTap,
       backgroundColor: AppColors.white,
-      indicatorColor: AppColors.green100,
+      indicatorColor: AppColors.orange100,
       elevation: 8,
-      destinations: _items.asMap().entries.map((entry) {
+      destinations: items.asMap().entries.map((entry) {
         final index = entry.key;
         final item = entry.value;
         final isSelected = index == currentIndex;

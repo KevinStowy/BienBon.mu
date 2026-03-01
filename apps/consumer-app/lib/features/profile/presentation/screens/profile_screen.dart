@@ -1,3 +1,4 @@
+import 'package:consumer_app/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -14,6 +15,7 @@ class ProfileScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authStateProvider);
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     final displayName = authState.userName ?? 'Utilisateur';
     final displayEmail = authState.userEmail ?? '';
@@ -21,7 +23,7 @@ class ProfileScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: Text('Mon profil', style: theme.textTheme.headlineLarge),
+        title: Text(l10n.profileTitle, style: theme.textTheme.headlineLarge),
         backgroundColor: AppColors.white,
         elevation: 0,
         actions: [

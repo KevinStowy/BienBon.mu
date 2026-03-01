@@ -11,6 +11,9 @@ import { LoggingInterceptor } from './shared/interceptors/logging.interceptor';
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter());
 
+  // Helmet for security headers (CSP disabled for Swagger UI inline scripts)
+  await app.register(import('@fastify/helmet'), { contentSecurityPolicy: false });
+
   app.enableCors({
     origin: process.env['CORS_ORIGINS']?.split(',') ?? ['http://localhost:3000'],
     credentials: true,

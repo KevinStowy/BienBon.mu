@@ -1,6 +1,10 @@
+import 'package:consumer_app/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/analytics/analytics_provider.dart';
+import '../../../../core/analytics/analytics_service.dart';
 import '../../../../core/router/route_names.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_theme.dart';
@@ -82,12 +86,14 @@ final _demoBaskets = [
   ),
 ];
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final analytics = ref.read(analyticsProvider);
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -104,7 +110,7 @@ class HomeScreen extends StatelessWidget {
                 const Icon(Icons.eco, color: AppColors.green700, size: 28),
                 const SizedBox(width: AppSpacing.xs),
                 Text(
-                  'BienBon',
+                  l10n.appName,
                   style: theme.textTheme.headlineLarge?.copyWith(
                     color: AppColors.green900,
                     fontWeight: FontWeight.w800,
@@ -149,7 +155,7 @@ class HomeScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Pres de chez moi',
+                        l10n.homeNearMeSection,
                         style: theme.textTheme.headlineLarge,
                       ),
                       Semantics(
@@ -158,7 +164,7 @@ class HomeScreen extends StatelessWidget {
                         child: TextButton(
                           onPressed: () =>
                               context.goNamed(RouteNames.explore),
-                          child: const Text('Voir tout'),
+                          child: Text(l10n.homeSeeAll),
                         ),
                       ),
                     ],
@@ -199,7 +205,7 @@ class HomeScreen extends StatelessWidget {
                     horizontal: AppSpacing.md,
                   ),
                   child: Text(
-                    'Paniers du moment',
+                    l10n.homeBasketsSection,
                     style: theme.textTheme.headlineLarge,
                   ),
                 ),
@@ -224,10 +230,20 @@ class HomeScreen extends StatelessWidget {
                         discountedPrice: basket.discountedPrice,
                         pickupWindow: basket.pickupWindow,
                         remainingCount: basket.remaining,
-                        onTap: () => context.goNamed(
-                          RouteNames.basketDetail,
-                          pathParameters: {'basketId': basket.id},
-                        ),
+                        onTap: () {
+                          analytics.logEvent(
+                            AnalyticsEvents.basketViewed,
+                            {
+                              'basket_id': basket.id,
+                              'basket_name': basket.name,
+                              'store_name': basket.storeName,
+                            },
+                          );
+                          context.goNamed(
+                            RouteNames.basketDetail,
+                            pathParameters: {'basketId': basket.id},
+                          );
+                        },
                       );
                     },
                   ),
@@ -246,6 +262,7 @@ class _HeroBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Container(
       margin: const EdgeInsets.all(AppSpacing.md),
@@ -265,7 +282,7 @@ class _HeroBanner extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Sauvez des\npaniers surprise !',
+                  l10n.homeHeroTitle,
                   style: theme.textTheme.displayLarge?.copyWith(
                     color: AppColors.green900,
                     height: 1.3,
@@ -273,7 +290,7 @@ class _HeroBanner extends StatelessWidget {
                 ),
                 const SizedBox(height: AppSpacing.sm),
                 Text(
-                  'Jusqu\'a -70% sur les invendus du jour',
+                  l10n.homeHeroSubtitle,
                   style: theme.textTheme.bodyLarge?.copyWith(
                     color: AppColors.green700,
                     fontWeight: FontWeight.w600,

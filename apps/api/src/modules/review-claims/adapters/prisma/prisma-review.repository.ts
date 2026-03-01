@@ -93,18 +93,17 @@ export class PrismaReviewRepository extends ReviewRepositoryPort {
     await this.prisma.review.delete({ where: { id } });
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private mapToReview(record: Record<string, any>): Review {
+  private mapToReview(record: Record<string, unknown>): Review {
     return {
-      id: record.id,
-      reservationId: record.reservationId,
-      consumerId: record.consumerId,
-      partnerId: record.partnerId,
-      rating: record.rating,
-      comment: record.comment ?? null,
-      editableUntil: record.editableUntil,
-      createdAt: record.createdAt,
-      updatedAt: record.updatedAt,
+      id: record['id'] as string,
+      reservationId: record['reservationId'] as string,
+      consumerId: record['consumerId'] as string,
+      partnerId: record['partnerId'] as string,
+      rating: record['rating'] as number,
+      comment: (record['comment'] as string | null) ?? null,
+      editableUntil: record['editableUntil'] as Date,
+      createdAt: record['createdAt'] as Date,
+      updatedAt: record['updatedAt'] as Date,
     };
   }
 }

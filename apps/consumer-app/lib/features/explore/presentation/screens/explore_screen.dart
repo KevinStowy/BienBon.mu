@@ -1,19 +1,14 @@
+import 'package:consumer_app/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/analytics/analytics_provider.dart';
+import '../../../../core/analytics/analytics_service.dart';
 import '../../../../core/router/route_names.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../shared/widgets/basket_card.dart';
-
-const _categories = [
-  'Tous',
-  'Boulangerie',
-  'Restaurant',
-  'Supermarche',
-  'Cafe',
-  'Traiteur',
-];
 
 final _allBaskets = [
   _BasketItem(
@@ -78,20 +73,30 @@ final _allBaskets = [
   ),
 ];
 
-class ExploreScreen extends StatefulWidget {
+class ExploreScreen extends ConsumerStatefulWidget {
   const ExploreScreen({super.key});
 
   @override
-  State<ExploreScreen> createState() => _ExploreScreenState();
+  ConsumerState<ExploreScreen> createState() => _ExploreScreenState();
 }
 
-class _ExploreScreenState extends State<ExploreScreen> {
-  String _selectedCategory = 'Tous';
+class _ExploreScreenState extends ConsumerState<ExploreScreen> {
+  String? _selectedCategory;
   String _searchQuery = '';
 
-  List<_BasketItem> get _filteredBaskets {
+  List<String> _buildCategories(AppLocalizations l10n) => [
+        l10n.exploreCategoryAll,
+        l10n.exploreCategoryBakery,
+        l10n.exploreCategoryRestaurant,
+        l10n.exploreCategorySupermarket,
+        l10n.exploreCategoryCafe,
+        'Traiteur',
+      ];
+
+  List<_BasketItem> _filteredBaskets(String categoryAll) {
     return _allBaskets.where((basket) {
-      final matchesCategory = _selectedCategory == 'Tous' ||
+      final matchesCategory = _selectedCategory == null ||
+          _selectedCategory == categoryAll ||
           basket.category == _selectedCategory;
       final matchesSearch = _searchQuery.isEmpty ||
           basket.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
@@ -103,13 +108,19 @@ class _ExploreScreenState extends State<ExploreScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final filtered = _filteredBaskets;
+    final l10n = AppLocalizations.of(context)!;
+    final categories = _buildCategories(l10n);
+
+    // Initialize the default selected category from l10n on first build.
+    _selectedCategory ??= l10n.exploreCategoryAll;
+
+    final filtered = _filteredBaskets(l10n.exploreCategoryAll);
 
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
         title: Text(
-          'Explorer',
+          l10n.exploreTitle,
           style: theme.textTheme.headlineLarge,
         ),
         backgroundColor: AppColors.white,
@@ -131,8 +142,19 @@ class _ExploreScreenState extends State<ExploreScreen> {
               textField: true,
               child: TextField(
                 onChanged: (v) => setState(() => _searchQuery = v),
+                onSubmitted: (v) {
+                  if (v.isNotEmpty) {
+                    ref.read(analyticsProvider).logEvent(
+                      AnalyticsEvents.searchPerformed,
+                      {
+                        'query': v,
+                        'category': _selectedCategory ?? 'all',
+                      },
+                    );
+                  }
+                },
                 decoration: InputDecoration(
-                  hintText: 'Rechercher un panier ou un commerce...',
+                  hintText: l10n.exploreSearchHint,
                   prefixIcon: const Icon(
                     Icons.search,
                     color: AppColors.textSecondary,
@@ -160,11 +182,11 @@ class _ExploreScreenState extends State<ExploreScreen> {
               padding: const EdgeInsets.symmetric(
                 horizontal: AppSpacing.md,
               ),
-              itemCount: _categories.length,
+              itemCount: categories.length,
               separatorBuilder: (context, index) =>
                   const SizedBox(width: AppSpacing.sm),
               itemBuilder: (context, index) {
-                final cat = _categories[index];
+                final cat = categories[index];
                 final isSelected = cat == _selectedCategory;
 
                 return Semantics(
@@ -201,7 +223,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
             child: Text(
-              '${filtered.length} panier${filtered.length > 1 ? "s" : ""} trouve${filtered.length > 1 ? "s" : ""}',
+              l10n.exploreResultsCount(filtered.length),
               style: theme.textTheme.bodyMedium,
             ),
           ),
@@ -220,14 +242,14 @@ class _ExploreScreenState extends State<ExploreScreen> {
                         ),
                         const SizedBox(height: AppSpacing.md),
                         Text(
-                          'Aucun panier trouve',
+                          l10n.exploreNoResults,
                           style: theme.textTheme.headlineMedium?.copyWith(
                             color: AppColors.textSecondary,
                           ),
                         ),
                         const SizedBox(height: AppSpacing.xs),
                         Text(
-                          'Essayez une autre recherche',
+                          l10n.exploreNoResultsSubtitle,
                           style: theme.textTheme.bodyMedium,
                         ),
                       ],

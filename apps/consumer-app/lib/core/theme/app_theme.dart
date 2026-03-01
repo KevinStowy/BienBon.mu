@@ -68,11 +68,11 @@ abstract final class AppTheme {
           height: 16 / 12,
           color: AppColors.textPrimary,
         ),
-        // Caption — 10 / Regular
+        // Caption — 11 / SemiBold
         labelSmall: nunito.labelSmall?.copyWith(
-          fontSize: 10,
-          fontWeight: FontWeight.w400,
-          height: 14 / 10,
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+          height: 14 / 11,
           color: AppColors.textSecondary,
         ),
       ),
@@ -162,7 +162,7 @@ abstract final class AppTheme {
         elevation: 2,
         shadowColor: AppColors.neutral900.withValues(alpha: 0.08),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(12),
         ),
         margin: EdgeInsets.zero,
       ),
@@ -180,30 +180,30 @@ abstract final class AppTheme {
       ),
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
         backgroundColor: AppColors.white,
-        selectedItemColor: AppColors.green700,
+        selectedItemColor: AppColors.orange500,
         unselectedItemColor: AppColors.neutral400,
         type: BottomNavigationBarType.fixed,
         elevation: 8,
       ),
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: AppColors.white,
-        indicatorColor: AppColors.green100,
+        indicatorColor: AppColors.orange100,
         iconTheme: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
-            return const IconThemeData(color: AppColors.green700);
+            return const IconThemeData(color: AppColors.orange500);
           }
           return const IconThemeData(color: AppColors.neutral400);
         }),
         labelTextStyle: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
             return GoogleFonts.nunito(
-              fontSize: 12,
+              fontSize: 10,
               fontWeight: FontWeight.w600,
-              color: AppColors.green700,
+              color: AppColors.orange600,
             );
           }
           return GoogleFonts.nunito(
-            fontSize: 12,
+            fontSize: 10,
             color: AppColors.neutral400,
           );
         }),
@@ -249,11 +249,13 @@ abstract final class AppSpacing {
 }
 
 abstract final class AppRadius {
-  static const double card = 8;
+  static const double card = 12;
   static const double button = 12;
   static const double bottomSheet = 24;
   static const double chip = 20;
+  static const double lg = 16;
   static const double image = 8;
+  static const double full = 9999;
 }
 
 abstract final class AppShadow {

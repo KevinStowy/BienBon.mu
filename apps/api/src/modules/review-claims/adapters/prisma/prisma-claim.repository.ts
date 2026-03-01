@@ -140,34 +140,34 @@ export class PrismaClaimRepository extends ClaimRepositoryPort {
     });
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private mapToClaim(record: Record<string, any>): Claim {
+  private mapToClaim(record: Record<string, unknown>): Claim {
+    const photos = (record.photos as Record<string, unknown>[] | undefined) ?? [];
     return {
-      id: record.id,
-      reservationId: record.reservationId,
-      consumerId: record.consumerId,
-      reasonSlug: record.reasonSlug,
-      description: record.description,
+      id: record.id as string,
+      reservationId: record.reservationId as string,
+      consumerId: record.consumerId as string,
+      reasonSlug: record.reasonSlug as string,
+      description: record.description as string,
       status: record.status as unknown as ClaimStatus,
-      assignedAdminId: record.assignedAdminId ?? null,
+      assignedAdminId: (record.assignedAdminId as string | null) ?? null,
       resolutionType: record.resolutionType
         ? (record.resolutionType as unknown as ResolutionType)
         : null,
       resolutionAmount: record.resolutionAmount
         ? Number(record.resolutionAmount)
         : null,
-      adminComment: record.adminComment ?? null,
-      resolvedBy: record.resolvedBy ?? null,
-      resolvedAt: record.resolvedAt ?? null,
-      photos: (record.photos ?? []).map(
+      adminComment: (record.adminComment as string | null) ?? null,
+      resolvedBy: (record.resolvedBy as string | null) ?? null,
+      resolvedAt: (record.resolvedAt as Date | null) ?? null,
+      photos: photos.map(
         (p: Record<string, unknown>): ClaimPhoto => ({
           id: p['id'] as string,
           url: p['url'] as string,
           position: p['position'] as number,
         }),
       ),
-      createdAt: record.createdAt,
-      updatedAt: record.updatedAt,
+      createdAt: record.createdAt as Date,
+      updatedAt: record.updatedAt as Date,
     };
   }
 }

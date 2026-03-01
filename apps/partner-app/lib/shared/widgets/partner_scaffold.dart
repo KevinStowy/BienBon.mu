@@ -66,7 +66,7 @@ class _PartnerBottomNav extends StatelessWidget {
       selectedIndex: currentIndex,
       onDestinationSelected: onTap,
       backgroundColor: AppColors.white,
-      indicatorColor: AppColors.green100,
+      indicatorColor: AppColors.orange100,
       elevation: 8,
       destinations: _items.asMap().entries.map((entry) {
         final index = entry.key;

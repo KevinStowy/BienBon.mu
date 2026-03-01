@@ -17,14 +17,18 @@ import '../../features/reservation/presentation/screens/payment_screen.dart';
 import '../../features/reservation/presentation/screens/reservation_screen.dart';
 import '../../features/store/presentation/screens/store_detail_screen.dart';
 import '../../shared/widgets/app_scaffold.dart';
+import '../analytics/analytics_observer.dart';
+import '../analytics/analytics_provider.dart';
 import 'route_names.dart';
 
 final goRouterProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authStateProvider);
+  final analytics = ref.read(analyticsProvider);
 
   return GoRouter(
     initialLocation: RoutePaths.home,
     debugLogDiagnostics: false,
+    observers: [AnalyticsRouteObserver(analytics)],
     redirect: (context, state) {
       final isAuthenticated = authState.isAuthenticated;
       final hasCompletedOnboarding = authState.hasCompletedOnboarding;

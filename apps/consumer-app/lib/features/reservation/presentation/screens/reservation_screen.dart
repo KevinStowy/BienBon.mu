@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/analytics/analytics_provider.dart';
+import '../../../../core/analytics/analytics_service.dart';
 import '../../../../core/router/route_names.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_theme.dart';
 
-class ReservationScreen extends StatelessWidget {
+class ReservationScreen extends ConsumerWidget {
   const ReservationScreen({super.key, required this.basketId});
 
   final String basketId;
@@ -31,7 +34,8 @@ class ReservationScreen extends StatelessWidget {
   };
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final analytics = ref.read(analyticsProvider);
     final theme = Theme.of(context);
     final basket = _baskets[basketId] ??
         _ReservationBasket(
@@ -240,10 +244,21 @@ class ReservationScreen extends StatelessWidget {
               button: true,
               label: 'Confirmer et payer ${basket.discountedPrice.toStringAsFixed(0)} MUR',
               child: ElevatedButton(
-                onPressed: () => context.goNamed(
-                  RouteNames.payment,
-                  pathParameters: {'reservationId': 'res-$basketId'},
-                ),
+                onPressed: () {
+                  analytics.logEvent(
+                    AnalyticsEvents.basketReserved,
+                    {
+                      'basket_id': basketId,
+                      'basket_name': basket.name,
+                      'store_name': basket.storeName,
+                      'price_mur': basket.discountedPrice.toStringAsFixed(0),
+                    },
+                  );
+                  context.goNamed(
+                    RouteNames.payment,
+                    pathParameters: {'reservationId': 'res-$basketId'},
+                  );
+                },
                 child: Text(
                   'Confirmer et payer ${basket.discountedPrice.toStringAsFixed(0)} MUR',
                 ),

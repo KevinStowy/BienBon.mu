@@ -10,6 +10,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
 
   # State management
   flutter_riverpod: ^2.6.1
@@ -19,6 +21,12 @@ dependencies:
 
   # Fonts
   google_fonts: ^6.2.1
+
+  # Offline-first database (ADR-012)
+  drift: ^2.22.1
+  sqlite3_flutter_libs: ^0.5.0
+  path_provider: ^2.1.0
+  path: ^1.9.0
 
   # Persistence
   shared_preferences: ^2.3.3
@@ -45,8 +53,14 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^6.0.0
 
+  # Code generation for Drift (ADR-012)
+  drift_dev: ^2.22.1
+  build_runner: ^2.4.0
+
 flutter:
   uses-material-design: true
+
+  generate: true
 
   assets:
     - assets/images/
