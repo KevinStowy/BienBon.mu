@@ -12,6 +12,16 @@
     "blog": "Blog",
     "becomePartner": "Become a partner"
   },
+  "breadcrumb": {
+    "home": "Home",
+    "howItWorks": "How it works",
+    "becomePartner": "Become a partner",
+    "faq": "FAQ",
+    "cgu": "Terms & Conditions",
+    "legal": "Legal notice",
+    "privacy": "Privacy policy",
+    "comingSoon": "Coming soon"
+  },
   "home": {
     "heroTitle": "Save meals, save money!",
     "heroSubtitle": "Surprise baskets at discounted prices near you in Mauritius.",
@@ -26,14 +36,39 @@
     "step4Desc": "Enjoy quality products at low prices",
     "impactTitle": "Our impact together",
     "mealsSaved": "meals saved",
-    "co2Saved": "kg of CO₂ avoided",
+    "co2Saved": "kg of CO2 avoided",
+    "partners": "active partners",
+    "rating": "average rating",
     "ctaTitle": "Ready to save meals?",
-    "ctaButton": "Download the app"
+    "ctaButton": "Download the app",
+    "partnersTitle": "Our partners in Mauritius",
+    "discoverAllPartners": "Discover all partners",
+    "partner1Name": "Boulangerie du Port",
+    "partner1Type": "Bakery",
+    "partner1Location": "Port-Louis",
+    "partner2Name": "Restaurant Le Chamarel",
+    "partner2Type": "Restaurant",
+    "partner2Location": "Chamarel",
+    "partner3Name": "Hotel Le Morne",
+    "partner3Type": "Hotel-Restaurant",
+    "partner3Location": "Le Morne",
+    "testimonialsTitle": "They trust us",
+    "testimonial1Quote": "Great concept! I saved a basket of pastries for only 100 Rs!",
+    "testimonial1Name": "Marie T.",
+    "testimonial1Role": "Consumer",
+    "testimonial1Location": "Curepipe",
+    "testimonial2Quote": "Less waste and more customers. BienBon is great!",
+    "testimonial2Name": "Chef Ravi",
+    "testimonial2Role": "Boulangerie du Port",
+    "testimonial2Location": "Port-Louis"
   },
   "howItWorks": {
     "title": "How does it work?",
+    "subtitle": "Simple, fast and responsible -- for consumers and merchants alike.",
     "consumerTitle": "For consumers",
     "partnerTitle": "For partners",
+    "consumerTab": "Consumer",
+    "partnerTab": "Partner",
     "consumerStep1Title": "Download the app",
     "consumerStep1Desc": "Available on iOS and Android, for free.",
     "consumerStep2Title": "Browse baskets",
@@ -49,7 +84,11 @@
     "partnerStep3Title": "Receive reservations",
     "partnerStep3Desc": "Manage your orders in real time from your dashboard.",
     "partnerStep4Title": "Hand over and collect",
-    "partnerStep4Desc": "Scan the customer's QR code and receive your payment."
+    "partnerStep4Desc": "Scan the customer's QR code and receive your payment.",
+    "consumerCta": "Get started now",
+    "partnerCta": "Become a partner",
+    "faqTeaser": "Have questions? Check our FAQ",
+    "faqLink": "View FAQ"
   },
   "partner": {
     "title": "Become a BienBon partner",
@@ -66,7 +105,37 @@
     "contactDesc": "Contact us to start your partner registration.",
     "contactEmail": "partners@bienbon.mu",
     "testimonialQuote": "Since using BienBon, I lose much less merchandise at the end of the day. It's a real plus for my bakery!",
-    "testimonialAuthor": "Priya S., Flamboyant Bakery, Port-Louis"
+    "testimonialAuthor": "Priya S., Flamboyant Bakery, Port-Louis",
+    "formTitle": "Register your store",
+    "formFirstName": "First name",
+    "formLastName": "Last name",
+    "formEmail": "Email",
+    "formPhone": "Phone number",
+    "formBusinessName": "Business name",
+    "formBusinessType": "Business type",
+    "formBusinessTypePlaceholder": "Select a type",
+    "formBusinessTypes": {
+      "bakery": "Bakery",
+      "restaurant": "Restaurant",
+      "deli": "Deli / Caterer",
+      "grocery": "Grocery store",
+      "supermarket": "Supermarket",
+      "hotel": "Hotel-Restaurant",
+      "other": "Other"
+    },
+    "formAddress": "Full address",
+    "formBrn": "BRN number (optional)",
+    "formDescription": "Short description of your business",
+    "formConsent": "I accept the",
+    "formCgu": "Terms & Conditions",
+    "formAnd": "and the",
+    "formPrivacy": "Privacy policy",
+    "formSubmit": "Submit my application",
+    "formSuccess": "Thank you! Your application has been submitted. Our team will contact you within 48 hours.",
+    "formRequired": "This field is required",
+    "formEmailInvalid": "Invalid email address",
+    "formPhoneInvalid": "Invalid phone number",
+    "formConsentRequired": "You must accept the terms"
   },
   "faq": {
     "title": "Frequently asked questions",
@@ -76,7 +145,11 @@
       "general": "General",
       "consumer": "Consumer",
       "partner": "Partner",
-      "payment": "Payment"
+      "payment": "Payment",
+      "pickup": "Collection",
+      "account": "Account",
+      "security": "Security",
+      "data": "Data"
     },
     "items": [
       {
@@ -92,7 +165,7 @@
       {
         "category": "consumer",
         "question": "How does a surprise basket work?",
-        "answer": "A surprise basket contains unsold products of the day selected by the merchant. You know the category (bakery, deli, etc.) and the approximate value, but not the exact contents — that's the surprise! The price is reduced by at least 50% compared to the actual value."
+        "answer": "A surprise basket contains unsold products of the day selected by the merchant. You know the category (bakery, deli, etc.) and the approximate value, but not the exact contents -- that's the surprise! The price is reduced by at least 50% compared to the actual value."
       },
       {
         "category": "consumer",
@@ -133,14 +206,99 @@
         "category": "payment",
         "question": "When are partners paid?",
         "answer": "Partners receive their payments every week, every Monday for the previous week's sales. The transfer is made to the bank account registered during registration."
+      },
+      {
+        "category": "pickup",
+        "question": "What happens if I can't collect my basket?",
+        "answer": "If you can't collect your basket, cancel at least 2 hours before the slot to get a refund. After that time, the basket is considered lost and no refund will be made."
+      },
+      {
+        "category": "pickup",
+        "question": "How do I know when to collect my basket?",
+        "answer": "The collection time slot is indicated on the basket listing at the time of reservation. You will also receive a reminder notification 30 minutes before the start of the slot."
+      },
+      {
+        "category": "pickup",
+        "question": "Do I need to bring anything for collection?",
+        "answer": "You only need your phone with the order QR code displayed in the app. We recommend bringing a reusable bag to carry your basket."
+      },
+      {
+        "category": "account",
+        "question": "How do I create a BienBon account?",
+        "answer": "Download the BienBon app on iOS or Android, then follow the registration steps with your email or phone number. Account creation is free and takes only a few seconds."
+      },
+      {
+        "category": "account",
+        "question": "How do I delete my account?",
+        "answer": "You can request account deletion from the app settings or by emailing privacy@bienbon.mu. Your data will be deleted in accordance with our privacy policy."
+      },
+      {
+        "category": "security",
+        "question": "Are my payments secure?",
+        "answer": "Yes, all payments are secured through our approved payment providers. We never store your full bank card details. Transactions are encrypted via HTTPS/TLS."
+      },
+      {
+        "category": "security",
+        "question": "What should I do if I notice suspicious activity on my account?",
+        "answer": "Contact our support immediately at contact@bienbon.mu. Change your password from the app and check your recent transactions. Our security team will investigate as soon as possible."
+      },
+      {
+        "category": "data",
+        "question": "What data do you collect?",
+        "answer": "We collect data necessary for the service: identification information, payment data, location (if authorised) and usage data. Please see our privacy policy for more details."
+      },
+      {
+        "category": "data",
+        "question": "How can I exercise my data rights?",
+        "answer": "Under the Data Protection Act 2017 of Mauritius, you can exercise your rights of access, rectification and deletion by contacting our DPO at privacy@bienbon.mu."
       }
     ]
+  },
+  "comingSoon": {
+    "title": "Coming soon to Mauritius!",
+    "subtitle": "The first anti-waste platform in Mauritius is coming soon.",
+    "newsletterTitle": "Be notified at launch:",
+    "emailPlaceholder": "Your email address",
+    "consent": "I agree to receive emails from BienBon and I have read the",
+    "privacyLink": "Privacy policy",
+    "submit": "Notify me",
+    "comingSoonButton": "Coming soon",
+    "followUs": "Follow us:"
+  },
+  "cookies": {
+    "title": "This site uses cookies",
+    "description": "We use cookies to improve your experience, analyse traffic and personalise content.",
+    "learnMore": "Learn more in our",
+    "privacyLink": "Privacy policy",
+    "acceptAll": "Accept all",
+    "rejectAll": "Reject all",
+    "customize": "Customize",
+    "customizeTitle": "Manage your cookie preferences",
+    "essential": "Essential cookies",
+    "essentialDesc": "Session, security, language preferences.",
+    "alwaysActive": "Always active",
+    "analytics": "Analytics cookies",
+    "analyticsDesc": "Help us understand how you use the site.",
+    "marketing": "Marketing cookies",
+    "marketingDesc": "Used to offer you relevant content and advertisements.",
+    "save": "Save my preferences"
+  },
+  "legal": {
+    "version": "Version",
+    "lastUpdate": "Last updated"
+  },
+  "notFound": {
+    "title": "This page seems to have disappeared...",
+    "description": "Like a surprise basket, this page may already be gone! But don't worry, there are more waiting for you.",
+    "backHome": "Back to home",
+    "discoverBaskets": "Discover baskets"
   },
   "footer": {
     "description": "BienBon is the first anti-food waste marketplace in Mauritius.",
     "legal": "Legal notice",
     "cgu": "Terms & Conditions",
     "privacy": "Privacy policy",
-    "copyright": "© 2026 BienBon. All rights reserved."
+    "copyright": "© 2026 BienBon. All rights reserved.",
+    "manageCookies": "Manage cookies"
   }
 }

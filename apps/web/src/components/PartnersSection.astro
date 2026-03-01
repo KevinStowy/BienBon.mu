@@ -1,0 +1,113 @@
+---
+import type { Locale } from '../i18n/utils';
+import { t } from '../i18n/utils';
+import Icon from './Icon.astro';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+
+const partners = [
+  {
+    nameKey: 'home.partner1Name',
+    typeKey: 'home.partner1Type',
+    locationKey: 'home.partner1Location',
+    rating: 4.8,
+    image: '/images/illustrations/vitrine-page-partenaire.png',
+  },
+  {
+    nameKey: 'home.partner2Name',
+    typeKey: 'home.partner2Type',
+    locationKey: 'home.partner2Location',
+    rating: 4.6,
+    image: '/images/illustrations/vitrine-etape-3-retire.png',
+  },
+  {
+    nameKey: 'home.partner3Name',
+    typeKey: 'home.partner3Type',
+    locationKey: 'home.partner3Location',
+    rating: 4.9,
+    image: '/images/illustrations/vitrine-etape-2-reserve.png',
+  },
+];
+
+function renderStars(rating: number): string[] {
+  const stars: string[] = [];
+  for (let i = 0; i < 5; i++) {
+    stars.push(i < Math.round(rating) ? 'filled' : 'empty');
+  }
+  return stars;
+}
+---
+
+<section class="py-16 sm:py-24 bg-neutral-50" aria-labelledby="partners-heading">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-12">
+      <h2 id="partners-heading" class="text-3xl sm:text-4xl font-extrabold text-neutral-900">
+        {t(locale, 'home.partnersTitle')}
+      </h2>
+    </div>
+
+    <!-- Mobile: horizontal scroll / Desktop: grid -->
+    <div class="flex gap-6 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide lg:grid lg:grid-cols-3 lg:overflow-visible lg:pb-0">
+      {partners.map((partner) => {
+        const stars = renderStars(partner.rating);
+        return (
+          <article class="flex-shrink-0 w-72 sm:w-80 lg:w-auto bg-white rounded-xl shadow-md overflow-hidden snap-start hover:shadow-lg transition-shadow">
+            <div class="aspect-[4/3] bg-green-100 overflow-hidden">
+              <img
+                src={partner.image}
+                alt={t(locale, partner.nameKey)}
+                class="w-full h-full object-cover"
+                loading="lazy"
+              />
+            </div>
+            <div class="p-5">
+              <h3 class="text-base font-extrabold text-neutral-900 mb-1">
+                {t(locale, partner.nameKey)}
+              </h3>
+              <p class="text-sm text-neutral-500 mb-2">
+                {t(locale, partner.typeKey)} -- {t(locale, partner.locationKey)}
+              </p>
+              <div class="flex items-center gap-1" aria-label={`${partner.rating} sur 5 étoiles`}>
+                {stars.map((star) => (
+                  <svg
+                    class={`w-4 h-4 ${star === 'filled' ? 'text-orange-500' : 'text-neutral-200'}`}
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                  </svg>
+                ))}
+                <span class="ml-1 text-sm font-semibold text-neutral-600">{partner.rating}</span>
+              </div>
+            </div>
+          </article>
+        );
+      })}
+    </div>
+
+    <div class="text-center mt-10">
+      <a
+        href="#"
+        class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg border-2 border-green-700 text-green-700 font-bold text-sm hover:bg-green-700 hover:text-white transition-colors min-h-[48px]"
+      >
+        {t(locale, 'home.discoverAllPartners')}
+        <Icon name="ArrowRight" size={18} />
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+</style>

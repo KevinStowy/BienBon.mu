@@ -2,6 +2,8 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import { t } from '../i18n/utils';
 
 const locale = 'fr' as const;
 ---
@@ -13,15 +15,37 @@ const locale = 'fr' as const;
   canonicalPath="/cgu"
 >
   <Header locale={locale} currentPath="/cgu" />
+  <Breadcrumb locale={locale} items={[{ label: t(locale, 'breadcrumb.cgu') }]} />
   <main id="main-content">
     <article class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
-      <h1 class="text-3xl sm:text-4xl font-extrabold text-neutral-900 mb-8">
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-neutral-900 mb-4">
         Conditions Générales d'Utilisation et de Vente
       </h1>
 
+      <!-- Version and date -->
+      <p class="text-sm text-neutral-500 mb-8">
+        {t(locale, 'legal.version')} : v1.0 | {t(locale, 'legal.lastUpdate')} : 28 février 2026
+      </p>
+
+      <!-- Table of contents -->
+      <nav class="bg-neutral-50 border border-neutral-200 rounded-xl p-6 mb-10" aria-label="Table des matières">
+        <h2 class="text-base font-extrabold text-neutral-900 mb-4">Table des matières</h2>
+        <ol class="space-y-2 list-decimal list-inside text-sm text-green-700">
+          <li><a href="#cgu-objet" class="hover:underline">Objet</a></li>
+          <li><a href="#cgu-definitions" class="hover:underline">Définitions</a></li>
+          <li><a href="#cgu-inscription" class="hover:underline">Inscription et compte utilisateur</a></li>
+          <li><a href="#cgu-reservations" class="hover:underline">Réservations et paiements</a></li>
+          <li><a href="#cgu-responsabilite-partenaires" class="hover:underline">Responsabilité des Partenaires</a></li>
+          <li><a href="#cgu-commission" class="hover:underline">Commission BienBon</a></li>
+          <li><a href="#cgu-propriete-intellectuelle" class="hover:underline">Propriété intellectuelle</a></li>
+          <li><a href="#cgu-litiges" class="hover:underline">Résolution des litiges</a></li>
+          <li><a href="#cgu-modification" class="hover:underline">Modification des CGU/CGV</a></li>
+        </ol>
+      </nav>
+
       <div class="space-y-8 text-neutral-700 text-sm leading-relaxed">
 
-        <section aria-labelledby="objet-heading">
+        <section id="cgu-objet" aria-labelledby="objet-heading">
           <h2 id="objet-heading" class="text-xl font-extrabold text-neutral-900 mb-3">1. Objet</h2>
           <p>
             Les présentes Conditions Générales d'Utilisation et de Vente (ci-après "CGU/CGV") régissent l'utilisation de la plateforme BienBon (application mobile et site web) éditée par BienBon Ltd, société mauricienne.
@@ -31,7 +55,7 @@ const locale = 'fr' as const;
           </p>
         </section>
 
-        <section aria-labelledby="definitions-heading">
+        <section id="cgu-definitions" aria-labelledby="definitions-heading">
           <h2 id="definitions-heading" class="text-xl font-extrabold text-neutral-900 mb-3">2. Définitions</h2>
           <dl class="space-y-2">
             <div>
@@ -53,7 +77,7 @@ const locale = 'fr' as const;
           </dl>
         </section>
 
-        <section aria-labelledby="inscription-heading">
+        <section id="cgu-inscription" aria-labelledby="inscription-heading">
           <h2 id="inscription-heading" class="text-xl font-extrabold text-neutral-900 mb-3">3. Inscription et compte utilisateur</h2>
           <p>
             L'inscription sur la plateforme est gratuite pour les Consommateurs. Pour créer un compte, vous devez fournir des informations exactes et complètes. Vous êtes responsable de la confidentialité de vos identifiants de connexion.
@@ -63,7 +87,7 @@ const locale = 'fr' as const;
           </p>
         </section>
 
-        <section aria-labelledby="reservations-heading">
+        <section id="cgu-reservations" aria-labelledby="reservations-heading">
           <h2 id="reservations-heading" class="text-xl font-extrabold text-neutral-900 mb-3">4. Réservations et paiements</h2>
           <p>
             Toute réservation effectuée sur la plateforme constitue une commande ferme soumise à paiement immédiat. Le paiement est sécurisé et traité par nos prestataires de paiement agréés.
@@ -76,7 +100,7 @@ const locale = 'fr' as const;
           </p>
         </section>
 
-        <section aria-labelledby="responsabilite-partneraires-heading">
+        <section id="cgu-responsabilite-partenaires" aria-labelledby="responsabilite-partneraires-heading">
           <h2 id="responsabilite-partneraires-heading" class="text-xl font-extrabold text-neutral-900 mb-3">5. Responsabilité des Partenaires</h2>
           <p>
             Les Partenaires sont seuls responsables de la qualité, de la conformité et de la sécurité alimentaire des produits proposés dans leurs paniers surprise. BienBon Ltd agit uniquement comme intermédiaire technique et ne peut être tenu responsable de la qualité des produits.
@@ -86,7 +110,7 @@ const locale = 'fr' as const;
           </p>
         </section>
 
-        <section aria-labelledby="commission-heading">
+        <section id="cgu-commission" aria-labelledby="commission-heading">
           <h2 id="commission-heading" class="text-xl font-extrabold text-neutral-900 mb-3">6. Commission BienBon</h2>
           <p>
             BienBon Ltd perçoit une commission de 20% sur le prix de vente hors taxes de chaque panier vendu. Cette commission couvre les frais de traitement des paiements, de maintenance de la plateforme et de service client.
@@ -96,14 +120,14 @@ const locale = 'fr' as const;
           </p>
         </section>
 
-        <section aria-labelledby="propriete-intellectuelle-cgu-heading">
+        <section id="cgu-propriete-intellectuelle" aria-labelledby="propriete-intellectuelle-cgu-heading">
           <h2 id="propriete-intellectuelle-cgu-heading" class="text-xl font-extrabold text-neutral-900 mb-3">7. Propriété intellectuelle</h2>
           <p>
             Tous les éléments de la plateforme (design, code, contenus) sont la propriété de BienBon Ltd et sont protégés par les lois mauriciennes relatives à la propriété intellectuelle.
           </p>
         </section>
 
-        <section aria-labelledby="litiges-heading">
+        <section id="cgu-litiges" aria-labelledby="litiges-heading">
           <h2 id="litiges-heading" class="text-xl font-extrabold text-neutral-900 mb-3">8. Résolution des litiges</h2>
           <p>
             En cas de litige, nous vous invitons à contacter notre service client à <a href="mailto:contact@bienbon.mu" class="text-green-700 hover:underline">contact@bienbon.mu</a>.
@@ -113,16 +137,12 @@ const locale = 'fr' as const;
           </p>
         </section>
 
-        <section aria-labelledby="modification-cgu-heading">
+        <section id="cgu-modification" aria-labelledby="modification-cgu-heading">
           <h2 id="modification-cgu-heading" class="text-xl font-extrabold text-neutral-900 mb-3">9. Modification des CGU/CGV</h2>
           <p>
             BienBon Ltd se réserve le droit de modifier les présentes CGU/CGV à tout moment. Les modifications entrent en vigueur dès leur publication sur la plateforme. La poursuite de l'utilisation de la plateforme après modification vaut acceptation des nouvelles conditions.
           </p>
         </section>
-
-        <p class="text-xs text-neutral-400 border-t border-neutral-200 pt-6">
-          Dernière mise à jour : 28 février 2026
-        </p>
       </div>
     </article>
   </main>

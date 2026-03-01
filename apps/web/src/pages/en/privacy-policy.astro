@@ -1,0 +1,40 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import { t } from '../../i18n/utils';
+
+const locale = 'en' as const;
+---
+
+<BaseLayout
+  title="Privacy Policy — BienBon"
+  description="BienBon Privacy Policy. How we collect, use and protect your personal data in accordance with the Data Protection Act 2017 of Mauritius."
+  locale={locale}
+  canonicalPath="/politique-de-confidentialite"
+>
+  <Header locale={locale} currentPath="/en/privacy-policy" />
+  <Breadcrumb locale={locale} items={[{ label: t(locale, 'breadcrumb.privacy') }]} />
+  <main id="main-content">
+    <article class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-neutral-900 mb-4">Privacy Policy</h1>
+      <p class="text-sm text-neutral-500 mb-8">{t(locale, 'legal.version')}: v1.0 | {t(locale, 'legal.lastUpdate')}: 28 February 2026</p>
+
+      <div class="space-y-8 text-neutral-700 text-sm leading-relaxed">
+        <section><h2 class="text-xl font-extrabold text-neutral-900 mb-3">1. Introduction</h2><p>BienBon Ltd is committed to protecting your privacy. This privacy policy explains how we collect, use, share and protect your personal data, in accordance with the <strong>Data Protection Act 2017</strong> of Mauritius.</p></section>
+        <section><h2 class="text-xl font-extrabold text-neutral-900 mb-3">2. Data Controller</h2><address class="not-italic space-y-1"><p><strong>BienBon Ltd</strong></p><p>Port-Louis, Mauritius</p><p>DPO Email: <a href="mailto:privacy@bienbon.mu" class="text-green-700 hover:underline">privacy@bienbon.mu</a></p></address></section>
+        <section><h2 class="text-xl font-extrabold text-neutral-900 mb-3">3. Data Collected</h2><p>We collect: identification data (name, email, phone), payment data, location data (if authorised), usage data, and technical data (IP address, browser type).</p></section>
+        <section><h2 class="text-xl font-extrabold text-neutral-900 mb-3">4. Purposes of Processing</h2><p>Your data is used to: manage your account, process reservations and payments, send confirmations, improve our service, prevent fraud, and comply with legal obligations.</p></section>
+        <section><h2 class="text-xl font-extrabold text-neutral-900 mb-3">5. Legal Basis</h2><p>Our processing is based on: contract performance, your consent, our legitimate interests, and legal obligations.</p></section>
+        <section><h2 class="text-xl font-extrabold text-neutral-900 mb-3">6. Data Sharing</h2><p>We share your data only with: Partners (for order management), service providers (payment, hosting, analytics), and authorities (if legally required). We never sell your personal data.</p></section>
+        <section><h2 class="text-xl font-extrabold text-neutral-900 mb-3">7. Retention Period</h2><p>Your data is retained for the duration of your relationship with BienBon, then for the applicable legal retention periods (generally 5 years for billing data).</p></section>
+        <section><h2 class="text-xl font-extrabold text-neutral-900 mb-3">8. Your Rights</h2><p>Under the DPA 2017, you have rights of: access, rectification, erasure, objection, portability, and withdrawal of consent. Contact: <a href="mailto:privacy@bienbon.mu" class="text-green-700 hover:underline">privacy@bienbon.mu</a></p></section>
+        <section><h2 class="text-xl font-extrabold text-neutral-900 mb-3">9. Cookies</h2><p>Our site uses technical cookies and analytics cookies (PostHog). You can configure your browser to refuse cookies.</p></section>
+        <section><h2 class="text-xl font-extrabold text-neutral-900 mb-3">10. Data Security</h2><p>We implement appropriate technical and organisational measures. Communications are encrypted via HTTPS/TLS.</p></section>
+        <section><h2 class="text-xl font-extrabold text-neutral-900 mb-3">11. Contact</h2><p>For any questions, contact our DPO: <a href="mailto:privacy@bienbon.mu" class="text-green-700 hover:underline">privacy@bienbon.mu</a>. You may also file a complaint with the Data Protection Office of Mauritius.</p></section>
+      </div>
+    </article>
+  </main>
+  <Footer locale={locale} />
+</BaseLayout>

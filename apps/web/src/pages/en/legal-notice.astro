@@ -1,0 +1,35 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import { t } from '../../i18n/utils';
+
+const locale = 'en' as const;
+---
+
+<BaseLayout
+  title="Legal Notice — BienBon"
+  description="Legal notice for BienBon, the anti-food waste marketplace in Mauritius."
+  locale={locale}
+  canonicalPath="/mentions-legales"
+>
+  <Header locale={locale} currentPath="/en/legal-notice" />
+  <Breadcrumb locale={locale} items={[{ label: t(locale, 'breadcrumb.legal') }]} />
+  <main id="main-content">
+    <article class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-neutral-900 mb-4">Legal Notice</h1>
+      <p class="text-sm text-neutral-500 mb-8">{t(locale, 'legal.version')}: v1.0 | {t(locale, 'legal.lastUpdate')}: 28 February 2026</p>
+
+      <div class="space-y-8 text-neutral-700 text-sm leading-relaxed">
+        <section><h2 class="text-xl font-extrabold text-neutral-900 mb-3">Site Publisher</h2><p>The website <strong>bienbon.mu</strong> is published by:</p><address class="not-italic mt-2 space-y-1"><p><strong>BienBon Ltd</strong></p><p>Company registered in Mauritius under the Companies Act 2001</p><p>Registration number: [Registration in progress]</p><p>Address: Port-Louis, Mauritius</p><p>Email: <a href="mailto:contact@bienbon.mu" class="text-green-700 hover:underline">contact@bienbon.mu</a></p></address></section>
+        <section><h2 class="text-xl font-extrabold text-neutral-900 mb-3">Hosting</h2><p>The site is hosted by:</p><address class="not-italic mt-2"><p><strong>Railway Corporation</strong></p><p>340 S Lemon Ave #5210, Walnut, CA 91789, USA</p><p>Website: <a href="https://railway.app" target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">railway.app</a></p></address></section>
+        <section><h2 class="text-xl font-extrabold text-neutral-900 mb-3">Intellectual Property</h2><p>All content on this site is the exclusive property of BienBon Ltd and is protected by Mauritian and international intellectual property laws. Any reproduction without prior written authorisation is prohibited.</p></section>
+        <section><h2 class="text-xl font-extrabold text-neutral-900 mb-3">Limitation of Liability</h2><p>BienBon Ltd shall not be held liable for direct or indirect damages caused to users' equipment when accessing the site. BienBon Ltd reserves the right to modify the information on the site at any time.</p></section>
+        <section><h2 class="text-xl font-extrabold text-neutral-900 mb-3">Personal Data Protection</h2><p>In accordance with the <strong>Data Protection Act 2017</strong> of Mauritius, you have rights of access, rectification and deletion of your personal data. Contact: <a href="mailto:privacy@bienbon.mu" class="text-green-700 hover:underline">privacy@bienbon.mu</a></p><p class="mt-2">For more information, see our <a href="/en/privacy-policy" class="text-green-700 hover:underline">Privacy Policy</a>.</p></section>
+        <section><h2 class="text-xl font-extrabold text-neutral-900 mb-3">Applicable Law</h2><p>This site is subject to Mauritian law. Any dispute shall be subject to the exclusive jurisdiction of the courts of Mauritius.</p></section>
+      </div>
+    </article>
+  </main>
+  <Footer locale={locale} />
+</BaseLayout>

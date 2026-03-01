@@ -1,0 +1,38 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import { t } from '../../i18n/utils';
+
+const locale = 'mfe' as const;
+---
+
+<BaseLayout
+  title="CGU & CGV — BienBon"
+  description="Kondisyon Zeneral Itilizasyon ek Vant BienBon."
+  locale={locale}
+  canonicalPath="/cgu"
+>
+  <Header locale={locale} currentPath="/kr/cgu" />
+  <Breadcrumb locale={locale} items={[{ label: t(locale, 'breadcrumb.cgu') }]} />
+  <main id="main-content">
+    <article class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-neutral-900 mb-4">Kondisyon Zeneral Itilizasyon ek Vant</h1>
+      <p class="text-sm text-neutral-500 mb-8">{t(locale, 'legal.version')}: v1.0 | {t(locale, 'legal.lastUpdate')}: 28 fevriye 2026</p>
+
+      <div class="space-y-8 text-neutral-700 text-sm leading-relaxed">
+        <section><h2 class="text-xl font-extrabold text-neutral-900 mb-3">1. Obze</h2><p>Sa bann Kondisyon Zeneral Itilizasyon ek Vant ("CGU/CGV") guvern itilizasyon plaform BienBon (laplikasyon mobil ek sit web) pibliye par BienBon Ltd, enn sosyete morisyen. Kan ou aksed plaform-la, ou aksepte sa bann CGU/CGV la san rezerv.</p></section>
+        <section><h2 class="text-xl font-extrabold text-neutral-900 mb-3">2. Definisyon</h2><p><strong>Plaform:</strong> Laplikasyon mobil ek sit web BienBon. <strong>Partenere:</strong> Tou komers alimanter anrezistre lor plaform. <strong>Konsomater:</strong> Tou dimoun ki itiliz plaform pou rezerv ek aste panye sipriz. <strong>Panye sipriz:</strong> Enn asortiman prodwi alimanter pa vann a pri redrwi.</p></section>
+        <section><h2 class="text-xl font-extrabold text-neutral-900 mb-3">3. Anrezistrasyon</h2><p>Anrezistrasyon lor plaform gratis pou Konsomater. Ou bizin fourni enformasyon egzak ek konple. Ou responsab konfidansyalite ou idantifyan koneksyon.</p></section>
+        <section><h2 class="text-xl font-extrabold text-neutral-900 mb-3">4. Rezervasyon ek Peyman</h2><p>Tou rezervasyon konstitye enn komand ferm. Peyman sekirize. Anilasyon posib ziska 2 er avan kreno ramassaz.</p></section>
+        <section><h2 class="text-xl font-extrabold text-neutral-900 mb-3">5. Responsabilite Partenere</h2><p>Partenere sel responsab kalite ek sekirite alimanter prodwi dan zot panye sipriz. BienBon Ltd azi zis kouma intermedier teknik.</p></section>
+        <section><h2 class="text-xl font-extrabold text-neutral-900 mb-3">6. Komisyon BienBon</h2><p>BienBon Ltd resevwar enn komisyon 20% lor pri vant sak panye vann. Partenere peye sak semenn, sak Lindi.</p></section>
+        <section><h2 class="text-xl font-extrabold text-neutral-900 mb-3">7. Propriete Intelektyel</h2><p>Tou eleman plaform propriete BienBon Ltd ek proteze par lalwa morisyen.</p></section>
+        <section><h2 class="text-xl font-extrabold text-neutral-900 mb-3">8. Rezolisyon Litiz</h2><p>Kontakte nou servis klyan: <a href="mailto:contact@bienbon.mu" class="text-green-700 hover:underline">contact@bienbon.mu</a>. Litiz pou soumi a konpetans tribinal morisyen.</p></section>
+        <section><h2 class="text-xl font-extrabold text-neutral-900 mb-3">9. Modifikasyon</h2><p>BienBon Ltd rezerv drwa modifye sa bann CGU/CGV a tou moman. Modifikasyon an viger depi zot piblifikasyon lor plaform.</p></section>
+      </div>
+    </article>
+  </main>
+  <Footer locale={locale} />
+</BaseLayout>

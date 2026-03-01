@@ -2,6 +2,8 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import { t } from '../i18n/utils';
 
 const locale = 'fr' as const;
 ---
@@ -13,12 +15,15 @@ const locale = 'fr' as const;
   canonicalPath="/politique-de-confidentialite"
 >
   <Header locale={locale} currentPath="/politique-de-confidentialite" />
+  <Breadcrumb locale={locale} items={[{ label: t(locale, 'breadcrumb.privacy') }]} />
   <main id="main-content">
     <article class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
       <h1 class="text-3xl sm:text-4xl font-extrabold text-neutral-900 mb-4">
         Politique de confidentialité
       </h1>
-      <p class="text-sm text-neutral-500 mb-8">Dernière mise à jour : 28 février 2026</p>
+      <p class="text-sm text-neutral-500 mb-8">
+        {t(locale, 'legal.version')} : v1.0 | {t(locale, 'legal.lastUpdate')} : 28 février 2026
+      </p>
 
       <div class="space-y-8 text-neutral-700 text-sm leading-relaxed">
 
@@ -79,17 +84,13 @@ const locale = 'fr' as const;
 
         <section aria-labelledby="partage-heading">
           <h2 id="partage-heading" class="text-xl font-extrabold text-neutral-900 mb-3">6. Partage des données</h2>
-          <p>
-            Nous partageons vos données uniquement dans les cas suivants :
-          </p>
+          <p>Nous partageons vos données uniquement dans les cas suivants :</p>
           <ul class="mt-2 space-y-1 list-disc list-inside">
             <li>Avec les Partenaires concernés (pour la gestion de vos commandes)</li>
             <li>Avec nos prestataires de services (paiement, hébergement, analytics)</li>
             <li>En cas d'obligation légale ou sur demande des autorités compétentes</li>
           </ul>
-          <p class="mt-2">
-            Nous ne vendons jamais vos données personnelles à des tiers.
-          </p>
+          <p class="mt-2">Nous ne vendons jamais vos données personnelles à des tiers.</p>
         </section>
 
         <section aria-labelledby="conservation-heading">
@@ -125,7 +126,7 @@ const locale = 'fr' as const;
         <section aria-labelledby="securite-heading">
           <h2 id="securite-heading" class="text-xl font-extrabold text-neutral-900 mb-3">10. Sécurité des données</h2>
           <p>
-            Nous mettons en œuvre des mesures techniques et organisationnelles appropriées pour protéger vos données contre tout accès non autorisé, divulgation, altération ou destruction. Nos communications sont chiffrées via HTTPS/TLS.
+            Nous mettons en oeuvre des mesures techniques et organisationnelles appropriées pour protéger vos données contre tout accès non autorisé, divulgation, altération ou destruction. Nos communications sont chiffrées via HTTPS/TLS.
           </p>
         </section>
 

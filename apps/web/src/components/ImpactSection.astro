@@ -2,6 +2,7 @@
 import type { Locale } from '../i18n/utils';
 import { t } from '../i18n/utils';
 import Icon from './Icon.astro';
+import CountUp from './CountUp';
 
 interface Props {
   locale: Locale;
@@ -11,33 +12,40 @@ const { locale } = Astro.props;
 
 const stats = [
   {
-    value: '12 450',
+    value: 12450,
+    displayValue: '12 450',
     labelKey: 'home.mealsSaved',
     iconName: 'Leaf' as const,
     iconClass: 'text-green-600',
   },
   {
-    value: '3 740',
+    value: 3740,
+    displayValue: '3 740',
     labelKey: 'home.co2Saved',
     iconName: 'Globe' as const,
     iconClass: 'text-green-600',
   },
   {
-    value: '87',
-    label: locale === 'fr' ? 'partenaires actifs' : locale === 'en' ? 'active partners' : 'partenere aktif',
+    value: 87,
+    displayValue: '87',
+    labelKey: 'home.partners',
     iconName: 'Store' as const,
     iconClass: 'text-orange-500',
   },
   {
-    value: '4.8/5',
-    label: locale === 'fr' ? 'note moyenne' : locale === 'en' ? 'average rating' : 'not mwayen',
+    value: 0,
+    displayValue: '4.8/5',
+    labelKey: 'home.rating',
     iconName: 'Star' as const,
     iconClass: 'text-orange-500',
+    isRating: true,
   },
 ];
 ---
 
-<section class="py-16 sm:py-24 bg-neutral-50" aria-labelledby="impact-heading">
+<!-- Impact section — toggle: set showImpact to false to hide pre-launch -->
+{/* FLAG: set to false to hide this section before launch */}
+<section class="py-16 sm:py-24 bg-neutral-50" aria-labelledby="impact-heading" data-impact-section>
   <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="text-center mb-12">
       <h2 id="impact-heading" class="text-3xl sm:text-4xl font-extrabold text-neutral-900">
@@ -52,10 +60,14 @@ const stats = [
             <Icon name={stat.iconName} size={32} class={stat.iconClass} />
           </div>
           <dt class="text-3xl sm:text-4xl font-extrabold text-green-700">
-            {stat.value}
+            {stat.isRating ? (
+              stat.displayValue
+            ) : (
+              <CountUp client:visible end={stat.value} duration={2000} separator=" " />
+            )}
           </dt>
           <dd class="mt-1 text-sm text-neutral-600">
-            {stat.labelKey ? t(locale, stat.labelKey) : stat.label}
+            {t(locale, stat.labelKey)}
           </dd>
         </div>
       ))}

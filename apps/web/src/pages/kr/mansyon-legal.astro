@@ -1,0 +1,34 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import { t } from '../../i18n/utils';
+
+const locale = 'mfe' as const;
+---
+
+<BaseLayout
+  title="Mansyon Legal — BienBon"
+  description="Mansyon legal BienBon, marketplace anti-gaspi alimanter dan lil Moris."
+  locale={locale}
+  canonicalPath="/mentions-legales"
+>
+  <Header locale={locale} currentPath="/kr/mansyon-legal" />
+  <Breadcrumb locale={locale} items={[{ label: t(locale, 'breadcrumb.legal') }]} />
+  <main id="main-content">
+    <article class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-neutral-900 mb-4">Mansyon Legal</h1>
+      <p class="text-sm text-neutral-500 mb-8">{t(locale, 'legal.version')}: v1.0 | {t(locale, 'legal.lastUpdate')}: 28 fevriye 2026</p>
+
+      <div class="space-y-8 text-neutral-700 text-sm leading-relaxed">
+        <section><h2 class="text-xl font-extrabold text-neutral-900 mb-3">Editer sit</h2><p>Sit <strong>bienbon.mu</strong> pibliye par:</p><address class="not-italic mt-2 space-y-1"><p><strong>BienBon Ltd</strong></p><p>Sosyete anrezistre dan lil Moris dapre Companies Act 2001</p><p>Ladres: Port-Louis, lil Moris</p><p>Email: <a href="mailto:contact@bienbon.mu" class="text-green-700 hover:underline">contact@bienbon.mu</a></p></address></section>
+        <section><h2 class="text-xl font-extrabold text-neutral-900 mb-3">Eberzzman</h2><p>Sit eberzze par:</p><address class="not-italic mt-2"><p><strong>Railway Corporation</strong></p><p>340 S Lemon Ave #5210, Walnut, CA 91789, USA</p></address></section>
+        <section><h2 class="text-xl font-extrabold text-neutral-900 mb-3">Propriete Intelektyel</h2><p>Tou konteni lor sa sit-la propriete exkliziv BienBon Ltd ek proteze par lalwa morisyen ek internasyonal.</p></section>
+        <section><h2 class="text-xl font-extrabold text-neutral-900 mb-3">Proteksyon Done Personel</h2><p>Dapre <strong>Data Protection Act 2017</strong> lil Moris, ou ena drwa lakse, rektifikasyon ek sipresyon ou done personel. Kontakt: <a href="mailto:privacy@bienbon.mu" class="text-green-700 hover:underline">privacy@bienbon.mu</a></p></section>
+        <section><h2 class="text-xl font-extrabold text-neutral-900 mb-3">Lalwa Aplikab</h2><p>Sa sit-la soumi a lalwa morisyen. Tou litiz pou soumi a konpetans exkliziv tribinal lil Moris.</p></section>
+      </div>
+    </article>
+  </main>
+  <Footer locale={locale} />
+</BaseLayout>

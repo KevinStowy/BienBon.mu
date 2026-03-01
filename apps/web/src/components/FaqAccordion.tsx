@@ -11,6 +11,7 @@ interface Props {
   categories: Record<string, string>;
   searchPlaceholder: string;
   noResults: string;
+  allLabel?: string;
 }
 
 function ChevronIcon({ isOpen }: { isOpen: boolean }) {
@@ -28,7 +29,32 @@ function ChevronIcon({ isOpen }: { isOpen: boolean }) {
   );
 }
 
-export default function FaqAccordion({ items, categories, searchPlaceholder, noResults }: Props) {
+function HighlightText({ text, highlight }: { text: string; highlight: string }) {
+  if (!highlight.trim()) {
+    return <>{text}</>;
+  }
+
+  // Escape special regex characters
+  const escaped = highlight.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const regex = new RegExp(`(${escaped})`, 'gi');
+  const parts = text.split(regex);
+
+  return (
+    <>
+      {parts.map((part, i) =>
+        regex.test(part) ? (
+          <mark key={i} className="bg-orange-100 text-orange-800 rounded px-0.5">
+            {part}
+          </mark>
+        ) : (
+          <span key={i}>{part}</span>
+        )
+      )}
+    </>
+  );
+}
+
+export default function FaqAccordion({ items, categories, searchPlaceholder, noResults, allLabel = 'Tout' }: Props) {
   const [search, setSearch] = useState('');
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [openItems, setOpenItems] = useState<Set<number>>(new Set());
@@ -61,6 +87,8 @@ export default function FaqAccordion({ items, categories, searchPlaceholder, noR
       return next;
     });
   }
+
+  const searchTerm = search.trim();
 
   return (
     <div className="max-w-3xl mx-auto">
@@ -99,7 +127,7 @@ export default function FaqAccordion({ items, categories, searchPlaceholder, noR
           }`}
           aria-pressed={activeCategory === 'all'}
         >
-          Tout
+          {allLabel}
         </button>
         {allCategories.map((cat) => (
           <button
@@ -123,8 +151,7 @@ export default function FaqAccordion({ items, categories, searchPlaceholder, noR
         <p className="text-center text-neutral-500 py-12">{noResults}</p>
       ) : (
         <div className="space-y-3" role="list">
-          {filteredItems.map((item, globalIndex) => {
-            // Use original index in items array for stable identity
+          {filteredItems.map((item) => {
             const originalIndex = items.indexOf(item);
             const isOpen = openItems.has(originalIndex);
             const panelId = `faq-panel-${originalIndex}`;
@@ -146,7 +173,7 @@ export default function FaqAccordion({ items, categories, searchPlaceholder, noR
                     aria-controls={panelId}
                   >
                     <span className="flex-1 text-sm sm:text-base leading-snug">
-                      {item.question}
+                      <HighlightText text={item.question} highlight={searchTerm} />
                     </span>
                     <ChevronIcon isOpen={isOpen} />
                   </button>
@@ -161,7 +188,7 @@ export default function FaqAccordion({ items, categories, searchPlaceholder, noR
                   <div className="px-5 pb-5 pt-0">
                     <div className="h-px bg-neutral-100 mb-4" aria-hidden="true"></div>
                     <p className="text-sm sm:text-base text-neutral-600 leading-relaxed">
-                      {item.answer}
+                      <HighlightText text={item.answer} highlight={searchTerm} />
                     </p>
                   </div>
                 </div>

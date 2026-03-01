@@ -12,6 +12,16 @@
     "blog": "Blog",
     "becomePartner": "Vinn partenere"
   },
+  "breadcrumb": {
+    "home": "Lakaz",
+    "howItWorks": "Kouma sa marse",
+    "becomePartner": "Vinn partenere",
+    "faq": "Kestion",
+    "cgu": "CGU & CGV",
+    "legal": "Mansyon legal",
+    "privacy": "Politik konfidansyalite",
+    "comingSoon": "Biento disponib"
+  },
   "home": {
     "heroTitle": "Sap manze, ekonomiz larzan!",
     "heroSubtitle": "Panye sipriz a pri redrwi pre kot ou dan lil Moris.",
@@ -26,14 +36,39 @@
     "step4Desc": "Profite prodwi kalite a ti pri",
     "impactTitle": "Nou lenpak ansam",
     "mealsSaved": "repa sove",
-    "co2Saved": "kg CO₂ evite",
+    "co2Saved": "kg CO2 evite",
+    "partners": "partenere aktif",
+    "rating": "not mwayen",
     "ctaTitle": "Pare pou sap repa?",
-    "ctaButton": "Telecharge laplikasyon"
+    "ctaButton": "Telecharge laplikasyon",
+    "partnersTitle": "Nou partenere dan Moris",
+    "discoverAllPartners": "Dekouver tou partenere",
+    "partner1Name": "Boulanzeriz du Port",
+    "partner1Type": "Boulanzeriz",
+    "partner1Location": "Port-Louis",
+    "partner2Name": "Restoran Le Chamarel",
+    "partner2Type": "Restoran",
+    "partner2Location": "Chamarel",
+    "partner3Name": "Lotel Le Morne",
+    "partner3Type": "Lotel-Restoran",
+    "partner3Location": "Le Morne",
+    "testimonialsTitle": "Zot fer nou konfians",
+    "testimonial1Quote": "Super konsep! Mo finn sap enn panye viennoiseries pou zis 100 Rs!",
+    "testimonial1Name": "Marie T.",
+    "testimonial1Role": "Konsomater",
+    "testimonial1Location": "Curepipe",
+    "testimonial2Quote": "Mwins gaspi ek plis klyan. BienBon li zenyal!",
+    "testimonial2Name": "Chef Ravi",
+    "testimonial2Role": "Boulanzeriz du Port",
+    "testimonial2Location": "Port-Louis"
   },
   "howItWorks": {
     "title": "Kouma sa marse?",
+    "subtitle": "Sinp, rapid ek responsab -- pou konsomater ek pou marsand.",
     "consumerTitle": "Pou konsomater",
     "partnerTitle": "Pou partenere",
+    "consumerTab": "Konsomater",
+    "partnerTab": "Partenere",
     "consumerStep1Title": "Telecharge laplikasyon",
     "consumerStep1Desc": "Disponib lor iOS ek Android, gratis.",
     "consumerStep2Title": "Sers panye",
@@ -49,7 +84,11 @@
     "partnerStep3Title": "Resevwar rezervasyon",
     "partnerStep3Desc": "Gere ou komand an tan reyel depi ou tablo de bord.",
     "partnerStep4Title": "Done ek enkais",
-    "partnerStep4Desc": "Skan kode QR klyan ek resevwar ou peyman."
+    "partnerStep4Desc": "Skan kode QR klyan ek resevwar ou peyman.",
+    "consumerCta": "Koumanse asterla",
+    "partnerCta": "Vinn partenere",
+    "faqTeaser": "Ou ena kestion? Gete nou FAQ",
+    "faqLink": "Get FAQ"
   },
   "partner": {
     "title": "Vinn partenere BienBon",
@@ -66,7 +105,37 @@
     "contactDesc": "Kontakte nou pou komannse ou anrezistrasyon partenere.",
     "contactEmail": "partenaires@bienbon.mu",
     "testimonialQuote": "Depi mo itiliz BienBon, mo perdi buku mwens marsandiz an lafin lazourne. Se enn vre pli pou mo boulangerie!",
-    "testimonialAuthor": "Priya S., Boulanzeriz Flamboyant, Port-Louis"
+    "testimonialAuthor": "Priya S., Boulanzeriz Flamboyant, Port-Louis",
+    "formTitle": "Anrezistre ou komers",
+    "formFirstName": "Prenom",
+    "formLastName": "Non",
+    "formEmail": "Email",
+    "formPhone": "Nimero telefonn",
+    "formBusinessName": "Non komers",
+    "formBusinessType": "Tip komers",
+    "formBusinessTypePlaceholder": "Swazir enn tip",
+    "formBusinessTypes": {
+      "bakery": "Boulanzeriz",
+      "restaurant": "Restoran",
+      "deli": "Trater",
+      "grocery": "Episkri",
+      "supermarket": "Sipermarse",
+      "hotel": "Lotel-Restoran",
+      "other": "Lot"
+    },
+    "formAddress": "Ladress konple",
+    "formBrn": "Nimero BRN (opsyonel)",
+    "formDescription": "Ti deskripsyon ou komers",
+    "formConsent": "Mo aksepte bann",
+    "formCgu": "CGU",
+    "formAnd": "ek",
+    "formPrivacy": "Politik konfidansyalite",
+    "formSubmit": "Anvoy mo kandidatir",
+    "formSuccess": "Mersi! Ou kandidatir finn anvwaye. Nou lekip pou kontakte ou dan 48 er.",
+    "formRequired": "Sa sham-la obligatwar",
+    "formEmailInvalid": "Ladres email invalide",
+    "formPhoneInvalid": "Nimero telefonn invalide",
+    "formConsentRequired": "Ou bizin aksepte bann kondisyon"
   },
   "faq": {
     "title": "Kestion souvan",
@@ -76,7 +145,11 @@
       "general": "Zeneral",
       "consumer": "Konsomater",
       "partner": "Partenere",
-      "payment": "Peyman"
+      "payment": "Peyman",
+      "pickup": "Ramassaz",
+      "account": "Kont",
+      "security": "Sekirite",
+      "data": "Done"
     },
     "items": [
       {
@@ -92,7 +165,7 @@
       {
         "category": "consumer",
         "question": "Kouma enn panye sipriz marse?",
-        "answer": "Enn panye sipriz kontenir prodwi pa vann zour la swazir par marsand. Ou kone kategori (boulanzeriz, trater, etc.) ek valer aproksimatif, me pa egzakteman konteni — se sipriz! Pri redwir o-mwins 50% par rapor a valer reyel."
+        "answer": "Enn panye sipriz kontenir prodwi pa vann zour la swazir par marsand. Ou kone kategori (boulanzeriz, trater, etc.) ek valer aproksimatif, me pa egzakteman konteni -- se sipriz! Pri redwir o-mwins 50% par rapor a valer reyel."
       },
       {
         "category": "consumer",
@@ -133,14 +206,99 @@
         "category": "payment",
         "question": "Kan partenere resevwar peyman?",
         "answer": "Partenere resevwar zot peyman sak semenn, sak Lindi pou bann vant semenn pase. Virmant fer lor kont bankir anrezistre pandan anrezistrasyon."
+      },
+      {
+        "category": "pickup",
+        "question": "Ki ariv si mo pa kapav ramass mo panye?",
+        "answer": "Si ou pa kapav ramass ou panye, anile o-mwins 2 er avan kreno pou gayn ranboursman. Apre sa ler-la, panye konsidere kouma perdi ek okenn ranboursman pa pou fer."
+      },
+      {
+        "category": "pickup",
+        "question": "Kouma mo kone kan ramass mo panye?",
+        "answer": "Kreno ramassaz indike lor fis panye ler ou rezerv. Ou pou osi resevwar enn notifikasyon rapel 30 minit avan kreno koumanse."
+      },
+      {
+        "category": "pickup",
+        "question": "Mo bizin amenn kiksoz pou ramassaz?",
+        "answer": "Ou zis bizin ou telefonn ek kode QR komand afise dan laplikasyon. Nou rekomand amenn enn sak reyutilizab pou sarye ou panye."
+      },
+      {
+        "category": "account",
+        "question": "Kouma kree enn kont BienBon?",
+        "answer": "Telecharge laplikasyon BienBon lor iOS ou Android, apre swiv bann etap anrezistrasyon ek ou email ou nimero telefonn. Kreation kont gratis ek pran zis kek segond."
+      },
+      {
+        "category": "account",
+        "question": "Kouma siprim mo kont?",
+        "answer": "Ou kapav demande sipresyon kont depi parametre laplikasyon ou par anvoy enn email a privacy@bienbon.mu. Ou done pou siprime dapre nou politik konfidansyalite."
+      },
+      {
+        "category": "security",
+        "question": "Mo peyman sekirize?",
+        "answer": "Wi, tou peyman sekirize atraver nou fournis peyman agreer. Nou pa zame stok ou done kart bankir konple. Tranzaksyon sifre via HTTPS/TLS."
+      },
+      {
+        "category": "security",
+        "question": "Ki fer si mo remarke aktivite sispe lor mo kont?",
+        "answer": "Kontakte nou sipor toud swit a contact@bienbon.mu. Sanz ou modpas depi laplikasyon ek verifye ou tranzaksyon resan. Nou lekip sekirite pou anket o pli vit."
+      },
+      {
+        "category": "data",
+        "question": "Ki done zot kolekte?",
+        "answer": "Nou kolekte done neseser pou servis: enformasyon idantifikasyon, done peyman, lokalizasyon (si otorize) ek done itilizasyon. Konsilt nou politik konfidansyalite pou plis detay."
+      },
+      {
+        "category": "data",
+        "question": "Kouma mo exers mo drwa lor mo done?",
+        "answer": "Dapre Data Protection Act 2017 lil Moris, ou kapav exers ou drwa lakse, rektifikasyon ek sipresyon an kontakte nou DPO a privacy@bienbon.mu."
       }
     ]
+  },
+  "comingSoon": {
+    "title": "Biento disponib dan Moris!",
+    "subtitle": "Premie plaform anti-gaspi lil Moris pe arive biento.",
+    "newsletterTitle": "Gayn inform ler lansman:",
+    "emailPlaceholder": "Ou ladres email",
+    "consent": "Mo aksepte resevwar email BienBon ek mo finn lir",
+    "privacyLink": "Politik konfidansyalite",
+    "submit": "Inform mwa",
+    "comingSoonButton": "Biento disponib",
+    "followUs": "Swiv nou:"
+  },
+  "cookies": {
+    "title": "Sa sit-la itiliz cookies",
+    "description": "Nou itiliz cookies pou amelior ou lexperyans, analiz trafik ek personalize konteni.",
+    "learnMore": "Aprann plis dan nou",
+    "privacyLink": "Politik konfidansyalite",
+    "acceptAll": "Aksepte tou",
+    "rejectAll": "Refiz tou",
+    "customize": "Personalize",
+    "customizeTitle": "Zer ou preferans cookies",
+    "essential": "Cookies esansyel",
+    "essentialDesc": "Sesyon, sekirite, preferans lang.",
+    "alwaysActive": "Touzour aktif",
+    "analytics": "Cookies analitik",
+    "analyticsDesc": "Ed nou konpran kouma ou itiliz sit-la.",
+    "marketing": "Cookies marketing",
+    "marketingDesc": "Itilize pou propoz ou konteni ek piblisit pertinen.",
+    "save": "Sovgard mo preferans"
+  },
+  "legal": {
+    "version": "Versyon",
+    "lastUpdate": "Dernie mizazour"
+  },
+  "notFound": {
+    "title": "Sa paz-la finn disparet...",
+    "description": "Kouma enn panye sipriz, sa paz-la finn al! Me pa trakase, ena lezot pe atann ou.",
+    "backHome": "Retourn lakaz",
+    "discoverBaskets": "Dekouver panye"
   },
   "footer": {
     "description": "BienBon se premie marketplace anti-gaspi alimanter dan lil Moris.",
     "legal": "Mansyon legal",
     "cgu": "CGU & CGV",
     "privacy": "Politik konfidansyalite",
-    "copyright": "© 2026 BienBon. Tou drwa rezervir."
+    "copyright": "© 2026 BienBon. Tou drwa rezervir.",
+    "manageCookies": "Zer cookies"
   }
 }

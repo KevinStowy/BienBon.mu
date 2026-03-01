@@ -50,7 +50,7 @@ const { locale, currentPath = '/' } = Astro.props;
         </a>
       </div>
 
-      <!-- Right side: language + CTA -->
+      <!-- Right side: language + CTAs -->
       <div class="flex items-center gap-3">
         <LanguageSwitcher locale={locale} currentPath={currentPath} />
 
@@ -59,6 +59,15 @@ const { locale, currentPath = '/' } = Astro.props;
           class="hidden sm:inline-flex items-center px-4 py-2 rounded-md text-sm font-bold text-green-700 border-2 border-green-700 hover:bg-green-700 hover:text-white transition-colors min-h-[44px]"
         >
           {t(locale, 'common.becomePartner')}
+        </a>
+
+        <!-- CTA: Discover baskets (US-W009) -->
+        <a
+          href="#"
+          class="hidden md:inline-flex items-center px-4 py-2 rounded-md text-sm font-bold text-white bg-green-700 hover:bg-green-900 transition-colors min-h-[44px]"
+          aria-label={t(locale, 'common.discoverBaskets')}
+        >
+          {t(locale, 'common.discoverBaskets')}
         </a>
 
         <!-- Mobile menu button -->
@@ -98,9 +107,16 @@ const { locale, currentPath = '/' } = Astro.props;
         </a>
         <a
           href={locale === 'fr' ? '/devenir-partenaire' : locale === 'en' ? '/en/become-partner' : '/kr/vinn-partenaire'}
-          class="mt-2 mx-4 px-4 py-3 rounded-md text-sm font-bold text-center text-white bg-green-700 hover:bg-green-900 transition-colors min-h-[44px] flex items-center justify-center"
+          class="px-4 py-3 rounded-md text-sm font-semibold text-neutral-600 hover:text-green-700 hover:bg-green-100 transition-colors min-h-[44px] flex items-center"
         >
           {t(locale, 'common.becomePartner')}
+        </a>
+        <!-- Mobile CTA: Discover baskets (US-W009) -->
+        <a
+          href="#"
+          class="mt-2 mx-4 px-4 py-3 rounded-md text-sm font-bold text-center text-white bg-green-700 hover:bg-green-900 transition-colors min-h-[44px] flex items-center justify-center"
+        >
+          {t(locale, 'common.discoverBaskets')}
         </a>
       </div>
     </div>

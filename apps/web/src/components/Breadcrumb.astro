@@ -1,0 +1,58 @@
+---
+import type { Locale } from '../i18n/utils';
+import { t, getLocalizedPath } from '../i18n/utils';
+
+interface BreadcrumbItem {
+  label: string;
+  href?: string;
+}
+
+interface Props {
+  locale: Locale;
+  items: BreadcrumbItem[];
+}
+
+const { locale, items } = Astro.props;
+
+const homeLabel = t(locale, 'breadcrumb.home');
+const homePath = getLocalizedPath(locale, '/');
+---
+
+<nav
+  class="bg-neutral-50 border-b border-neutral-200"
+  aria-label={locale === 'fr' ? 'Fil d\'Ariane' : locale === 'en' ? 'Breadcrumb' : 'Fil Ariane'}
+>
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+    <ol class="flex items-center gap-2 text-sm text-neutral-500" itemscope itemtype="https://schema.org/BreadcrumbList">
+      <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a
+          href={homePath}
+          class="hover:text-green-700 transition-colors"
+          itemprop="item"
+        >
+          <span itemprop="name">{homeLabel}</span>
+        </a>
+        <meta itemprop="position" content="1" />
+      </li>
+      {items.map((item, index) => (
+        <li class="flex items-center gap-2" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+          <span class="text-neutral-300" aria-hidden="true">&gt;</span>
+          {item.href ? (
+            <a
+              href={item.href}
+              class="hover:text-green-700 transition-colors"
+              itemprop="item"
+            >
+              <span itemprop="name">{item.label}</span>
+            </a>
+          ) : (
+            <span class="text-neutral-900 font-semibold" aria-current="page" itemprop="name">
+              {item.label}
+            </span>
+          )}
+          <meta itemprop="position" content={String(index + 2)} />
+        </li>
+      ))}
+    </ol>
+  </div>
+</nav>

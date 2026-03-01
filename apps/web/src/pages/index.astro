@@ -5,6 +5,8 @@ import Footer from '../components/Footer.astro';
 import HeroSection from '../components/HeroSection.astro';
 import HowItWorksSection from '../components/HowItWorksSection.astro';
 import ImpactSection from '../components/ImpactSection.astro';
+import PartnersSection from '../components/PartnersSection.astro';
+import TestimonialsSection from '../components/TestimonialsSection.astro';
 import CtaSection from '../components/CtaSection.astro';
 
 const locale = 'fr' as const;
@@ -21,6 +23,9 @@ const locale = 'fr' as const;
     <HeroSection locale={locale} />
     <HowItWorksSection locale={locale} />
     <ImpactSection locale={locale} />
+    <PartnersSection locale={locale} />
+    <!-- Testimonials section — comment out to hide pre-launch -->
+    <TestimonialsSection locale={locale} />
     <CtaSection locale={locale} />
   </main>
   <Footer locale={locale} />

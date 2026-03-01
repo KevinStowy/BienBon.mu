@@ -2,6 +2,8 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import { t } from '../i18n/utils';
 
 const locale = 'fr' as const;
 ---
@@ -13,9 +15,14 @@ const locale = 'fr' as const;
   canonicalPath="/mentions-legales"
 >
   <Header locale={locale} currentPath="/mentions-legales" />
+  <Breadcrumb locale={locale} items={[{ label: t(locale, 'breadcrumb.legal') }]} />
   <main id="main-content">
     <article class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
-      <h1 class="text-3xl sm:text-4xl font-extrabold text-neutral-900 mb-8">Mentions légales</h1>
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-neutral-900 mb-4">Mentions légales</h1>
+
+      <p class="text-sm text-neutral-500 mb-8">
+        {t(locale, 'legal.version')} : v1.0 | {t(locale, 'legal.lastUpdate')} : 28 février 2026
+      </p>
 
       <div class="prose prose-neutral max-w-none space-y-8 text-neutral-700">
 
@@ -81,10 +88,6 @@ const locale = 'fr' as const;
             Le présent site est soumis au droit mauricien. Tout litige relatif à l'utilisation du site sera soumis à la compétence exclusive des tribunaux de l'île Maurice.
           </p>
         </section>
-
-        <p class="text-xs text-neutral-400 border-t border-neutral-200 pt-6">
-          Dernière mise à jour : 28 février 2026
-        </p>
       </div>
     </article>
   </main>

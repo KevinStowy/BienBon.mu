@@ -1,0 +1,38 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import { t } from '../../i18n/utils';
+
+const locale = 'en' as const;
+---
+
+<BaseLayout
+  title="Terms & Conditions — BienBon"
+  description="Terms and Conditions of Use and Sale (T&C) of BienBon, the anti-food waste marketplace in Mauritius."
+  locale={locale}
+  canonicalPath="/cgu"
+>
+  <Header locale={locale} currentPath="/en/terms" />
+  <Breadcrumb locale={locale} items={[{ label: t(locale, 'breadcrumb.cgu') }]} />
+  <main id="main-content">
+    <article class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-neutral-900 mb-4">Terms & Conditions of Use and Sale</h1>
+      <p class="text-sm text-neutral-500 mb-8">{t(locale, 'legal.version')}: v1.0 | {t(locale, 'legal.lastUpdate')}: 28 February 2026</p>
+
+      <div class="space-y-8 text-neutral-700 text-sm leading-relaxed">
+        <section><h2 class="text-xl font-extrabold text-neutral-900 mb-3">1. Purpose</h2><p>These Terms & Conditions of Use and Sale ("T&C") govern the use of the BienBon platform (mobile application and website) published by BienBon Ltd, a Mauritian company. By accessing the platform, you unreservedly accept these T&C.</p></section>
+        <section><h2 class="text-xl font-extrabold text-neutral-900 mb-3">2. Definitions</h2><p><strong>Platform:</strong> The BienBon mobile application and website. <strong>Partner:</strong> Any food business registered on the platform. <strong>Consumer:</strong> Any person using the platform to reserve and purchase surprise baskets. <strong>Surprise basket:</strong> An assortment of unsold food products offered by a Partner at a reduced price.</p></section>
+        <section><h2 class="text-xl font-extrabold text-neutral-900 mb-3">3. Registration</h2><p>Registration on the platform is free for Consumers. You must provide accurate and complete information. You are responsible for the confidentiality of your login credentials. BienBon Ltd reserves the right to suspend or delete any account in case of non-compliance.</p></section>
+        <section><h2 class="text-xl font-extrabold text-neutral-900 mb-3">4. Reservations and Payments</h2><p>Any reservation constitutes a firm order subject to immediate payment. Payment is secure and processed by our approved payment providers. Cancellations are possible up to 2 hours before the collection slot. The Consumer must present their QR code at the store within the indicated time slot.</p></section>
+        <section><h2 class="text-xl font-extrabold text-neutral-900 mb-3">5. Partner Responsibility</h2><p>Partners are solely responsible for the quality, compliance and food safety of the products in their surprise baskets. BienBon Ltd acts solely as a technical intermediary. Partners commit to complying with all health and food regulations in Mauritius.</p></section>
+        <section><h2 class="text-xl font-extrabold text-neutral-900 mb-3">6. BienBon Commission</h2><p>BienBon Ltd receives a 20% commission on the tax-exclusive sale price of each basket sold. Partners are paid weekly, every Monday, for the previous week's sales.</p></section>
+        <section><h2 class="text-xl font-extrabold text-neutral-900 mb-3">7. Intellectual Property</h2><p>All elements of the platform are the property of BienBon Ltd and are protected by Mauritian intellectual property laws.</p></section>
+        <section><h2 class="text-xl font-extrabold text-neutral-900 mb-3">8. Dispute Resolution</h2><p>In case of dispute, please contact our customer service at <a href="mailto:contact@bienbon.mu" class="text-green-700 hover:underline">contact@bienbon.mu</a>. Disputes shall be subject to the jurisdiction of Mauritian courts.</p></section>
+        <section><h2 class="text-xl font-extrabold text-neutral-900 mb-3">9. Amendments</h2><p>BienBon Ltd reserves the right to modify these T&C at any time. Changes take effect upon publication on the platform.</p></section>
+      </div>
+    </article>
+  </main>
+  <Footer locale={locale} />
+</BaseLayout>

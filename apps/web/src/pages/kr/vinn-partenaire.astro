@@ -2,68 +2,40 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
 import Icon from '../../components/Icon.astro';
+import PartnerRegistrationForm from '../../components/PartnerRegistrationForm';
 import { t } from '../../i18n/utils';
+import mfeTranslations from '../../i18n/mfe.json';
 
 const locale = 'mfe' as const;
 
 const benefits = [
-  {
-    iconName: 'TrendingUp' as const,
-    titleKey: 'partner.benefit1',
-    descKey: 'partner.benefit1Desc',
-    iconClass: 'text-green-700',
-    bgClass: 'bg-green-100',
-  },
-  {
-    iconName: 'Users' as const,
-    titleKey: 'partner.benefit2',
-    descKey: 'partner.benefit2Desc',
-    iconClass: 'text-orange-600',
-    bgClass: 'bg-orange-100',
-  },
-  {
-    iconName: 'Banknote' as const,
-    titleKey: 'partner.benefit3',
-    descKey: 'partner.benefit3Desc',
-    iconClass: 'text-green-700',
-    bgClass: 'bg-green-100',
-  },
-  {
-    iconName: 'Sprout' as const,
-    titleKey: 'partner.benefit4',
-    descKey: 'partner.benefit4Desc',
-    iconClass: 'text-orange-600',
-    bgClass: 'bg-orange-100',
-  },
+  { iconName: 'TrendingUp' as const, titleKey: 'partner.benefit1', descKey: 'partner.benefit1Desc', iconClass: 'text-green-700', bgClass: 'bg-green-100' },
+  { iconName: 'Users' as const, titleKey: 'partner.benefit2', descKey: 'partner.benefit2Desc', iconClass: 'text-orange-600', bgClass: 'bg-orange-100' },
+  { iconName: 'Banknote' as const, titleKey: 'partner.benefit3', descKey: 'partner.benefit3Desc', iconClass: 'text-green-700', bgClass: 'bg-green-100' },
+  { iconName: 'Sprout' as const, titleKey: 'partner.benefit4', descKey: 'partner.benefit4Desc', iconClass: 'text-orange-600', bgClass: 'bg-orange-100' },
 ];
 ---
 
 <BaseLayout
   title="Vinn partenere BienBon — Redwir gaspi, ogmant ou reveni"
-  description="Zwenn rezo BienBon ek vann ou prodwi pa vann kouma panye sipriz a pri redrwi. Zero invendu, nouvo klyan, reveni ansipleman."
+  description="Zwenn rezo BienBon ek vann ou prodwi pa vann kouma panye sipriz a pri redrwi."
   locale={locale}
   canonicalPath="/devenir-partenaire"
 >
   <Header locale={locale} currentPath="/kr/vinn-partenaire" />
+  <Breadcrumb locale={locale} items={[{ label: t(locale, 'breadcrumb.becomePartner') }]} />
   <main id="main-content">
     <section class="bg-gradient-to-br from-orange-100 to-neutral-50 py-14 sm:py-20">
       <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
           <div class="flex-1 text-center lg:text-left">
-            <h1 class="text-4xl sm:text-5xl font-extrabold text-neutral-900">
-              {t(locale, 'partner.title')}
-            </h1>
-            <p class="mt-4 text-lg text-neutral-600 max-w-xl mx-auto lg:mx-0">
-              {t(locale, 'partner.subtitle')}
-            </p>
+            <h1 class="text-4xl sm:text-5xl font-extrabold text-neutral-900">{t(locale, 'partner.title')}</h1>
+            <p class="mt-4 text-lg text-neutral-600 max-w-xl mx-auto lg:mx-0">{t(locale, 'partner.subtitle')}</p>
           </div>
           <div class="flex-shrink-0">
-            <img
-              src="/images/illustrations/vitrine-page-partenaire.png"
-              alt=""
-              class="w-full max-w-md mx-auto"
-            />
+            <img src="/images/illustrations/vitrine-page-partenaire.png" alt="" class="w-full max-w-md mx-auto" />
           </div>
         </div>
       </div>
@@ -71,9 +43,7 @@ const benefits = [
 
     <section class="py-16 sm:py-20 bg-white" aria-labelledby="benefits-heading">
       <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 id="benefits-heading" class="text-2xl sm:text-3xl font-extrabold text-neutral-900 text-center mb-12">
-          Porkwa zwenn BienBon?
-        </h2>
+        <h2 id="benefits-heading" class="text-2xl sm:text-3xl font-extrabold text-neutral-900 text-center mb-12">Porkwa zwenn BienBon?</h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {benefits.map((benefit) => (
             <article class="bg-neutral-50 rounded-xl p-6 text-center">
@@ -88,20 +58,17 @@ const benefits = [
       </div>
     </section>
 
-    <section class="py-16 sm:py-20 bg-white" aria-labelledby="contact-heading">
-      <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <h2 id="contact-heading" class="text-2xl sm:text-3xl font-extrabold text-neutral-900 mb-4">
-          {t(locale, 'partner.contactTitle')}
-        </h2>
-        <p class="text-neutral-600 mb-8">{t(locale, 'partner.contactDesc')}</p>
-        <div class="bg-green-50 border border-green-200 rounded-xl p-8">
-          <a
-            href={`mailto:${t(locale, 'partner.contactEmail')}`}
-            class="text-xl font-extrabold text-green-700 hover:text-green-900 transition-colors underline underline-offset-4"
-          >
-            {t(locale, 'partner.contactEmail')}
-          </a>
-          <p class="mt-4 text-sm text-neutral-500">Nou reponn dan 48 er travay.</p>
+    <section class="py-16 sm:py-20 bg-white" aria-labelledby="register-heading">
+      <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 id="register-heading" class="text-2xl sm:text-3xl font-extrabold text-neutral-900 mb-4 text-center">{t(locale, 'partner.contactTitle')}</h2>
+        <p class="text-neutral-600 mb-8 text-center">{t(locale, 'partner.contactDesc')}</p>
+        <div class="bg-neutral-50 border border-neutral-200 rounded-xl p-6 sm:p-8">
+          <PartnerRegistrationForm
+            client:visible
+            translations={mfeTranslations.partner}
+            cguUrl="/cgu"
+            privacyUrl="/politique-de-confidentialite"
+          />
         </div>
       </div>
     </section>

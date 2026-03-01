@@ -1,6 +1,10 @@
 ---
 import type { Locale } from '../i18n/utils';
 import { getAlternateUrls } from '../i18n/utils';
+import CookieBanner from '../components/CookieBanner';
+import fr from '../i18n/fr.json';
+import en from '../i18n/en.json';
+import mfe from '../i18n/mfe.json';
 
 interface Props {
   title: string;
@@ -24,7 +28,7 @@ const orgSchema = JSON.stringify({
   '@type': 'Organization',
   name: 'BienBon',
   url: 'https://bienbon.mu',
-  logo: 'https://bienbon.mu/logo.svg',
+  logo: 'https://bienbon.mu/images/logos/logo-principal.png',
   description: 'La première marketplace anti-gaspillage alimentaire à l\'île Maurice.',
   contactPoint: {
     '@type': 'ContactPoint',
@@ -36,6 +40,9 @@ const orgSchema = JSON.stringify({
     'https://www.instagram.com/bienbon.mu',
   ],
 });
+
+const cookieTranslations = locale === 'fr' ? fr.cookies : locale === 'en' ? en.cookies : mfe.cookies;
+const privacyUrl = locale === 'fr' ? '/politique-de-confidentialite' : locale === 'en' ? '/en/privacy-policy' : '/kr/politik-konfidansyalite';
 ---
 
 <!doctype html>
@@ -120,6 +127,11 @@ const orgSchema = JSON.stringify({
 
     <slot />
 
-    <!-- prefers-reduced-motion: disable animations via JS for browsers that don't support the CSS media query -->
+    <!-- Cookie Banner (US-W012) -->
+    <CookieBanner
+      client:load
+      translations={cookieTranslations}
+      privacyUrl={privacyUrl}
+    />
   </body>
 </html>

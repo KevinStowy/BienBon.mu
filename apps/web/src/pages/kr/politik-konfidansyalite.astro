@@ -1,0 +1,40 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import { t } from '../../i18n/utils';
+
+const locale = 'mfe' as const;
+---
+
+<BaseLayout
+  title="Politik Konfidansyalite — BienBon"
+  description="Politik konfidansyalite BienBon. Kouma nou kolekt, itiliz ek protez ou done personel."
+  locale={locale}
+  canonicalPath="/politique-de-confidentialite"
+>
+  <Header locale={locale} currentPath="/kr/politik-konfidansyalite" />
+  <Breadcrumb locale={locale} items={[{ label: t(locale, 'breadcrumb.privacy') }]} />
+  <main id="main-content">
+    <article class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-neutral-900 mb-4">Politik Konfidansyalite</h1>
+      <p class="text-sm text-neutral-500 mb-8">{t(locale, 'legal.version')}: v1.0 | {t(locale, 'legal.lastUpdate')}: 28 fevriye 2026</p>
+
+      <div class="space-y-8 text-neutral-700 text-sm leading-relaxed">
+        <section><h2 class="text-xl font-extrabold text-neutral-900 mb-3">1. Entrodiksyon</h2><p>BienBon Ltd angaze pou protez ou lavi prive. Sa politik konfidansyalite explik kouma nou kolekt, itiliz, partaz ek protez ou done personel, dapre <strong>Data Protection Act 2017</strong> lil Moris.</p></section>
+        <section><h2 class="text-xl font-extrabold text-neutral-900 mb-3">2. Responsab Tretman</h2><address class="not-italic space-y-1"><p><strong>BienBon Ltd</strong></p><p>Port-Louis, lil Moris</p><p>Email DPO: <a href="mailto:privacy@bienbon.mu" class="text-green-700 hover:underline">privacy@bienbon.mu</a></p></address></section>
+        <section><h2 class="text-xl font-extrabold text-neutral-900 mb-3">3. Done Kolekte</h2><p>Nou kolekt: done idantifikasyon (non, email, telefonn), done peyman, done lokalizasyon (si otorize), done itilizasyon ek done teknik.</p></section>
+        <section><h2 class="text-xl font-extrabold text-neutral-900 mb-3">4. Fynalite Tretman</h2><p>Ou done itilize pou: gere ou kont, tret rezervasyon ek peyman, avoy konfirmasyon, amelior servis, prevenir lafraud ek respekte obligasyon legal.</p></section>
+        <section><h2 class="text-xl font-extrabold text-neutral-900 mb-3">5. Baz Legal</h2><p>Nou tretman baze lor: egzekisyon kontra, ou konsentman, nou intere lezitim ek obligasyon legal.</p></section>
+        <section><h2 class="text-xl font-extrabold text-neutral-900 mb-3">6. Partaz Done</h2><p>Nou partaz ou done zis ek: Partenere (pou gere komand), fournis servis (peyman, eberzzman, analitik) ek otorite (si legalman oblige). Nou pa zanme vann ou done personel.</p></section>
+        <section><h2 class="text-xl font-extrabold text-neutral-900 mb-3">7. Dire Konservasyon</h2><p>Ou done konserve pandan ou relasyon ek BienBon ek pandan bann dele legal aplikab.</p></section>
+        <section><h2 class="text-xl font-extrabold text-neutral-900 mb-3">8. Ou Drwa</h2><p>Dapre DPA 2017, ou ena drwa: lakse, rektifikasyon, sipresyon, opozisyon, portabilite ek retr konsentman. Kontakt: <a href="mailto:privacy@bienbon.mu" class="text-green-700 hover:underline">privacy@bienbon.mu</a></p></section>
+        <section><h2 class="text-xl font-extrabold text-neutral-900 mb-3">9. Cookies</h2><p>Nou sit itiliz cookies teknik ek cookies analitik (PostHog). Ou kapav konfigire ou navigater pou refiz cookies.</p></section>
+        <section><h2 class="text-xl font-extrabold text-neutral-900 mb-3">10. Sekirite Done</h2><p>Nou mete an plas bann mezir teknik ek organizasyonel apropriye. Bann kominikasyon sifre via HTTPS/TLS.</p></section>
+        <section><h2 class="text-xl font-extrabold text-neutral-900 mb-3">11. Kontakt</h2><p>Pou tou kestion, kontakte nou DPO: <a href="mailto:privacy@bienbon.mu" class="text-green-700 hover:underline">privacy@bienbon.mu</a>. Ou kapav osi depoze enn plint kot Data Protection Office lil Moris.</p></section>
+      </div>
+    </article>
+  </main>
+  <Footer locale={locale} />
+</BaseLayout>
