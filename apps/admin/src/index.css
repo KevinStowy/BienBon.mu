@@ -1,0 +1,57 @@
+@import "tailwindcss";
+
+@theme {
+  /* BienBon Design Tokens */
+  --color-green-900: #1B5E20;
+  --color-green-700: #2E7D32;
+  --color-green-500: #4CAF50;
+  --color-green-100: #E8F5E9;
+
+  --color-orange-600: #E65100;
+  --color-orange-500: #FF9800;
+  --color-orange-100: #FFF3E0;
+
+  --color-neutral-900: #1A1A1A;
+  --color-neutral-600: #6B7280;
+  --color-neutral-400: #9CA3AF;
+  --color-neutral-200: #E5E7EB;
+  --color-neutral-50: #F7F4EF;
+
+  --color-red-700: #C62828;
+  --color-red-100: #FFEBEE;
+
+  --color-blue-700: #1565C0;
+  --color-blue-100: #E3F2FD;
+
+  --font-family-sans: 'Nunito', sans-serif;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.10);
+  --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: 'Nunito', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  background-color: #F7F4EF;
+  color: #1A1A1A;
+}
+
+:focus-visible {
+  outline: 2px solid #4CAF50;
+  outline-offset: 2px;
+}
