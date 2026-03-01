@@ -1,0 +1,181 @@
+{
+  "@@locale": "fr",
+  "appName": "BienBon",
+  "@appName": {
+    "description": "Application name"
+  },
+  "appTagline": "Sauvez des paniers surprise !",
+  "@appTagline": {
+    "description": "Application tagline"
+  },
+  "tabHome": "Accueil",
+  "@tabHome": {
+    "description": "Bottom nav: Home tab"
+  },
+  "tabExplore": "Explorer",
+  "@tabExplore": {
+    "description": "Bottom nav: Explore tab"
+  },
+  "tabOrders": "Commandes",
+  "@tabOrders": {
+    "description": "Bottom nav: Orders tab"
+  },
+  "tabFavorites": "Favoris",
+  "@tabFavorites": {
+    "description": "Bottom nav: Favorites tab"
+  },
+  "tabProfile": "Profil",
+  "@tabProfile": {
+    "description": "Bottom nav: Profile tab"
+  },
+  "onboardingTitle1": "Sauvez des paniers",
+  "onboardingSubtitle1": "Recuperez des paniers surprise de commerces locaux a prix reduit et contribuez a reduire le gaspillage alimentaire a Maurice.",
+  "onboardingTitle2": "Retrait simple et rapide",
+  "onboardingSubtitle2": "Reservez en quelques clics et presentez votre QR code lors du retrait. Simple, rapide, sans contact.",
+  "onboardingTitle3": "Agissez pour la planete",
+  "onboardingSubtitle3": "Chaque panier sauve, c'est 1,2 kg de CO2 evite. Ensemble, protegeon notre belle ile Maurice !",
+  "onboardingSkip": "Passer",
+  "onboardingNext": "Suivant",
+  "onboardingGetStarted": "Commencer",
+  "loginTitle": "Connexion",
+  "loginEmail": "Email",
+  "loginPassword": "Mot de passe",
+  "loginButton": "Se connecter",
+  "loginNoAccount": "Pas encore de compte ?",
+  "loginRegisterLink": "S'inscrire",
+  "loginEmailHint": "vous@exemple.com",
+  "loginPasswordHint": "••••••••",
+  "loginEmailRequired": "Veuillez saisir votre email",
+  "loginEmailInvalid": "Email invalide",
+  "loginPasswordRequired": "Veuillez saisir votre mot de passe",
+  "registerTitle": "Creer un compte",
+  "registerName": "Prenom et nom",
+  "registerNameHint": "Marie Dupont",
+  "registerEmail": "Email",
+  "registerPassword": "Mot de passe",
+  "registerConfirmPassword": "Confirmer le mot de passe",
+  "registerButton": "Creer mon compte",
+  "registerAlreadyAccount": "Deja un compte ?",
+  "registerLoginLink": "Se connecter",
+  "homeHeroTitle": "Sauvez des paniers surprise !",
+  "homeHeroSubtitle": "Jusqu'a -70% sur les invendus du jour",
+  "homeNearMeSection": "Pres de chez moi",
+  "homeBasketsSection": "Paniers du moment",
+  "homeSeeAll": "Voir tout",
+  "exploreTitle": "Explorer",
+  "exploreSearchHint": "Rechercher un panier ou un commerce...",
+  "exploreCategoryAll": "Tous",
+  "exploreCategoryBakery": "Boulangerie",
+  "exploreCategoryRestaurant": "Restaurant",
+  "exploreCategorySupermarket": "Supermarche",
+  "exploreCategoryCafe": "Cafe",
+  "exploreResultsCount": "{count} paniers trouves",
+  "@exploreResultsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "exploreNoResults": "Aucun panier trouve",
+  "exploreNoResultsSubtitle": "Essayez une autre recherche",
+  "basketDetailReserveButton": "Reserver ce panier",
+  "basketDetailPickupWindow": "Creneau de retrait",
+  "basketDetailAllergens": "Allergenes possibles",
+  "basketDetailDescription": "Description",
+  "reservationTitle": "Recapitulatif",
+  "reservationStore": "Commerce",
+  "reservationAddress": "Adresse",
+  "reservationPickup": "Creneau de retrait",
+  "reservationQuantity": "Quantite",
+  "reservationOriginalPrice": "Prix original",
+  "reservationDiscount": "Remise BienBon",
+  "reservationTotal": "Total a payer",
+  "reservationConfirmButton": "Confirmer et payer",
+  "reservationCancelButton": "Annuler",
+  "paymentTitle": "Paiement",
+  "paymentMethodCard": "Carte bancaire",
+  "paymentMethodCardSub": "Visa, Mastercard, MCB",
+  "paymentMethodJuice": "Juice by MCB",
+  "paymentMethodJuiceSub": "Paiement mobile",
+  "paymentMethodCash": "Especes au retrait",
+  "paymentMethodCashSub": "Payer directement au commerce",
+  "paymentButton": "Payer maintenant",
+  "paymentSecure": "Paiement securise par BienBon",
+  "confirmationTitle": "Reservation confirmee !",
+  "confirmationSubtitle": "Votre panier est reserve. Presentez votre QR code au commerce lors du retrait.",
+  "confirmationReservationNumber": "N° de reservation",
+  "confirmationViewQR": "Voir mon QR code",
+  "confirmationBackHome": "Retour a l'accueil",
+  "qrPickupTitle": "Mon QR de retrait",
+  "qrPickupInstruction": "Presentez ce QR code au commerce lors du retrait de votre panier.",
+  "qrPickupPin": "Code PIN de secours",
+  "qrPickupStoreInfo": "Details du retrait",
+  "qrPickupStatus": "Paiement confirme",
+  "ordersTitle": "Mes commandes",
+  "ordersTabActive": "En cours",
+  "ordersTabHistory": "Historique",
+  "ordersEmptyTitle": "Aucune commande en cours",
+  "ordersEmptySubtitle": "Reservez un panier pour commencer !",
+  "ordersEmptyAction": "Explorer les paniers",
+  "ordersHistoryEmptyTitle": "Aucun historique",
+  "ordersHistoryEmptySubtitle": "Vos paniers passes apparaitront ici.",
+  "ordersStatusActive": "En cours",
+  "ordersStatusCompleted": "Retire",
+  "ordersStatusCancelled": "Annule",
+  "favoritesTitle": "Mes favoris",
+  "favoritesCount": "{count} commerces favoris",
+  "@favoritesCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "favoritesEmptyTitle": "Aucun favori",
+  "favoritesEmptySubtitle": "Ajoutez des commerces a vos favoris pour les retrouver facilement.",
+  "favoritesDiscover": "Decouvrir les commerces",
+  "profileTitle": "Mon profil",
+  "profileSectionPreferences": "Preferences",
+  "profileSectionAccount": "Mon compte",
+  "profileSectionSupport": "Support",
+  "profileFoodPreferences": "Preferences alimentaires",
+  "profileNotifications": "Notifications",
+  "profileLanguage": "Langue",
+  "profileReferralCode": "Mon code parrainage",
+  "profileOrders": "Historique des commandes",
+  "profilePaymentMethods": "Moyens de paiement",
+  "profileHelp": "Aide et FAQ",
+  "profileContact": "Contacter le support",
+  "profilePrivacy": "Politique de confidentialite",
+  "profileTerms": "Conditions d'utilisation",
+  "profileLogout": "Deconnexion",
+  "profileLogoutConfirmTitle": "Deconnexion",
+  "profileLogoutConfirmMessage": "Etes-vous sur de vouloir vous deconnecter ?",
+  "profileLogoutConfirm": "Deconnecter",
+  "commonCancel": "Annuler",
+  "commonBack": "Retour",
+  "commonShare": "Partager",
+  "commonLoading": "Chargement...",
+  "commonError": "Une erreur est survenue",
+  "commonRetry": "Reessayer",
+  "currencyMUR": "MUR",
+  "basketRemaining": "{count} panier(s) restant(s)",
+  "@basketRemaining": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "storeRating": "Note",
+  "storeDistance": "Distance",
+  "storeBasketCount": "{count} panier(s) disponible(s)",
+  "@storeBasketCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
+}
