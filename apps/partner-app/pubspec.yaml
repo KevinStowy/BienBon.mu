@@ -1,0 +1,52 @@
+name: partner_app
+description: BienBon Partner App — manage baskets, validate pickups, track revenue.
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.7.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # State management
+  flutter_riverpod: ^2.6.1
+
+  # Navigation
+  go_router: ^14.6.3
+
+  # Fonts
+  google_fonts: ^6.2.1
+
+  # Persistence
+  shared_preferences: ^2.3.3
+
+  # Network
+  http: ^1.2.2
+
+  # Connectivity
+  connectivity_plus: ^6.1.0
+
+  # Image
+  cached_network_image: ^3.4.1
+
+  # QR display
+  qr_flutter: ^4.1.0
+
+  # Intl
+  intl: ^0.20.1
+
+  cupertino_icons: ^1.0.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/

@@ -1,0 +1,107 @@
+{
+  "@@locale": "fr",
+  "appTitle": "BienBon Partner",
+  "@appTitle": { "description": "Application title" },
+
+  "loginTitle": "BienBon Partner",
+  "loginSubtitle": "Gerez vos paniers, validez les retraits et suivez vos revenus.",
+  "loginEmailLabel": "Email partenaire",
+  "loginPasswordLabel": "Mot de passe",
+  "loginButton": "Se connecter",
+  "loginForgotPassword": "Mot de passe oublie ?",
+  "loginNoAccount": "Vous n'avez pas encore de compte partenaire ?\nContactez-nous sur partenaires@bienbon.mu",
+
+  "dashboardTitle": "Tableau de bord",
+  "dashboardGreeting": "Bonjour, {name}",
+  "@dashboardGreeting": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "dashboardSubtitle": "Statistiques du jour",
+  "dashboardBasketsPublished": "Paniers publies",
+  "dashboardReservations": "Reservations",
+  "dashboardPickupsValidated": "Retraits valides",
+  "dashboardRevenue": "Chiffre d'affaires",
+  "dashboardWeeklySales": "Ventes cette semaine",
+  "dashboardQuickActions": "Actions rapides",
+  "dashboardCreateBasket": "Creer un panier",
+  "dashboardScanPickup": "Scanner un retrait",
+  "dashboardMyStores": "Mes commerces",
+  "dashboardRecentActivity": "Activite recente",
+
+  "basketsTitle": "Mes paniers",
+  "basketCreate": "Creer un panier",
+  "basketEdit": "Modifier",
+  "basketPublish": "Publier",
+  "basketUnpublish": "Retirer",
+  "basketStock": "Stock",
+  "basketOriginalPrice": "Prix original",
+  "basketDiscountedPrice": "Prix reduit",
+  "basketCategory": "Categorie",
+  "basketPickupTime": "Heure de retrait",
+  "basketStatusDraft": "Brouillon",
+  "basketStatusPublished": "Publie",
+  "basketStatusSoldOut": "Epuise",
+  "basketReservationsCount": "{count} reservation(s)",
+  "@basketReservationsCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+
+  "pickupTitle": "Valider un retrait",
+  "pickupScanQr": "Scanner QR",
+  "pickupEnterPin": "Saisir PIN",
+  "pickupValidate": "Valider le retrait",
+  "pickupConfirmed": "Retrait confirme !",
+  "pickupSuccess": "Le retrait a ete valide avec succes.",
+  "pickupScanAnother": "Scanner un autre retrait",
+  "pickupPinHint": "0000",
+  "pickupPinInstruction": "Le client doit vous communiquer son code PIN a 4 chiffres.",
+
+  "reservationsTitle": "Reservations",
+  "reservationDetail": "Detail de la reservation",
+  "reservationStatusConfirmed": "Confirme",
+  "reservationStatusReady": "Pret",
+  "reservationStatusPickedUp": "Retire",
+  "reservationStatusNoShow": "Absent",
+  "reservationCode": "Code de retrait",
+  "reservationValidate": "Valider le retrait",
+
+  "revenueTitle": "Mes reversements",
+  "revenueCurrent": "Chiffre d'affaires brut",
+  "revenueCommission": "Commission BienBon (25%)",
+  "revenueNet": "Net partenaire",
+  "revenueHistory": "Historique des reversements",
+  "revenueThisMonth": "Ce mois-ci",
+  "revenuePaid": "Vire",
+
+  "profileTitle": "Profil & Parametres",
+  "profileMyStore": "Mon commerce",
+  "profileHours": "Horaires du commerce",
+  "profileMyStores": "Mes commerces",
+  "profilePayouts": "Reversements",
+  "profileNotifications": "Notifications",
+  "profileLanguage": "Langue",
+  "profileHelp": "Aide & Support",
+  "profileTerms": "Conditions partenaires",
+  "profilePrivacy": "Politique de confidentialite",
+  "profileLogout": "Se deconnecter",
+  "profileLogoutConfirm": "Etes-vous sur de vouloir vous deconnecter ?",
+  "profileVerified": "Partenaire verifie",
+
+  "storeActive": "Actif",
+  "storeSuspended": "Suspendu",
+  "storePending": "En attente",
+  "storeDetailTitle": "Detail du commerce",
+
+  "commonSave": "Enregistrer",
+  "commonCancel": "Annuler",
+  "commonConfirm": "Confirmer",
+  "commonClose": "Fermer",
+  "commonLoading": "Chargement...",
+  "commonRequired": "Requis",
+  "commonError": "Une erreur est survenue",
+  "commonSuccess": "Succes"
+}
