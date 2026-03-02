@@ -4,9 +4,10 @@ import { createColumnHelper } from '@tanstack/react-table'
 import { DataTable } from '../../components/ui/DataTable'
 import { Badge, statusToBadgeVariant } from '../../components/ui/Badge'
 import { TabNav } from '../../components/ui/TabNav'
-import { mockClaims, mockReviews, type MockClaim, type MockReview } from '../../mocks/data'
-import { formatDate, cn } from '../../lib/utils'
 import { Trash2 } from 'lucide-react'
+import { useClaims, useReviews, useDeleteReview } from '../../hooks/use-claims'
+import type { Claim, Review } from '../../api/types'
+import { formatDate, cn } from '../../lib/utils'
 import { Route as rootRoute } from '../__root'
 
 export const Route = createRoute({
@@ -15,20 +16,14 @@ export const Route = createRoute({
   component: ModerationPage,
 })
 
-const claimColumnHelper = createColumnHelper<MockClaim>()
-const reviewColumnHelper = createColumnHelper<MockReview>()
-
-const urgencyClasses: Record<MockClaim['urgency'], string> = {
-  LOW: 'bg-[#E8F5E9] border-l-4 border-l-[#4CAF50]',
-  MEDIUM: 'bg-[#FFF3E0] border-l-4 border-l-[#FF9800]',
-  HIGH: 'bg-[#FFEBEE] border-l-4 border-l-[#C62828]',
-}
+const claimColumnHelper = createColumnHelper<Claim>()
+const reviewColumnHelper = createColumnHelper<Review>()
 
 const claimColumns = [
   claimColumnHelper.accessor('id', {
     header: 'ID',
     cell: (info) => (
-      <span className="text-xs font-mono text-[#9CA3AF]">{info.getValue()}</span>
+      <span className="text-xs font-mono text-[#9CA3AF]">{info.getValue().slice(0, 8)}</span>
     ),
   }),
   claimColumnHelper.accessor('consumerName', {
@@ -51,13 +46,16 @@ const claimColumns = [
       return <span className="text-sm text-[#6B7280]">{labels[info.getValue()] ?? info.getValue()}</span>
     },
   }),
-  claimColumnHelper.accessor('urgency', {
+  claimColumnHelper.display({
+    id: 'urgency',
     header: 'Urgence',
     cell: (info) => {
+      const ageHours = info.row.original.ageHours ?? 0
+      const level = ageHours >= 48 ? 'HIGH' : ageHours >= 24 ? 'MEDIUM' : 'LOW'
       const labels: Record<string, string> = { LOW: 'Faible', MEDIUM: 'Moyen', HIGH: 'Eleve' }
       return (
-        <Badge variant={statusToBadgeVariant(info.getValue())}>
-          {labels[info.getValue()] ?? info.getValue()}
+        <Badge variant={statusToBadgeVariant(level)}>
+          {labels[level]}
         </Badge>
       )
     },
@@ -67,6 +65,7 @@ const claimColumns = [
     cell: (info) => {
       const labels: Record<string, string> = {
         OPEN: 'Ouverte',
+        IN_PROGRESS: 'En examen',
         IN_REVIEW: 'En examen',
         RESOLVED: 'Resolue',
         REJECTED: 'Rejetee',
@@ -110,12 +109,6 @@ const reviewColumns = [
       </span>
     ),
   }),
-  reviewColumnHelper.accessor('comment', {
-    header: 'Commentaire',
-    cell: (info) => (
-      <span className="text-sm text-[#6B7280] max-w-xs block truncate">{info.getValue()}</span>
-    ),
-  }),
   reviewColumnHelper.accessor('flagged', {
     header: 'Signal',
     cell: (info) =>
@@ -136,27 +129,31 @@ const reviewColumns = [
   reviewColumnHelper.display({
     id: 'actions',
     header: 'Actions',
-    cell: (info) => (
-      <button
-        aria-label={`Supprimer l'avis de ${info.row.original.consumerName}`}
-        onClick={(e) => e.stopPropagation()}
-        className="inline-flex items-center gap-1 px-2 py-1 text-xs font-semibold text-[#C62828] hover:bg-[#FFEBEE] rounded transition-colors"
-      >
-        <Trash2 className="w-3.5 h-3.5" aria-hidden="true" />
-        Supprimer
-      </button>
-    ),
+    cell: (info) => {
+      return (
+        <DeleteReviewButton reviewId={info.row.original.id} consumerName={info.row.original.consumerName} />
+      )
+    },
   }),
 ]
 
-const tabs = [
-  {
-    id: 'claims',
-    label: 'Reclamations',
-    badge: mockClaims.filter((c) => c.status === 'OPEN').length,
-  },
-  { id: 'reviews', label: 'Avis' },
-]
+function DeleteReviewButton({ reviewId, consumerName }: { reviewId: string; consumerName: string }) {
+  const deleteReview = useDeleteReview()
+
+  return (
+    <button
+      aria-label={`Supprimer l'avis de ${consumerName}`}
+      onClick={(e) => {
+        e.stopPropagation()
+        deleteReview.mutate({ id: reviewId, reason: 'Admin moderation' })
+      }}
+      className="inline-flex items-center gap-1 px-2 py-1 text-xs font-semibold text-[#C62828] hover:bg-[#FFEBEE] rounded transition-colors"
+    >
+      <Trash2 className="w-3.5 h-3.5" aria-hidden="true" />
+      Supprimer
+    </button>
+  )
+}
 
 function ModerationPage() {
   const navigate = useNavigate()
@@ -164,21 +161,35 @@ function ModerationPage() {
   const [page, setPage] = useState(1)
   const PAGE_SIZE = 10
 
-  const claimsData = mockClaims
-  const reviewsData = mockReviews
+  const claimsQuery = useClaims()
+  const reviewsQuery = useReviews()
 
-  const handleClaimClick = (claim: MockClaim) => {
+  const claims = claimsQuery.data?.data ?? []
+  const reviews = reviewsQuery.data?.data ?? []
+
+  const openClaimsCount = claims.filter((c) => c.status === 'OPEN').length
+
+  const tabs = [
+    {
+      id: 'claims',
+      label: 'Reclamations',
+      badge: openClaimsCount > 0 ? openClaimsCount : undefined,
+    },
+    { id: 'reviews', label: 'Avis' },
+  ]
+
+  const handleClaimClick = (claim: Claim) => {
     void navigate({
       to: '/moderation/claims/$claimId',
       params: { claimId: claim.id },
     })
   }
 
-  const claimsPageCount = Math.max(1, Math.ceil(claimsData.length / PAGE_SIZE))
-  const pagedClaims = claimsData.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
+  const claimsPageCount = Math.max(1, Math.ceil(claims.length / PAGE_SIZE))
+  const pagedClaims = claims.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
-  const reviewsPageCount = Math.max(1, Math.ceil(reviewsData.length / PAGE_SIZE))
-  const pagedReviews = reviewsData.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
+  const reviewsPageCount = Math.max(1, Math.ceil(reviews.length / PAGE_SIZE))
+  const pagedReviews = reviews.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
   return (
     <div className="flex flex-col gap-6">
@@ -193,14 +204,21 @@ function ModerationPage() {
       {activeTab === 'claims' ? (
         <div className="flex items-center gap-4 text-xs text-[#6B7280]">
           <span className="font-semibold">Urgence :</span>
-          {(['LOW', 'MEDIUM', 'HIGH'] as const).map((level) => (
-            <span
-              key={level}
-              className={cn('px-2 py-0.5 rounded text-[#1A1A1A]', urgencyClasses[level])}
-            >
-              {level === 'LOW' ? 'Faible' : level === 'MEDIUM' ? 'Moyen' : 'Eleve'}
-            </span>
-          ))}
+          {(['LOW', 'MEDIUM', 'HIGH'] as const).map((level) => {
+            const urgencyClasses: Record<string, string> = {
+              LOW: 'bg-[#E8F5E9] border-l-4 border-l-[#4CAF50]',
+              MEDIUM: 'bg-[#FFF3E0] border-l-4 border-l-[#FF9800]',
+              HIGH: 'bg-[#FFEBEE] border-l-4 border-l-[#C62828]',
+            }
+            return (
+              <span
+                key={level}
+                className={cn('px-2 py-0.5 rounded text-[#1A1A1A]', urgencyClasses[level])}
+              >
+                {level === 'LOW' ? 'Faible' : level === 'MEDIUM' ? 'Moyen' : 'Eleve'}
+              </span>
+            )
+          })}
         </div>
       ) : null}
 
@@ -222,6 +240,7 @@ function ModerationPage() {
               pageCount={claimsPageCount}
               onPageChange={setPage}
               onRowClick={handleClaimClick}
+              isLoading={claimsQuery.isLoading}
               emptyMessage="Aucune reclamation"
             />
           ) : (
@@ -231,6 +250,7 @@ function ModerationPage() {
               page={page}
               pageCount={reviewsPageCount}
               onPageChange={setPage}
+              isLoading={reviewsQuery.isLoading}
               emptyMessage="Aucun avis"
             />
           )}

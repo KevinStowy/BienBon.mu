@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import type { Consumer } from '../api/types'
 import { mockConsumers } from '../mocks/extended-data'
+import { getAuthHeaders } from '../api/client'
 
 export interface ConsumerFilters {
   status?: string
@@ -22,7 +23,8 @@ export function useConsumers(filters: ConsumerFilters = {}) {
             .filter(([, v]) => v !== undefined && v !== '' && v !== 'ALL')
             .map(([k, v]) => [k, String(v)]),
         )
-        const res = await fetch(`/api/v1/admin/consumers?${params}`)
+        const headers = await getAuthHeaders()
+        const res = await fetch(`/api/v1/admin/consumers?${params}`, { headers })
         if (!res.ok) throw new Error('API unavailable')
         return (await res.json()) as { data: Consumer[]; total: number }
       } catch {
@@ -51,7 +53,8 @@ export function useConsumer(id: string) {
     queryKey: ['consumers', id],
     queryFn: async () => {
       try {
-        const res = await fetch(`/api/v1/admin/consumers/${id}`)
+        const headers = await getAuthHeaders()
+        const res = await fetch(`/api/v1/admin/consumers/${id}`, { headers })
         if (!res.ok) throw new Error('API unavailable')
         return (await res.json()) as Consumer
       } catch {
@@ -68,9 +71,10 @@ export function useSuspendConsumer() {
   return useMutation({
     mutationFn: async ({ id, reason }: { id: string; reason: string }) => {
       try {
+        const headers = await getAuthHeaders()
         const res = await fetch(`/api/v1/admin/consumers/${id}/suspend`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers,
           body: JSON.stringify({ reason }),
         })
         if (!res.ok) throw new Error('API unavailable')
@@ -91,9 +95,10 @@ export function useReactivateConsumer() {
   return useMutation({
     mutationFn: async ({ id, comment }: { id: string; comment?: string }) => {
       try {
+        const headers = await getAuthHeaders()
         const res = await fetch(`/api/v1/admin/consumers/${id}/reactivate`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers,
           body: JSON.stringify({ comment }),
         })
         if (!res.ok) throw new Error('API unavailable')
@@ -114,9 +119,10 @@ export function useBanConsumer() {
   return useMutation({
     mutationFn: async ({ id, reason }: { id: string; reason: string }) => {
       try {
+        const headers = await getAuthHeaders()
         const res = await fetch(`/api/v1/admin/consumers/${id}/ban`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers,
           body: JSON.stringify({ reason }),
         })
         if (!res.ok) throw new Error('API unavailable')

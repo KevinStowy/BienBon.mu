@@ -2,7 +2,7 @@ import { supabase } from '../auth/supabase'
 
 const API_BASE = import.meta.env['VITE_API_URL'] as string | undefined ?? '/api'
 
-async function getAuthHeaders(): Promise<Record<string, string>> {
+export async function getAuthHeaders(): Promise<Record<string, string>> {
   const { data } = await supabase.auth.getSession()
   const token = data.session?.access_token
   if (token) {

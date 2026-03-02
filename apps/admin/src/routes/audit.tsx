@@ -3,7 +3,8 @@ import { useState } from 'react'
 import { createColumnHelper } from '@tanstack/react-table'
 import { DataTable } from '../components/ui/DataTable'
 import { SearchInput } from '../components/ui/SearchInput'
-import { mockAuditEntries, type MockAuditEntry } from '../mocks/data'
+import { useAuditLog } from '../hooks/use-audit'
+import type { AuditEntry, AuditCategory } from '../api/types'
 import { formatDateTime } from '../lib/utils'
 import { Route as rootRoute } from './__root'
 
@@ -13,15 +14,22 @@ export const Route = createRoute({
   component: AuditPage,
 })
 
-const columnHelper = createColumnHelper<MockAuditEntry>()
+const columnHelper = createColumnHelper<AuditEntry>()
 
-const categoryColors: Record<MockAuditEntry['category'], string> = {
+const categoryColors: Record<string, string> = {
   AUTH: 'bg-[#E3F2FD] text-[#1565C0]',
   PARTNER: 'bg-[#E8F5E9] text-[#2E7D32]',
   CONSUMER: 'bg-[#FFF3E0] text-[#E65100]',
   FINANCE: 'bg-[#F3E5F5] text-[#6A1B9A]',
   SETTINGS: 'bg-[#E5E7EB] text-[#6B7280]',
   CLAIM: 'bg-[#FFEBEE] text-[#C62828]',
+  RESERVATION: 'bg-[#E8F5E9] text-[#2E7D32]',
+  PICKUP: 'bg-[#FFF3E0] text-[#E65100]',
+  BASKET: 'bg-[#E3F2FD] text-[#1565C0]',
+  PAYMENT: 'bg-[#F3E5F5] text-[#6A1B9A]',
+  MODERATION: 'bg-[#FFEBEE] text-[#C62828]',
+  ADMIN: 'bg-[#E5E7EB] text-[#6B7280]',
+  FRAUD: 'bg-[#FFEBEE] text-[#C62828]',
 }
 
 const columns = [
@@ -48,7 +56,7 @@ const columns = [
       const cat = info.getValue()
       return (
         <span
-          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${categoryColors[cat]}`}
+          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${categoryColors[cat] ?? 'bg-[#E5E7EB] text-[#6B7280]'}`}
         >
           {cat}
         </span>
@@ -63,21 +71,27 @@ const columns = [
       </span>
     ),
   }),
-  columnHelper.accessor('details', {
-    header: 'Details',
+  columnHelper.accessor('summary', {
+    header: 'Resume',
     cell: (info) => (
-      <span className="text-sm text-[#6B7280] max-w-sm block">{info.getValue()}</span>
+      <span className="text-sm text-[#6B7280] max-w-sm block">{info.getValue() || info.row.original.details}</span>
     ),
   }),
 ]
 
-const CATEGORIES: MockAuditEntry['category'][] = [
+const CATEGORIES: AuditCategory[] = [
   'AUTH',
   'PARTNER',
   'CONSUMER',
   'FINANCE',
   'SETTINGS',
   'CLAIM',
+  'RESERVATION',
+  'PICKUP',
+  'BASKET',
+  'PAYMENT',
+  'MODERATION',
+  'ADMIN',
 ]
 
 function AuditPage() {
@@ -86,24 +100,16 @@ function AuditPage() {
   const [page, setPage] = useState(1)
   const PAGE_SIZE = 10
 
-  const filtered = mockAuditEntries
-    .filter((e) => {
-      if (categoryFilter !== 'ALL') return e.category === categoryFilter
-      return true
-    })
-    .filter((e) => {
-      if (!search) return true
-      const q = search.toLowerCase()
-      return (
-        e.userName.toLowerCase().includes(q) ||
-        e.action.toLowerCase().includes(q) ||
-        e.details.toLowerCase().includes(q)
-      )
-    })
-    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+  const auditQuery = useAuditLog({
+    search: search || undefined,
+    category: categoryFilter !== 'ALL' ? categoryFilter as AuditCategory : undefined,
+    page,
+    limit: PAGE_SIZE,
+  })
 
-  const pageCount = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
-  const paged = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
+  const entries = auditQuery.data?.data ?? []
+  const total = auditQuery.data?.total ?? 0
+  const pageCount = Math.max(1, Math.ceil(total / PAGE_SIZE))
 
   return (
     <div className="flex flex-col gap-6">
@@ -141,17 +147,18 @@ function AuditPage() {
           </div>
 
           <p className="text-xs text-[#9CA3AF] ml-auto">
-            {filtered.length} entree{filtered.length !== 1 ? 's' : ''} trouvee{filtered.length !== 1 ? 's' : ''}
+            {total} entree{total !== 1 ? 's' : ''} trouvee{total !== 1 ? 's' : ''}
           </p>
         </div>
 
         <div className="p-4">
           <DataTable
             columns={columns}
-            data={paged}
+            data={entries}
             page={page}
             pageCount={pageCount}
             onPageChange={setPage}
+            isLoading={auditQuery.isLoading}
             emptyMessage="Aucune entree d'audit trouvee"
           />
         </div>

@@ -7,18 +7,18 @@ import '../../../../core/router/route_names.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../auth/providers/auth_provider.dart';
+import '../../providers/profile_provider.dart';
 
+/// Profile screen (US-C054 to US-C057).
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authStateProvider);
+    final profileAsync = ref.watch(profileProvider);
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
-
-    final displayName = authState.userName ?? 'Utilisateur';
-    final displayEmail = authState.userEmail ?? '';
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -32,7 +32,7 @@ class ProfileScreen extends ConsumerWidget {
             label: 'Modifier le profil',
             child: IconButton(
               icon: const Icon(Icons.edit_outlined),
-              onPressed: () {},
+              onPressed: () => context.pushNamed(RouteNames.profileEdit),
             ),
           ),
         ],
@@ -44,18 +44,88 @@ class ProfileScreen extends ConsumerWidget {
             Container(
               color: AppColors.white,
               padding: const EdgeInsets.all(AppSpacing.lg),
-              child: Column(
-                children: [
-                  // Avatar
-                  Semantics(
-                    label: 'Photo de profil de $displayName',
-                    child: CircleAvatar(
+              child: profileAsync.when(
+                data: (profile) => Column(
+                  children: [
+                    // Avatar
+                    Semantics(
+                      label: 'Photo de profil de ${profile.displayName}',
+                      child: CircleAvatar(
+                        radius: 44,
+                        backgroundColor: AppColors.green700,
+                        backgroundImage: profile.photoUrl != null
+                            ? NetworkImage(profile.photoUrl!)
+                            : null,
+                        child: profile.photoUrl == null
+                            ? Text(
+                                profile.firstName.isNotEmpty
+                                    ? profile.firstName[0].toUpperCase()
+                                    : 'U',
+                                style:
+                                    theme.textTheme.displayLarge?.copyWith(
+                                  color: AppColors.white,
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: 36,
+                                ),
+                              )
+                            : null,
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    Text(profile.displayName,
+                        style: theme.textTheme.headlineLarge),
+                    if (profile.email != null) ...[
+                      const SizedBox(height: AppSpacing.xs),
+                      Text(
+                        profile.email!,
+                        style: theme.textTheme.bodyLarge?.copyWith(
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                    ],
+                    const SizedBox(height: AppSpacing.md),
+                    // Stats row
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        _StatItem(
+                          label: 'Paniers\nsauves',
+                          value: '${profile.totalBasketsSaved}',
+                        ),
+                        Container(
+                          width: 1,
+                          height: 40,
+                          color: AppColors.divider,
+                        ),
+                        _StatItem(
+                          label: 'CO2 evite',
+                          value:
+                              '${(profile.totalBasketsSaved * 1.2).toStringAsFixed(1)} kg',
+                        ),
+                        Container(
+                          width: 1,
+                          height: 40,
+                          color: AppColors.divider,
+                        ),
+                        _StatItem(
+                          label: 'Economies',
+                          value:
+                              '${profile.totalSavings.toStringAsFixed(0)} MUR',
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                loading: () => const Center(
+                  child: CircularProgressIndicator(color: AppColors.green700),
+                ),
+                error: (_, __) => Column(
+                  children: [
+                    CircleAvatar(
                       radius: 44,
                       backgroundColor: AppColors.green700,
                       child: Text(
-                        displayName.isNotEmpty
-                            ? displayName[0].toUpperCase()
-                            : 'U',
+                        (authState.userName ?? 'U')[0].toUpperCase(),
                         style: theme.textTheme.displayLarge?.copyWith(
                           color: AppColors.white,
                           fontWeight: FontWeight.w800,
@@ -63,42 +133,13 @@ class ProfileScreen extends ConsumerWidget {
                         ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  Text(
-                    displayName,
-                    style: theme.textTheme.headlineLarge,
-                  ),
-                  if (displayEmail.isNotEmpty) ...[
-                    const SizedBox(height: AppSpacing.xs),
+                    const SizedBox(height: AppSpacing.md),
                     Text(
-                      displayEmail,
-                      style: theme.textTheme.bodyLarge?.copyWith(
-                        color: AppColors.textSecondary,
-                      ),
+                      authState.userName ?? 'Utilisateur',
+                      style: theme.textTheme.headlineLarge,
                     ),
                   ],
-                  const SizedBox(height: AppSpacing.md),
-                  // Stats row
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      _StatItem(label: 'Paniers\nsauves', value: '12'),
-                      Container(
-                        width: 1,
-                        height: 40,
-                        color: AppColors.divider,
-                      ),
-                      _StatItem(label: 'CO2 evite', value: '14.4 kg'),
-                      Container(
-                        width: 1,
-                        height: 40,
-                        color: AppColors.divider,
-                      ),
-                      _StatItem(label: 'Economies', value: '1 580 MUR'),
-                    ],
-                  ),
-                ],
+                ),
               ),
             ),
             const SizedBox(height: AppSpacing.md),
@@ -109,23 +150,19 @@ class ProfileScreen extends ConsumerWidget {
                 _ProfileItem(
                   icon: Icons.restaurant_menu,
                   label: 'Preferences alimentaires',
-                  onTap: () {},
+                  onTap: () => context.pushNamed(RouteNames.profileEdit),
                 ),
                 _ProfileItem(
                   icon: Icons.notifications_outlined,
                   label: 'Notifications',
-                  onTap: () {},
-                  trailing: Switch(
-                    value: true,
-                    onChanged: (_) {},
-                    activeThumbColor: AppColors.green700,
-                  ),
+                  onTap: () => context.pushNamed(RouteNames.notifications),
                 ),
                 _ProfileItem(
                   icon: Icons.language,
                   label: 'Langue',
-                  onTap: () {},
-                  trailingText: 'Francais',
+                  onTap: () => context.pushNamed(RouteNames.profileEdit),
+                  trailingText: _languageLabel(
+                      profileAsync.valueOrNull?.language ?? 'fr'),
                 ),
               ],
             ),
@@ -134,10 +171,14 @@ class ProfileScreen extends ConsumerWidget {
               title: 'Mon compte',
               items: [
                 _ProfileItem(
+                  icon: Icons.workspace_premium,
+                  label: 'Mon impact et badges',
+                  onTap: () => context.pushNamed(RouteNames.gamification),
+                ),
+                _ProfileItem(
                   icon: Icons.card_giftcard,
                   label: 'Mon code parrainage',
-                  onTap: () => _showReferralCode(context),
-                  trailingText: 'BIEN-001',
+                  onTap: () => context.pushNamed(RouteNames.gamification),
                 ),
                 _ProfileItem(
                   icon: Icons.history,
@@ -145,9 +186,9 @@ class ProfileScreen extends ConsumerWidget {
                   onTap: () => context.goNamed(RouteNames.orders),
                 ),
                 _ProfileItem(
-                  icon: Icons.payment,
-                  label: 'Moyens de paiement',
-                  onTap: () {},
+                  icon: Icons.gavel,
+                  label: 'Mes reclamations',
+                  onTap: () => context.pushNamed(RouteNames.claims),
                 ),
               ],
             ),
@@ -158,12 +199,12 @@ class ProfileScreen extends ConsumerWidget {
                 _ProfileItem(
                   icon: Icons.help_outline,
                   label: 'Aide et FAQ',
-                  onTap: () {},
+                  onTap: () => context.pushNamed(RouteNames.support),
                 ),
                 _ProfileItem(
                   icon: Icons.mail_outline,
                   label: 'Contacter le support',
-                  onTap: () {},
+                  onTap: () => context.pushNamed(RouteNames.support),
                 ),
                 _ProfileItem(
                   icon: Icons.privacy_tip_outlined,
@@ -209,68 +250,12 @@ class ProfileScreen extends ConsumerWidget {
     );
   }
 
-  void _showReferralCode(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(AppRadius.bottomSheet),
-        ),
-      ),
-      builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.all(AppSpacing.lg),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'Mon code parrainage',
-                style: Theme.of(context).textTheme.headlineLarge,
-              ),
-              const SizedBox(height: AppSpacing.md),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.xl,
-                  vertical: AppSpacing.md,
-                ),
-                decoration: BoxDecoration(
-                  color: AppColors.green100,
-                  borderRadius: BorderRadius.circular(AppRadius.card),
-                ),
-                child: Text(
-                  'BIEN-001',
-                  style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                    color: AppColors.green700,
-                    letterSpacing: 4,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-              ),
-              const SizedBox(height: AppSpacing.md),
-              Text(
-                'Partagez ce code avec vos amis.\nIls obtiennent 50 MUR de reduction sur leur premier panier !',
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: AppColors.textSecondary,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: AppSpacing.lg),
-              Semantics(
-                button: true,
-                label: 'Partager le code parrainage',
-                child: ElevatedButton.icon(
-                  onPressed: () => Navigator.pop(context),
-                  icon: const Icon(Icons.share),
-                  label: const Text('Partager mon code'),
-                ),
-              ),
-              const SizedBox(height: AppSpacing.md),
-            ],
-          ),
-        );
-      },
-    );
-  }
+  String _languageLabel(String code) => switch (code) {
+        'fr' => 'Francais',
+        'en' => 'English',
+        'mfe' => 'Kreol',
+        _ => code,
+      };
 
   void _confirmLogout(BuildContext context, WidgetRef ref) {
     showDialog(
@@ -402,14 +387,12 @@ class _ProfileItem extends StatelessWidget {
     required this.icon,
     required this.label,
     required this.onTap,
-    this.trailing,
     this.trailingText,
   });
 
   final IconData icon;
   final String label;
   final VoidCallback onTap;
-  final Widget? trailing;
   final String? trailingText;
 
   @override
@@ -423,30 +406,23 @@ class _ProfileItem extends StatelessWidget {
         onTap: onTap,
         leading: Icon(icon, color: AppColors.green700, size: 22),
         title: Text(label, style: theme.textTheme.bodyLarge),
-        trailing: trailing ??
-            (trailingText != null
-                ? Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        trailingText!,
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: AppColors.textSecondary,
-                        ),
-                      ),
-                      const SizedBox(width: AppSpacing.xs),
-                      const Icon(
-                        Icons.chevron_right,
-                        color: AppColors.textSecondary,
-                        size: 18,
-                      ),
-                    ],
-                  )
-                : const Icon(
-                    Icons.chevron_right,
-                    color: AppColors.textSecondary,
-                    size: 18,
-                  )),
+        trailing: trailingText != null
+            ? Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    trailingText!,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                  const SizedBox(width: AppSpacing.xs),
+                  const Icon(Icons.chevron_right,
+                      color: AppColors.textSecondary, size: 18),
+                ],
+              )
+            : const Icon(Icons.chevron_right,
+                color: AppColors.textSecondary, size: 18),
         minLeadingWidth: 20,
       ),
     );

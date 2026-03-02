@@ -16,6 +16,8 @@ import { SseModule } from './modules/sse/sse.module';
 import { SharedModule } from './shared/shared.module';
 import { PaymentsModule } from './modules/payments/payments.module';
 import { ReviewClaimsModule } from './modules/review-claims/review-claims.module';
+import { AdminDashboardModule } from './modules/admin-dashboard/admin-dashboard.module';
+import { AuditModule } from './modules/audit/audit.module';
 import { HealthController } from './health/health.controller';
 
 @Module({
@@ -35,6 +37,8 @@ import { HealthController } from './health/health.controller';
     OrderingModule,
     PaymentsModule,
     ReviewClaimsModule,
+    AdminDashboardModule,
+    AuditModule,
     SseModule,
   ],
   controllers: [HealthController],

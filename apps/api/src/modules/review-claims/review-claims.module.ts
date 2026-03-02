@@ -21,6 +21,7 @@ import { StateMachineService } from '../../shared/state-machine';
 import { ClaimsController } from './controllers/claims.controller';
 import { ReviewsController } from './controllers/reviews.controller';
 import { AdminReviewClaimsController } from './controllers/admin-review-claims.controller';
+import { AdminReviewsController } from './controllers/admin-reviews.controller';
 
 // Application services
 import { ClaimService } from './application/services/claim.service';
@@ -43,6 +44,7 @@ import { PrismaReviewRepository } from './adapters/prisma/prisma-review.reposito
     ClaimsController,
     ReviewsController,
     AdminReviewClaimsController,
+    AdminReviewsController,
   ],
   providers: [
     // State machine engine (shared)

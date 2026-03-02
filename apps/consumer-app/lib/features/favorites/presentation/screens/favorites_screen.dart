@@ -1,80 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/router/route_names.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../shared/models/store.dart';
+import '../../providers/favorites_provider.dart';
 
-class _FavoriteStore {
-  const _FavoriteStore({
-    required this.id,
-    required this.name,
-    required this.category,
-    required this.rating,
-    required this.basketCount,
-  });
-
-  final String id;
-  final String name;
-  final String category;
-  final double rating;
-  final int basketCount;
-}
-
-final _favoriteStores = [
-  const _FavoriteStore(
-    id: 'store-001',
-    name: 'Boulangerie Paul',
-    category: 'Boulangerie',
-    rating: 4.8,
-    basketCount: 3,
-  ),
-  const _FavoriteStore(
-    id: 'store-004',
-    name: 'Cafe Creole',
-    category: 'Cafe',
-    rating: 4.6,
-    basketCount: 1,
-  ),
-  const _FavoriteStore(
-    id: 'store-003',
-    name: 'Super U Port-Louis',
-    category: 'Supermarche',
-    rating: 4.2,
-    basketCount: 5,
-  ),
-];
-
-class FavoritesScreen extends StatefulWidget {
+/// Favorites screen (US-C050 to US-C053).
+class FavoritesScreen extends ConsumerWidget {
   const FavoritesScreen({super.key});
 
   @override
-  State<FavoritesScreen> createState() => _FavoritesScreenState();
-}
-
-class _FavoritesScreenState extends State<FavoritesScreen> {
-  final Set<String> _favorites = {
-    'store-001',
-    'store-004',
-    'store-003',
-  };
-
-  void _toggleFavorite(String storeId) {
-    setState(() {
-      if (_favorites.contains(storeId)) {
-        _favorites.remove(storeId);
-      } else {
-        _favorites.add(storeId);
-      }
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final visibleStores = _favoriteStores
-        .where((s) => _favorites.contains(s.id))
-        .toList();
+    final favoritesAsync = ref.watch(favoritesProvider);
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -83,18 +24,17 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
         backgroundColor: AppColors.white,
         elevation: 0,
       ),
-      body: visibleStores.isEmpty
-          ? Center(
+      body: favoritesAsync.when(
+        data: (stores) {
+          if (stores.isEmpty) {
+            return Center(
               child: Padding(
                 padding: const EdgeInsets.all(AppSpacing.xl),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(
-                      Icons.favorite_border,
-                      size: 72,
-                      color: AppColors.neutral200,
-                    ),
+                    const Icon(Icons.favorite_border,
+                        size: 72, color: AppColors.neutral200),
                     const SizedBox(height: AppSpacing.md),
                     Text(
                       'Aucun favori',
@@ -121,14 +61,18 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                   ],
                 ),
               ),
-            )
-          : Padding(
+            );
+          }
+
+          return RefreshIndicator(
+            onRefresh: () => ref.read(favoritesProvider.notifier).refresh(),
+            child: Padding(
               padding: const EdgeInsets.all(AppSpacing.md),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '${visibleStores.length} commerce${visibleStores.length > 1 ? "s" : ""} favori${visibleStores.length > 1 ? "s" : ""}',
+                    '${stores.length} commerce${stores.length > 1 ? "s" : ""} favori${stores.length > 1 ? "s" : ""}',
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: AppColors.textSecondary,
                     ),
@@ -143,14 +87,14 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                         mainAxisSpacing: AppSpacing.sm,
                         childAspectRatio: 0.85,
                       ),
-                      itemCount: visibleStores.length,
+                      itemCount: stores.length,
                       itemBuilder: (context, index) {
-                        final store = visibleStores[index];
+                        final store = stores[index];
                         return _FavoriteStoreCard(
                           store: store,
-                          isFavorite: _favorites.contains(store.id),
-                          onToggleFavorite: () =>
-                              _toggleFavorite(store.id),
+                          onToggleFavorite: () => ref
+                              .read(favoritesProvider.notifier)
+                              .toggleFavorite(store.id),
                           onTap: () => context.goNamed(
                             RouteNames.storeDetail,
                             pathParameters: {'storeId': store.id},
@@ -162,6 +106,26 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                 ],
               ),
             ),
+          );
+        },
+        loading: () => const Center(
+          child: CircularProgressIndicator(color: AppColors.green700),
+        ),
+        error: (e, _) => Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('Erreur : $e', style: theme.textTheme.bodyLarge),
+              const SizedBox(height: AppSpacing.md),
+              ElevatedButton(
+                onPressed: () =>
+                    ref.read(favoritesProvider.notifier).refresh(),
+                child: const Text('Reessayer'),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
@@ -169,13 +133,11 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
 class _FavoriteStoreCard extends StatelessWidget {
   const _FavoriteStoreCard({
     required this.store,
-    required this.isFavorite,
     required this.onToggleFavorite,
     required this.onTap,
   });
 
-  final _FavoriteStore store;
-  final bool isFavorite;
+  final Store store;
   final VoidCallback onToggleFavorite;
   final VoidCallback onTap;
 
@@ -205,27 +167,28 @@ class _FavoriteStoreCard extends StatelessWidget {
                   Container(
                     height: 110,
                     color: AppColors.green100,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Center(
-                          child: Icon(
-                            Icons.storefront,
-                            size: 44,
-                            color: AppColors.green700,
+                    child: store.imageUrl != null
+                        ? Image.network(
+                            store.imageUrl!,
+                            fit: BoxFit.cover,
+                            width: double.infinity,
+                            height: 110,
+                            errorBuilder: (_, __, ___) => const Center(
+                              child: Icon(Icons.storefront,
+                                  size: 44, color: AppColors.green700),
+                            ),
+                          )
+                        : const Center(
+                            child: Icon(Icons.storefront,
+                                size: 44, color: AppColors.green700),
                           ),
-                        ),
-                      ],
-                    ),
                   ),
                   Positioned(
                     top: 8,
                     right: 8,
                     child: Semantics(
                       button: true,
-                      label: isFavorite
-                          ? 'Retirer des favoris'
-                          : 'Ajouter aux favoris',
+                      label: 'Retirer des favoris',
                       child: GestureDetector(
                         onTap: onToggleFavorite,
                         child: Container(
@@ -235,20 +198,12 @@ class _FavoriteStoreCard extends StatelessWidget {
                             color: AppColors.white,
                             shape: BoxShape.circle,
                           ),
-                          child: Icon(
-                            isFavorite
-                                ? Icons.favorite
-                                : Icons.favorite_outline,
-                            size: 18,
-                            color: isFavorite
-                                ? AppColors.green500
-                                : AppColors.textSecondary,
-                          ),
+                          child: const Icon(Icons.favorite,
+                              size: 18, color: AppColors.green500),
                         ),
                       ),
                     ),
                   ),
-                  // Basket count badge
                   if (store.basketCount > 0)
                     Positioned(
                       top: 8,
@@ -274,18 +229,15 @@ class _FavoriteStoreCard extends StatelessWidget {
                     ),
                 ],
               ),
-              // Store info
               Padding(
                 padding: const EdgeInsets.all(AppSpacing.sm),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      store.name,
-                      style: theme.textTheme.headlineMedium,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                    Text(store.name,
+                        style: theme.textTheme.headlineMedium,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis),
                     const SizedBox(height: 2),
                     Text(
                       store.category,
@@ -296,11 +248,8 @@ class _FavoriteStoreCard extends StatelessWidget {
                     const SizedBox(height: AppSpacing.xs),
                     Row(
                       children: [
-                        const Icon(
-                          Icons.star,
-                          size: 12,
-                          color: AppColors.orange500,
-                        ),
+                        const Icon(Icons.star,
+                            size: 12, color: AppColors.orange500),
                         const SizedBox(width: 2),
                         Text(
                           store.rating.toStringAsFixed(1),

@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { BasketController } from './api/basket.controller';
+import { AdminCatalogController } from './api/admin-catalog.controller';
 import { BasketService } from './application/services/basket.service';
 import { CategoryService } from './application/services/category.service';
 import { BasketRepositoryPort } from './ports/basket.repository.port';
@@ -14,6 +15,7 @@ import { PrismaTagRepository } from './adapters/prisma/prisma-tag.repository';
  * CatalogModule — bounded context for baskets, categories, tags, stock.
  *
  * Hexagonal architecture: controllers → services → ports ← adapters (Prisma).
+ * Admin controller for categories/tags management (CRUD, direct Prisma).
  *
  * ADR-002: Monolithe modulaire
  * ADR-008: Stock atomique
@@ -22,7 +24,7 @@ import { PrismaTagRepository } from './adapters/prisma/prisma-tag.repository';
  */
 @Module({
   imports: [EventEmitterModule.forRoot()],
-  controllers: [BasketController],
+  controllers: [BasketController, AdminCatalogController],
   providers: [
     BasketService,
     CategoryService,

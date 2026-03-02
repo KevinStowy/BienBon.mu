@@ -10,7 +10,9 @@ import {
 } from 'lucide-react'
 import { Link, useRouterState } from '@tanstack/react-router'
 import { cn } from '../../lib/utils'
-import { mockPartners, mockClaims, mockFraudAlerts } from '../../mocks/extended-data'
+import { usePartners } from '../../hooks/use-partners'
+import { useClaims } from '../../hooks/use-claims'
+import { useFraudAlerts } from '../../hooks/use-fraud'
 
 interface NavItem {
   label: string
@@ -20,14 +22,21 @@ interface NavItem {
   ariaLabel: string
 }
 
-function getNavItems(): NavItem[] {
-  const pendingPartners = mockPartners.filter((p) => p.status === 'PENDING').length
-  const openClaims = mockClaims.filter((c) => c.status === 'OPEN').length
-  const activeFraudAlerts = mockFraudAlerts.filter(
+export function Sidebar() {
+  const router = useRouterState()
+  const currentPath = router.location.pathname
+
+  const partnersQuery = usePartners({ status: 'PENDING' })
+  const claimsQuery = useClaims({ status: 'OPEN' })
+  const fraudQuery = useFraudAlerts()
+
+  const pendingPartners = partnersQuery.data?.data?.length ?? 0
+  const openClaims = claimsQuery.data?.data?.length ?? 0
+  const activeFraudAlerts = (fraudQuery.data?.data ?? []).filter(
     (f) => f.status === 'NEW' || f.status === 'INVESTIGATING',
   ).length
 
-  return [
+  const navItems: NavItem[] = [
     {
       label: 'Tableau de bord',
       to: '/',
@@ -80,12 +89,6 @@ function getNavItems(): NavItem[] {
       ariaLabel: 'Parametres',
     },
   ]
-}
-
-export function Sidebar() {
-  const router = useRouterState()
-  const currentPath = router.location.pathname
-  const navItems = getNavItems()
 
   return (
     <aside

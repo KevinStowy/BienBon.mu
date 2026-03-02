@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import type { FraudAlert, DuplicateAccount, ThresholdAlert, ThresholdRule } from '../api/types'
 import { mockFraudAlerts, mockDuplicates, mockThresholdAlerts, mockThresholdRules } from '../mocks/extended-data'
+import { getAuthHeaders } from '../api/client'
 
 export interface FraudFilters {
   entityType?: 'CONSUMER' | 'PARTNER' | 'ALL'
@@ -18,9 +19,11 @@ export function useFraudAlerts(filters: FraudFilters = {}) {
             .filter(([, v]) => v !== undefined && v !== '' && v !== 'ALL')
             .map(([k, v]) => [k, String(v)]),
         )
-        const res = await fetch(`/api/v1/admin/fraud/alerts?${params}`)
+        const headers = await getAuthHeaders()
+        const res = await fetch(`/api/v1/admin/fraud/alerts?${params}`, { headers })
         if (!res.ok) throw new Error('API unavailable')
-        return (await res.json()) as { data: FraudAlert[]; total: number }
+        const raw = await res.json()
+        return { data: raw.data, total: raw.total ?? raw.meta?.total ?? 0 } as { data: FraudAlert[]; total: number }
       } catch {
         let filtered = [...mockFraudAlerts]
         if (filters.entityType && filters.entityType !== 'ALL') {
@@ -40,9 +43,10 @@ export function useUpdateFraudAlert() {
   return useMutation({
     mutationFn: async ({ id, status, comment }: { id: string; status: string; comment?: string }) => {
       try {
+        const headers = await getAuthHeaders()
         const res = await fetch(`/api/v1/admin/fraud/alerts/${id}`, {
           method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
+          headers,
           body: JSON.stringify({ status, comment }),
         })
         if (!res.ok) throw new Error('API unavailable')
@@ -63,7 +67,8 @@ export function useDuplicateAccounts() {
     queryKey: ['fraud', 'duplicates'],
     queryFn: async () => {
       try {
-        const res = await fetch('/api/v1/admin/fraud/duplicates')
+        const headers = await getAuthHeaders()
+        const res = await fetch('/api/v1/admin/fraud/duplicates', { headers })
         if (!res.ok) throw new Error('API unavailable')
         return (await res.json()) as { data: DuplicateAccount[]; total: number }
       } catch {
@@ -78,9 +83,10 @@ export function useMergeAccounts() {
   return useMutation({
     mutationFn: async ({ duplicateId, primaryAccountId }: { duplicateId: string; primaryAccountId: string }) => {
       try {
+        const headers = await getAuthHeaders()
         const res = await fetch(`/api/v1/admin/fraud/duplicates/${duplicateId}/merge`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers,
           body: JSON.stringify({ primaryAccountId }),
         })
         if (!res.ok) throw new Error('API unavailable')
@@ -101,7 +107,8 @@ export function useThresholdAlerts() {
     queryKey: ['fraud', 'threshold-alerts'],
     queryFn: async () => {
       try {
-        const res = await fetch('/api/v1/admin/fraud/threshold-alerts')
+        const headers = await getAuthHeaders()
+        const res = await fetch('/api/v1/admin/fraud/threshold-alerts', { headers })
         if (!res.ok) throw new Error('API unavailable')
         return (await res.json()) as ThresholdAlert[]
       } catch {
@@ -116,7 +123,8 @@ export function useThresholdRules() {
     queryKey: ['fraud', 'threshold-rules'],
     queryFn: async () => {
       try {
-        const res = await fetch('/api/v1/admin/fraud/threshold-rules')
+        const headers = await getAuthHeaders()
+        const res = await fetch('/api/v1/admin/fraud/threshold-rules', { headers })
         if (!res.ok) throw new Error('API unavailable')
         return (await res.json()) as ThresholdRule[]
       } catch {
@@ -131,9 +139,10 @@ export function useUpdateThresholdRule() {
   return useMutation({
     mutationFn: async ({ id, ...data }: Partial<ThresholdRule> & { id: string }) => {
       try {
+        const headers = await getAuthHeaders()
         const res = await fetch(`/api/v1/admin/fraud/threshold-rules/${id}`, {
           method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
+          headers,
           body: JSON.stringify(data),
         })
         if (!res.ok) throw new Error('API unavailable')

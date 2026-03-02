@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/analytics/analytics_provider.dart';
-import '../../../../core/analytics/analytics_service.dart';
 import '../../../../core/router/route_names.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../shared/repositories/reservation_repository.dart';
 
+/// Payment screen (US-C031 to US-C038).
 class PaymentScreen extends ConsumerStatefulWidget {
   const PaymentScreen({super.key, required this.reservationId});
 
@@ -35,42 +35,40 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
       icon: Icons.phone_android,
     ),
     _PaymentMethod(
-      id: 'cash',
-      label: 'Especes au retrait',
-      subtitle: 'Payer directement au commerce',
-      icon: Icons.money,
+      id: 'blink',
+      label: 'Blink by Emtel',
+      subtitle: 'Paiement mobile',
+      icon: Icons.flash_on,
+    ),
+    _PaymentMethod(
+      id: 'myt_money',
+      label: 'my.t money',
+      subtitle: 'Paiement mobile',
+      icon: Icons.account_balance_wallet,
     ),
   ];
 
-  @override
-  void initState() {
-    super.initState();
-    // Log payment_started when screen is first displayed.
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(analyticsProvider).logEvent(
-        AnalyticsEvents.paymentStarted,
-        {'reservation_id': widget.reservationId},
-      );
-    });
-  }
-
   Future<void> _onPay() async {
     setState(() => _isLoading = true);
-    // Simulate payment processing
-    await Future.delayed(const Duration(seconds: 1));
-    if (mounted) {
-      ref.read(analyticsProvider).logEvent(
-        AnalyticsEvents.paymentCompleted,
-        {
-          'reservation_id': widget.reservationId,
-          'payment_method': _paymentMethods[_selectedMethod].id,
-        },
+    try {
+      final repo = ref.read(reservationRepositoryProvider);
+      await repo.processPayment(
+        reservationId: widget.reservationId,
+        paymentMethod: _paymentMethods[_selectedMethod].id,
       );
-      setState(() => _isLoading = false);
-      context.goNamed(
-        RouteNames.confirmation,
-        pathParameters: {'reservationId': widget.reservationId},
-      );
+      if (mounted) {
+        context.goNamed(
+          RouteNames.confirmation,
+          pathParameters: {'reservationId': widget.reservationId},
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Erreur de paiement : $e')),
+        );
+      }
     }
   }
 
@@ -110,11 +108,8 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(
-                    Icons.lock,
-                    size: 16,
-                    color: AppColors.green700,
-                  ),
+                  const Icon(Icons.lock,
+                      size: 16, color: AppColors.green700),
                   const SizedBox(width: AppSpacing.xs),
                   Text(
                     'Paiement securise par BienBon',
@@ -126,10 +121,8 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
               ),
             ),
             const SizedBox(height: AppSpacing.lg),
-            Text(
-              'Choisissez votre mode de paiement',
-              style: theme.textTheme.headlineLarge,
-            ),
+            Text('Choisissez votre mode de paiement',
+                style: theme.textTheme.headlineLarge),
             const SizedBox(height: AppSpacing.md),
             // Payment methods
             ..._paymentMethods.asMap().entries.map((entry) {
@@ -150,7 +143,8 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
                       padding: const EdgeInsets.all(AppSpacing.md),
                       decoration: BoxDecoration(
                         color: AppColors.white,
-                        borderRadius: BorderRadius.circular(AppRadius.card),
+                        borderRadius:
+                            BorderRadius.circular(AppRadius.card),
                         border: Border.all(
                           color: isSelected
                               ? AppColors.green700
@@ -192,10 +186,8 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
                                         : AppColors.textPrimary,
                                   ),
                                 ),
-                                Text(
-                                  method.subtitle,
-                                  style: theme.textTheme.bodyMedium,
-                                ),
+                                Text(method.subtitle,
+                                    style: theme.textTheme.bodyMedium),
                               ],
                             ),
                           ),
@@ -214,73 +206,6 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
                 ),
               );
             }),
-            // Card details (shown only for card payment)
-            if (_selectedMethod == 0) ...[
-              const SizedBox(height: AppSpacing.md),
-              Container(
-                padding: const EdgeInsets.all(AppSpacing.md),
-                decoration: BoxDecoration(
-                  color: AppColors.white,
-                  borderRadius: BorderRadius.circular(AppRadius.card),
-                  boxShadow: AppShadow.sm,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Coordonnees de la carte',
-                      style: theme.textTheme.headlineMedium,
-                    ),
-                    const SizedBox(height: AppSpacing.md),
-                    Semantics(
-                      label: 'Numero de carte bancaire',
-                      textField: true,
-                      child: TextFormField(
-                        keyboardType: TextInputType.number,
-                        decoration: const InputDecoration(
-                          labelText: 'Numero de carte',
-                          hintText: '4242 4242 4242 4242',
-                          prefixIcon: Icon(Icons.credit_card),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.sm),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Semantics(
-                            label: "Date d'expiration",
-                            textField: true,
-                            child: TextFormField(
-                              keyboardType: TextInputType.datetime,
-                              decoration: const InputDecoration(
-                                labelText: 'MM/AA',
-                                hintText: '12/27',
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: AppSpacing.sm),
-                        Expanded(
-                          child: Semantics(
-                            label: 'Code CVV',
-                            textField: true,
-                            child: TextFormField(
-                              keyboardType: TextInputType.number,
-                              obscureText: true,
-                              decoration: const InputDecoration(
-                                labelText: 'CVV',
-                                hintText: '123',
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ],
             const SizedBox(height: AppSpacing.xl),
             // Pay button
             Semantics(

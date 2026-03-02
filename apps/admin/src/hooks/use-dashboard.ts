@@ -1,13 +1,15 @@
 import { useQuery } from '@tanstack/react-query'
 import type { DashboardKpis, DailyFocus, RevenueDataPoint, ActivityEvent, PeriodFilter } from '../api/types'
 import { mockDashboardKpis, mockDailyFocus, mockRevenueData, mockRecentActivity } from '../mocks/extended-data'
+import { getAuthHeaders } from '../api/client'
 
 export function useKpis(period: PeriodFilter = 'today') {
   return useQuery<DashboardKpis>({
     queryKey: ['dashboard', 'kpis', period],
     queryFn: async () => {
       try {
-        const res = await fetch(`/api/v1/admin/dashboard/kpis?period=${period}`)
+        const headers = await getAuthHeaders()
+        const res = await fetch(`/api/v1/admin/dashboard/kpis?period=${period}`, { headers })
         if (!res.ok) throw new Error('API unavailable')
         return res.json() as Promise<DashboardKpis>
       } catch {
@@ -23,7 +25,8 @@ export function useDailyFocus() {
     queryKey: ['dashboard', 'daily-focus'],
     queryFn: async () => {
       try {
-        const res = await fetch('/api/v1/admin/dashboard/daily-focus')
+        const headers = await getAuthHeaders()
+        const res = await fetch('/api/v1/admin/dashboard/daily-focus', { headers })
         if (!res.ok) throw new Error('API unavailable')
         return res.json() as Promise<DailyFocus>
       } catch {
@@ -39,7 +42,8 @@ export function useRevenueChart(period: PeriodFilter = 'this_month') {
     queryKey: ['dashboard', 'revenue-chart', period],
     queryFn: async () => {
       try {
-        const res = await fetch(`/api/v1/admin/dashboard/revenue?period=${period}`)
+        const headers = await getAuthHeaders()
+        const res = await fetch(`/api/v1/admin/dashboard/revenue?period=${period}`, { headers })
         if (!res.ok) throw new Error('API unavailable')
         return res.json() as Promise<RevenueDataPoint[]>
       } catch {
@@ -54,7 +58,8 @@ export function useRecentActivity() {
     queryKey: ['dashboard', 'recent-activity'],
     queryFn: async () => {
       try {
-        const res = await fetch('/api/v1/admin/dashboard/activity')
+        const headers = await getAuthHeaders()
+        const res = await fetch('/api/v1/admin/dashboard/activity', { headers })
         if (!res.ok) throw new Error('API unavailable')
         return res.json() as Promise<ActivityEvent[]>
       } catch {

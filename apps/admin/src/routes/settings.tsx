@@ -6,6 +6,16 @@ import { Card, CardHeader, CardTitle } from '../components/ui/Card'
 import { Button } from '../components/ui/Button'
 import { Badge } from '../components/ui/Badge'
 import { useAuth } from '../auth/use-auth'
+import {
+  useCategories,
+  useCreateCategory,
+  useDeleteCategory,
+  useTags,
+  useCreateTag,
+  useDeleteTag,
+  useAdminUsers,
+} from '../hooks/use-settings'
+import type { Category, Tag } from '../api/types'
 import { Route as rootRoute } from './__root'
 
 export const Route = createRoute({
@@ -14,57 +24,30 @@ export const Route = createRoute({
   component: SettingsPage,
 })
 
-// Mock categories and tags
-const mockCategories = [
-  { id: 'cat-001', name: 'Boulangerie', icon: '🍞', partnerCount: 12 },
-  { id: 'cat-002', name: 'Restaurant', icon: '🍽️', partnerCount: 28 },
-  { id: 'cat-003', name: 'Epicerie', icon: '🛒', partnerCount: 15 },
-  { id: 'cat-004', name: 'Cafe', icon: '☕', partnerCount: 9 },
-  { id: 'cat-005', name: 'Patisserie', icon: '🧁', partnerCount: 6 },
-]
-
-const mockTags = [
-  { id: 'tag-001', name: 'Vegetarien', count: 18 },
-  { id: 'tag-002', name: 'Halal', count: 34 },
-  { id: 'tag-003', name: 'Bio', count: 7 },
-  { id: 'tag-004', name: 'Sans gluten', count: 5 },
-  { id: 'tag-005', name: 'Local', count: 42 },
-]
-
-const mockAdminUsers = [
-  {
-    id: 'admin-001',
-    name: 'Admin Jean',
-    email: 'jean@bienbon.mu',
-    role: 'ADMIN',
-    lastLogin: '2026-02-28T08:00:00Z',
-  },
-  {
-    id: 'admin-002',
-    name: 'Admin Sophie',
-    email: 'sophie@bienbon.mu',
-    role: 'ADMIN',
-    lastLogin: '2026-02-27T16:00:00Z',
-  },
-  {
-    id: 'superadmin-001',
-    name: 'SuperAdmin Root',
-    email: 'root@bienbon.mu',
-    role: 'SUPER_ADMIN',
-    lastLogin: '2026-02-28T06:00:00Z',
-  },
-]
-
 function CategoriesTab() {
   const [newCategoryName, setNewCategoryName] = useState('')
-  const [isSaving, setIsSaving] = useState(false)
+  const categoriesQuery = useCategories()
+  const createCategory = useCreateCategory()
+  const deleteCategory = useDeleteCategory()
 
-  const handleAdd = async () => {
+  const categories = categoriesQuery.data ?? []
+
+  const handleAdd = () => {
     if (!newCategoryName.trim()) return
-    setIsSaving(true)
-    await new Promise((r) => setTimeout(r, 500))
+    const slug = newCategoryName.trim().toLowerCase().replace(/\s+/g, '-')
+    createCategory.mutate({
+      slug,
+      nameFr: newCategoryName.trim(),
+      nameEn: '',
+      nameKr: '',
+      icon: '',
+      status: 'ACTIVE',
+    } as Omit<Category, 'id' | 'basketCount'>)
     setNewCategoryName('')
-    setIsSaving(false)
+  }
+
+  const handleDelete = (id: string) => {
+    deleteCategory.mutate({ id })
   }
 
   return (
@@ -89,15 +72,15 @@ function CategoriesTab() {
                 placeholder:text-[#9CA3AF]
                 focus:outline-none focus:ring-2 focus:ring-[#4CAF50]"
               onKeyDown={(e) => {
-                if (e.key === 'Enter') { void handleAdd() }
+                if (e.key === 'Enter') handleAdd()
               }}
             />
           </div>
           <Button
             variant="primary"
             size="sm"
-            isLoading={isSaving}
-            onClick={() => { void handleAdd() }}
+            isLoading={createCategory.isPending}
+            onClick={handleAdd}
           >
             <Plus className="w-4 h-4" aria-hidden="true" />
             Ajouter
@@ -111,28 +94,41 @@ function CategoriesTab() {
           <thead className="bg-[#F7F4EF]">
             <tr>
               <th scope="col" className="px-4 py-3 text-left text-xs font-bold text-[#6B7280] uppercase">Categorie</th>
-              <th scope="col" className="px-4 py-3 text-right text-xs font-bold text-[#6B7280] uppercase">Partenaires</th>
+              <th scope="col" className="px-4 py-3 text-right text-xs font-bold text-[#6B7280] uppercase">Paniers</th>
               <th scope="col" className="px-4 py-3 text-center text-xs font-bold text-[#6B7280] uppercase">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-[#E5E7EB]">
-            {mockCategories.map((cat) => (
-              <tr key={cat.id} className="hover:bg-[#F7F4EF] transition-colors">
-                <td className="px-4 py-3">
-                  <span className="font-semibold text-[#1A1A1A]">{cat.name}</span>
-                </td>
-                <td className="px-4 py-3 text-right text-[#6B7280]">{cat.partnerCount}</td>
-                <td className="px-4 py-3 text-center">
-                  <button
-                    aria-label={`Supprimer la categorie ${cat.name}`}
-                    className="inline-flex items-center gap-1 px-2 py-1 text-xs font-semibold text-[#C62828] hover:bg-[#FFEBEE] rounded transition-colors"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" aria-hidden="true" />
-                    Supprimer
-                  </button>
-                </td>
+            {categoriesQuery.isLoading ? (
+              <tr>
+                <td colSpan={3} className="px-4 py-8 text-center text-[#9CA3AF]">Chargement...</td>
               </tr>
-            ))}
+            ) : categories.length === 0 ? (
+              <tr>
+                <td colSpan={3} className="px-4 py-8 text-center text-[#9CA3AF]">Aucune categorie</td>
+              </tr>
+            ) : (
+              categories.map((cat) => (
+                <tr key={cat.id} className="hover:bg-[#F7F4EF] transition-colors">
+                  <td className="px-4 py-3">
+                    <span className="font-semibold text-[#1A1A1A]">
+                      {cat.nameFr || (cat as unknown as Record<string, unknown>)['namesFr'] as string || cat.id}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3 text-right text-[#6B7280]">{cat.basketCount ?? 0}</td>
+                  <td className="px-4 py-3 text-center">
+                    <button
+                      aria-label={`Supprimer la categorie ${cat.nameFr || ''}`}
+                      onClick={() => handleDelete(cat.id)}
+                      className="inline-flex items-center gap-1 px-2 py-1 text-xs font-semibold text-[#C62828] hover:bg-[#FFEBEE] rounded transition-colors"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" aria-hidden="true" />
+                      Supprimer
+                    </button>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>
@@ -142,9 +138,30 @@ function CategoriesTab() {
 
 function TagsTab() {
   const [newTagName, setNewTagName] = useState('')
+  const tagsQuery = useTags()
+  const createTag = useCreateTag()
+  const deleteTag = useDeleteTag()
+
+  const tags = tagsQuery.data ?? []
 
   const handleAdd = () => {
+    if (!newTagName.trim()) return
+    const slug = newTagName.trim().toLowerCase().replace(/\s+/g, '-')
+    createTag.mutate({
+      slug,
+      nameFr: newTagName.trim(),
+      nameEn: '',
+      nameKr: '',
+      icon: '',
+      description: '',
+      isSystem: false,
+      status: 'ACTIVE',
+    } as Omit<Tag, 'id' | 'basketCount' | 'consumerCount'>)
     setNewTagName('')
+  }
+
+  const handleDelete = (id: string) => {
+    deleteTag.mutate({ id })
   }
 
   return (
@@ -171,7 +188,12 @@ function TagsTab() {
               }}
             />
           </div>
-          <Button variant="primary" size="sm" onClick={handleAdd}>
+          <Button
+            variant="primary"
+            size="sm"
+            isLoading={createTag.isPending}
+            onClick={handleAdd}
+          >
             <Plus className="w-4 h-4" aria-hidden="true" />
             Ajouter
           </Button>
@@ -184,30 +206,41 @@ function TagsTab() {
           <thead className="bg-[#F7F4EF]">
             <tr>
               <th scope="col" className="px-4 py-3 text-left text-xs font-bold text-[#6B7280] uppercase">Tag</th>
-              <th scope="col" className="px-4 py-3 text-right text-xs font-bold text-[#6B7280] uppercase">Utilisations</th>
+              <th scope="col" className="px-4 py-3 text-right text-xs font-bold text-[#6B7280] uppercase">Paniers</th>
               <th scope="col" className="px-4 py-3 text-center text-xs font-bold text-[#6B7280] uppercase">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-[#E5E7EB]">
-            {mockTags.map((tag) => (
-              <tr key={tag.id} className="hover:bg-[#F7F4EF] transition-colors">
-                <td className="px-4 py-3">
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#E8F5E9] text-[#2E7D32]">
-                    {tag.name}
-                  </span>
-                </td>
-                <td className="px-4 py-3 text-right text-[#6B7280]">{tag.count}</td>
-                <td className="px-4 py-3 text-center">
-                  <button
-                    aria-label={`Supprimer le tag ${tag.name}`}
-                    className="inline-flex items-center gap-1 px-2 py-1 text-xs font-semibold text-[#C62828] hover:bg-[#FFEBEE] rounded transition-colors"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" aria-hidden="true" />
-                    Supprimer
-                  </button>
-                </td>
+            {tagsQuery.isLoading ? (
+              <tr>
+                <td colSpan={3} className="px-4 py-8 text-center text-[#9CA3AF]">Chargement...</td>
               </tr>
-            ))}
+            ) : tags.length === 0 ? (
+              <tr>
+                <td colSpan={3} className="px-4 py-8 text-center text-[#9CA3AF]">Aucun tag</td>
+              </tr>
+            ) : (
+              tags.map((tag) => (
+                <tr key={tag.id} className="hover:bg-[#F7F4EF] transition-colors">
+                  <td className="px-4 py-3">
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#E8F5E9] text-[#2E7D32]">
+                      {tag.nameFr || (tag as unknown as Record<string, unknown>)['namesFr'] as string || tag.id}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3 text-right text-[#6B7280]">{tag.basketCount ?? 0}</td>
+                  <td className="px-4 py-3 text-center">
+                    <button
+                      aria-label={`Supprimer le tag ${tag.nameFr || ''}`}
+                      onClick={() => handleDelete(tag.id)}
+                      className="inline-flex items-center gap-1 px-2 py-1 text-xs font-semibold text-[#C62828] hover:bg-[#FFEBEE] rounded transition-colors"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" aria-hidden="true" />
+                      Supprimer
+                    </button>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>
@@ -217,6 +250,8 @@ function TagsTab() {
 
 function AdminUsersTab() {
   const { isSuperAdmin } = useAuth()
+  const adminUsersQuery = useAdminUsers()
+  const adminUsers = adminUsersQuery.data ?? []
 
   if (!isSuperAdmin) {
     return (
@@ -239,34 +274,36 @@ function AdminUsersTab() {
             <tr>
               <th scope="col" className="px-4 py-3 text-left text-xs font-bold text-[#6B7280] uppercase">Nom</th>
               <th scope="col" className="px-4 py-3 text-left text-xs font-bold text-[#6B7280] uppercase">Role</th>
-              <th scope="col" className="px-4 py-3 text-left text-xs font-bold text-[#6B7280] uppercase">Derniere connexion</th>
+              <th scope="col" className="px-4 py-3 text-left text-xs font-bold text-[#6B7280] uppercase">Statut</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-[#E5E7EB]">
-            {mockAdminUsers.map((admin) => (
-              <tr key={admin.id} className="hover:bg-[#F7F4EF] transition-colors">
-                <td className="px-4 py-3">
-                  <p className="font-semibold text-[#1A1A1A]">{admin.name}</p>
-                  <p className="text-xs text-[#9CA3AF]">{admin.email}</p>
-                </td>
-                <td className="px-4 py-3">
-                  <Badge variant={admin.role === 'SUPER_ADMIN' ? 'critical' : 'active'}>
-                    {admin.role === 'SUPER_ADMIN' ? 'Super Admin' : 'Admin'}
-                  </Badge>
-                </td>
-                <td className="px-4 py-3 text-[#6B7280] text-xs">
-                  <time dateTime={admin.lastLogin}>
-                    {new Date(admin.lastLogin).toLocaleDateString('fr-MU', {
-                      day: '2-digit',
-                      month: '2-digit',
-                      year: 'numeric',
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    })}
-                  </time>
-                </td>
+            {adminUsersQuery.isLoading ? (
+              <tr>
+                <td colSpan={3} className="px-4 py-8 text-center text-[#9CA3AF]">Chargement...</td>
               </tr>
-            ))}
+            ) : adminUsers.length === 0 ? (
+              <tr>
+                <td colSpan={3} className="px-4 py-8 text-center text-[#9CA3AF]">Aucun administrateur</td>
+              </tr>
+            ) : (
+              adminUsers.map((admin) => (
+                <tr key={admin.id} className="hover:bg-[#F7F4EF] transition-colors">
+                  <td className="px-4 py-3">
+                    <p className="font-semibold text-[#1A1A1A]">{admin.name}</p>
+                    <p className="text-xs text-[#9CA3AF]">{admin.email}</p>
+                  </td>
+                  <td className="px-4 py-3">
+                    <Badge variant={admin.role === 'SUPER_ADMIN' ? 'critical' : 'active'}>
+                      {admin.role === 'SUPER_ADMIN' ? 'Super Admin' : 'Admin'}
+                    </Badge>
+                  </td>
+                  <td className="px-4 py-3 text-[#6B7280] text-xs">
+                    {(admin as unknown as Record<string, unknown>)['status'] as string ?? 'ACTIVE'}
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>

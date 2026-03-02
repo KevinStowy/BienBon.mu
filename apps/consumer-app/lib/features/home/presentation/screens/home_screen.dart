@@ -1,258 +1,254 @@
-import 'package:consumer_app/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/analytics/analytics_provider.dart';
-import '../../../../core/analytics/analytics_service.dart';
 import '../../../../core/router/route_names.dart';
+import '../../../../core/services/location_service.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../shared/widgets/basket_card.dart';
 import '../../../../shared/widgets/store_card.dart';
-
-// Demo data — replace with Riverpod providers once API is wired.
-final _demoStores = [
-  _StoreDemo(
-    id: 'store-001',
-    name: 'Boulangerie Paul',
-    category: 'Boulangerie',
-    distanceKm: 0.3,
-    rating: 4.8,
-    basketCount: 3,
-  ),
-  _StoreDemo(
-    id: 'store-002',
-    name: 'Restaurant Chez Pierre',
-    category: 'Restaurant',
-    distanceKm: 0.7,
-    rating: 4.5,
-    basketCount: 2,
-  ),
-  _StoreDemo(
-    id: 'store-003',
-    name: 'Super U Port-Louis',
-    category: 'Supermarche',
-    distanceKm: 1.2,
-    rating: 4.2,
-    basketCount: 5,
-  ),
-  _StoreDemo(
-    id: 'store-004',
-    name: 'Cafe Creole',
-    category: 'Cafe',
-    distanceKm: 0.5,
-    rating: 4.6,
-    basketCount: 1,
-  ),
-];
-
-final _demoBaskets = [
-  _BasketDemo(
-    id: 'basket-001',
-    name: 'Panier Viennoiseries',
-    storeName: 'Boulangerie Paul',
-    originalPrice: 350,
-    discountedPrice: 120,
-    pickupWindow: '17h - 19h',
-    remaining: 3,
-  ),
-  _BasketDemo(
-    id: 'basket-002',
-    name: 'Panier Repas du Soir',
-    storeName: 'Restaurant Chez Pierre',
-    originalPrice: 600,
-    discountedPrice: 200,
-    pickupWindow: '20h - 21h',
-    remaining: 2,
-  ),
-  _BasketDemo(
-    id: 'basket-003',
-    name: 'Panier Epicerie',
-    storeName: 'Super U Port-Louis',
-    originalPrice: 800,
-    discountedPrice: 280,
-    pickupWindow: '18h - 20h',
-    remaining: 5,
-  ),
-  _BasketDemo(
-    id: 'basket-004',
-    name: 'Panier Petit-Dej',
-    storeName: 'Cafe Creole',
-    originalPrice: 250,
-    discountedPrice: 90,
-    pickupWindow: '08h - 10h',
-    remaining: 1,
-  ),
-];
+import '../../../notifications/providers/notifications_provider.dart';
+import '../../providers/home_provider.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final analytics = ref.read(analyticsProvider);
     final theme = Theme.of(context);
-    final l10n = AppLocalizations.of(context)!;
+    final storesAsync = ref.watch(nearbyStoresProvider);
+    final basketsAsync = ref.watch(featuredBasketsProvider);
+    final userLocation = ref.watch(locationProvider);
+    final unreadCount = ref.watch(unreadNotificationCountProvider);
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: CustomScrollView(
-        slivers: [
-          // App bar
-          SliverAppBar(
-            floating: true,
-            snap: true,
-            backgroundColor: AppColors.white,
-            elevation: 0,
-            title: Row(
-              children: [
-                const Icon(Icons.eco, color: AppColors.green700, size: 28),
-                const SizedBox(width: AppSpacing.xs),
-                Text(
-                  l10n.appName,
-                  style: theme.textTheme.headlineLarge?.copyWith(
-                    color: AppColors.green900,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-              ],
-            ),
-            actions: [
-              Semantics(
-                label: 'Localisation : Port-Louis',
-                child: TextButton.icon(
-                  onPressed: () {},
-                  icon: const Icon(
-                    Icons.location_on,
-                    color: AppColors.orange600,
-                    size: 16,
-                  ),
-                  label: Text(
-                    'Port-Louis',
-                    style: theme.textTheme.bodyLarge?.copyWith(
-                      color: AppColors.orange600,
-                      fontWeight: FontWeight.w600,
+      body: RefreshIndicator(
+        onRefresh: () async {
+          ref.invalidate(nearbyStoresProvider);
+          ref.invalidate(featuredBasketsProvider);
+        },
+        child: CustomScrollView(
+          slivers: [
+            // App bar
+            SliverAppBar(
+              floating: true,
+              snap: true,
+              backgroundColor: AppColors.white,
+              elevation: 0,
+              title: Row(
+                children: [
+                  const Icon(Icons.eco, color: AppColors.green700, size: 28),
+                  const SizedBox(width: AppSpacing.xs),
+                  Text(
+                    'BienBon',
+                    style: theme.textTheme.headlineLarge?.copyWith(
+                      color: AppColors.green900,
+                      fontWeight: FontWeight.w800,
                     ),
                   ),
-                ),
+                ],
               ),
-            ],
-          ),
-          SliverToBoxAdapter(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Hero banner
-                _HeroBanner(),
-                const SizedBox(height: AppSpacing.lg),
-                // Near me section
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.md,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              actions: [
+                // Notifications
+                Semantics(
+                  button: true,
+                  label: unreadCount > 0
+                      ? '$unreadCount notifications non lues'
+                      : 'Notifications',
+                  child: Stack(
                     children: [
-                      Text(
-                        l10n.homeNearMeSection,
-                        style: theme.textTheme.headlineLarge,
+                      IconButton(
+                        icon: const Icon(Icons.notifications_outlined),
+                        onPressed: () =>
+                            context.pushNamed(RouteNames.notifications),
                       ),
-                      Semantics(
-                        button: true,
-                        label: 'Voir tous les commerces',
-                        child: TextButton(
-                          onPressed: () =>
-                              context.goNamed(RouteNames.explore),
-                          child: Text(l10n.homeSeeAll),
+                      if (unreadCount > 0)
+                        Positioned(
+                          top: 8,
+                          right: 8,
+                          child: Container(
+                            width: 16,
+                            height: 16,
+                            decoration: const BoxDecoration(
+                              color: AppColors.orange600,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Center(
+                              child: Text(
+                                '$unreadCount',
+                                style: const TextStyle(
+                                  color: AppColors.white,
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
                     ],
                   ),
                 ),
-                const SizedBox(height: AppSpacing.sm),
-                SizedBox(
-                  height: 220,
-                  child: ListView.separated(
-                    scrollDirection: Axis.horizontal,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppSpacing.md,
+                // Location indicator
+                Semantics(
+                  label: 'Position actuelle',
+                  child: TextButton.icon(
+                    onPressed: () {},
+                    icon: const Icon(
+                      Icons.location_on,
+                      color: AppColors.orange600,
+                      size: 16,
                     ),
-                    itemCount: _demoStores.length,
-                    separatorBuilder: (_, _) =>
-                        const SizedBox(width: AppSpacing.sm),
-                    itemBuilder: (context, index) {
-                      final store = _demoStores[index];
-                      return StoreCard(
-                        storeId: store.id,
-                        storeName: store.name,
-                        category: store.category,
-                        distanceKm: store.distanceKm,
-                        rating: store.rating,
-                        basketCount: store.basketCount,
-                        onTap: () => context.goNamed(
-                          RouteNames.storeDetail,
-                          pathParameters: {'storeId': store.id},
-                        ),
-                      );
-                    },
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.lg),
-                // Baskets section
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.md,
-                  ),
-                  child: Text(
-                    l10n.homeBasketsSection,
-                    style: theme.textTheme.headlineLarge,
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.sm),
-                SizedBox(
-                  height: 260,
-                  child: ListView.separated(
-                    scrollDirection: Axis.horizontal,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppSpacing.md,
+                    label: Text(
+                      'Port-Louis',
+                      style: theme.textTheme.bodyLarge?.copyWith(
+                        color: AppColors.orange600,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
-                    itemCount: _demoBaskets.length,
-                    separatorBuilder: (_, _) =>
-                        const SizedBox(width: AppSpacing.sm),
-                    itemBuilder: (context, index) {
-                      final basket = _demoBaskets[index];
-                      return BasketCard(
-                        basketId: basket.id,
-                        basketName: basket.name,
-                        storeName: basket.storeName,
-                        originalPrice: basket.originalPrice,
-                        discountedPrice: basket.discountedPrice,
-                        pickupWindow: basket.pickupWindow,
-                        remainingCount: basket.remaining,
-                        onTap: () {
-                          analytics.logEvent(
-                            AnalyticsEvents.basketViewed,
-                            {
-                              'basket_id': basket.id,
-                              'basket_name': basket.name,
-                              'store_name': basket.storeName,
-                            },
-                          );
-                          context.goNamed(
-                            RouteNames.basketDetail,
-                            pathParameters: {'basketId': basket.id},
-                          );
-                        },
-                      );
-                    },
                   ),
                 ),
-                const SizedBox(height: AppSpacing.xl),
               ],
             ),
-          ),
-        ],
+            SliverToBoxAdapter(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Hero banner
+                  _HeroBanner(),
+                  const SizedBox(height: AppSpacing.lg),
+                  // Near me section
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.md,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Pres de chez moi',
+                          style: theme.textTheme.headlineLarge,
+                        ),
+                        Semantics(
+                          button: true,
+                          label: 'Voir tous les commerces',
+                          child: TextButton(
+                            onPressed: () =>
+                                context.goNamed(RouteNames.explore),
+                            child: const Text('Voir tout'),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.sm),
+                  SizedBox(
+                    height: 220,
+                    child: storesAsync.when(
+                      data: (stores) => stores.isEmpty
+                          ? const Center(
+                              child: Text('Aucun commerce a proximite'))
+                          : ListView.separated(
+                              scrollDirection: Axis.horizontal,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: AppSpacing.md,
+                              ),
+                              itemCount: stores.length,
+                              separatorBuilder: (_, __) =>
+                                  const SizedBox(width: AppSpacing.sm),
+                              itemBuilder: (context, index) {
+                                final store = stores[index];
+                                final dist = calculateDistanceKm(
+                                  lat1: userLocation.latitude,
+                                  lon1: userLocation.longitude,
+                                  lat2: store.latitude,
+                                  lon2: store.longitude,
+                                );
+                                return StoreCard(
+                                  storeId: store.id,
+                                  storeName: store.name,
+                                  category: store.category,
+                                  distanceKm: dist,
+                                  rating: store.rating,
+                                  basketCount: store.basketCount,
+                                  imageUrl: store.imageUrl,
+                                  onTap: () => context.goNamed(
+                                    RouteNames.storeDetail,
+                                    pathParameters: {'storeId': store.id},
+                                  ),
+                                );
+                              },
+                            ),
+                      loading: () => const Center(
+                        child: CircularProgressIndicator(
+                            color: AppColors.green700),
+                      ),
+                      error: (e, _) => Center(
+                        child: Text('Erreur : $e'),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                  // Baskets section
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.md,
+                    ),
+                    child: Text(
+                      'Paniers du moment',
+                      style: theme.textTheme.headlineLarge,
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.sm),
+                  SizedBox(
+                    height: 260,
+                    child: basketsAsync.when(
+                      data: (baskets) => baskets.isEmpty
+                          ? const Center(
+                              child:
+                                  Text('Aucun panier disponible pour le moment'))
+                          : ListView.separated(
+                              scrollDirection: Axis.horizontal,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: AppSpacing.md,
+                              ),
+                              itemCount: baskets.length,
+                              separatorBuilder: (_, __) =>
+                                  const SizedBox(width: AppSpacing.sm),
+                              itemBuilder: (context, index) {
+                                final basket = baskets[index];
+                                return BasketCard(
+                                  basketId: basket.id,
+                                  basketName: basket.title,
+                                  storeName: basket.storeName,
+                                  originalPrice: basket.originalPrice,
+                                  discountedPrice: basket.discountedPrice,
+                                  pickupWindow: basket.pickupWindow,
+                                  remainingCount: basket.remaining,
+                                  imageUrl: basket.imageUrl,
+                                  onTap: () => context.goNamed(
+                                    RouteNames.basketDetail,
+                                    pathParameters: {'basketId': basket.id},
+                                  ),
+                                );
+                              },
+                            ),
+                      loading: () => const Center(
+                        child: CircularProgressIndicator(
+                            color: AppColors.green700),
+                      ),
+                      error: (e, _) => Center(
+                        child: Text('Erreur : $e'),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.xl),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -262,7 +258,6 @@ class _HeroBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final l10n = AppLocalizations.of(context)!;
 
     return Container(
       margin: const EdgeInsets.all(AppSpacing.md),
@@ -282,7 +277,7 @@ class _HeroBanner extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  l10n.homeHeroTitle,
+                  'Sauvez des\npaniers surprise !',
                   style: theme.textTheme.displayLarge?.copyWith(
                     color: AppColors.green900,
                     height: 1.3,
@@ -290,7 +285,7 @@ class _HeroBanner extends StatelessWidget {
                 ),
                 const SizedBox(height: AppSpacing.sm),
                 Text(
-                  l10n.homeHeroSubtitle,
+                  'Jusqu\'a -70% sur les invendus du jour',
                   style: theme.textTheme.bodyLarge?.copyWith(
                     color: AppColors.green700,
                     fontWeight: FontWeight.w600,
@@ -317,42 +312,4 @@ class _HeroBanner extends StatelessWidget {
       ),
     );
   }
-}
-
-class _StoreDemo {
-  const _StoreDemo({
-    required this.id,
-    required this.name,
-    required this.category,
-    required this.distanceKm,
-    required this.rating,
-    required this.basketCount,
-  });
-
-  final String id;
-  final String name;
-  final String category;
-  final double distanceKm;
-  final double rating;
-  final int basketCount;
-}
-
-class _BasketDemo {
-  const _BasketDemo({
-    required this.id,
-    required this.name,
-    required this.storeName,
-    required this.originalPrice,
-    required this.discountedPrice,
-    required this.pickupWindow,
-    required this.remaining,
-  });
-
-  final String id;
-  final String name;
-  final String storeName;
-  final double originalPrice;
-  final double discountedPrice;
-  final String pickupWindow;
-  final int remaining;
 }

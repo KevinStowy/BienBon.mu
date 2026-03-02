@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import type { Partner, PartnerModification, PriceHistoryEntry } from '../api/types'
 import { mockPartners, mockPartnerModifications, mockPriceHistory } from '../mocks/extended-data'
-import { apiClient } from '../api/client'
+import { apiClient, getAuthHeaders } from '../api/client'
 
 export interface PartnerFilters {
   status?: string
@@ -67,7 +67,8 @@ export function usePartnerModifications() {
     queryKey: ['partners', 'modifications'],
     queryFn: async (): Promise<PartnerModification[]> => {
       try {
-        const res = await fetch('/api/v1/admin/partners/modifications')
+        const headers = await getAuthHeaders()
+        const res = await fetch('/api/v1/admin/partners/modifications', { headers })
         if (!res.ok) throw new Error('API unavailable')
         return res.json() as Promise<PartnerModification[]>
       } catch {
@@ -82,7 +83,8 @@ export function usePriceHistory(partnerId: string) {
     queryKey: ['partners', partnerId, 'price-history'],
     queryFn: async (): Promise<PriceHistoryEntry[]> => {
       try {
-        const res = await fetch(`/api/v1/admin/partners/${partnerId}/price-history`)
+        const headers = await getAuthHeaders()
+        const res = await fetch(`/api/v1/admin/partners/${partnerId}/price-history`, { headers })
         if (!res.ok) throw new Error('API unavailable')
         return res.json() as Promise<PriceHistoryEntry[]>
       } catch {
@@ -148,9 +150,10 @@ export function useReactivatePartner() {
   return useMutation({
     mutationFn: async ({ id, comment }: { id: string; comment?: string }) => {
       try {
+        const headers = await getAuthHeaders()
         const res = await fetch(`/api/v1/admin/partners/${id}/reactivate`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers,
           body: JSON.stringify({ comment }),
         })
         if (!res.ok) throw new Error('API unavailable')
@@ -171,9 +174,10 @@ export function useBanPartner() {
   return useMutation({
     mutationFn: async ({ id, reason }: { id: string; reason: string }) => {
       try {
+        const headers = await getAuthHeaders()
         const res = await fetch(`/api/v1/admin/partners/${id}/ban`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers,
           body: JSON.stringify({ reason }),
         })
         if (!res.ok) throw new Error('API unavailable')
@@ -194,9 +198,10 @@ export function useUpdatePartnerCommission() {
   return useMutation({
     mutationFn: async ({ id, commissionRate, commissionFixed, feeMinimum }: { id: string; commissionRate: number | null; commissionFixed: number | null; feeMinimum: number | null }) => {
       try {
+        const headers = await getAuthHeaders()
         const res = await fetch(`/api/v1/admin/partners/${id}/commission`, {
           method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
+          headers,
           body: JSON.stringify({ commissionRate, commissionFixed, feeMinimum }),
         })
         if (!res.ok) throw new Error('API unavailable')
@@ -217,9 +222,10 @@ export function useCreatePartner() {
   return useMutation({
     mutationFn: async (data: Partial<Partner>) => {
       try {
+        const headers = await getAuthHeaders()
         const res = await fetch('/api/v1/admin/partners', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers,
           body: JSON.stringify(data),
         })
         if (!res.ok) throw new Error('API unavailable')

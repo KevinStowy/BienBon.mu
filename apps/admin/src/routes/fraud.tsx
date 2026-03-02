@@ -6,7 +6,12 @@ import { DataTable } from '../components/ui/DataTable'
 import { Badge, statusToBadgeVariant } from '../components/ui/Badge'
 import { TabNav } from '../components/ui/TabNav'
 import { Card } from '../components/ui/Card'
-import { mockFraudAlerts, type MockFraudAlert } from '../mocks/data'
+import {
+  useFraudAlerts,
+  useThresholdRules,
+  useUpdateThresholdRule,
+} from '../hooks/use-fraud'
+import type { FraudAlert, ThresholdRule } from '../api/types'
 import { formatDateTime } from '../lib/utils'
 import { Route as rootRoute } from './__root'
 
@@ -16,19 +21,19 @@ export const Route = createRoute({
   component: FraudPage,
 })
 
-const tabs = [
-  {
-    id: 'alerts',
-    label: 'Alertes',
-    badge: mockFraudAlerts.filter((f) => f.status === 'ACTIVE' || f.status === 'INVESTIGATING').length,
-  },
-  { id: 'rules', label: 'Regles' },
-  { id: 'suspensions', label: 'Suspensions actives' },
-]
+const columnHelper = createColumnHelper<FraudAlert>()
 
-const columnHelper = createColumnHelper<MockFraudAlert>()
-
-const typeLabels: Record<MockFraudAlert['type'], string> = {
+const typeLabels: Record<string, string> = {
+  MULTIPLE_ACCOUNTS: 'Comptes multiples',
+  SYSTEMATIC_CLAIMS: 'Reclamations systematiques',
+  RECURRING_NO_SHOWS: 'No-shows recurrents',
+  REFUND_ABUSE: 'Abus de remboursement',
+  RESERVATION_CANCEL_PATTERN: 'Schema d\'annulation',
+  VALUE_INFLATION: 'Inflation de valeur',
+  FREQUENT_CANCELLATIONS: 'Annulations frequentes',
+  HIGH_CLAIM_RATE: 'Taux de reclamation eleve',
+  INCONSISTENT_HOURS: 'Horaires incoherents',
+  PRICE_VOLATILITY: 'Volatilite prix',
   VELOCITY_ABUSE: 'Abus de velocite',
   PAYMENT_ANOMALY: 'Anomalie paiement',
   ACCOUNT_TAKEOVER: 'Prise de controle',
@@ -36,10 +41,13 @@ const typeLabels: Record<MockFraudAlert['type'], string> = {
 }
 
 const statusLabels: Record<string, string> = {
-  ACTIVE: 'Active',
+  NEW: 'Nouvelle',
   INVESTIGATING: 'En cours',
   RESOLVED: 'Resolue',
+  FALSE_POSITIVE: 'Faux positif',
+  ACTIVE: 'Active',
   DISMISSED: 'Ignoree',
+  INVESTIGATED: 'Investiguee',
 }
 
 const columns = [
@@ -106,56 +114,15 @@ const columns = [
   }),
 ]
 
-// Mock fraud rules
-const mockRules = [
-  {
-    id: 'rule-001',
-    name: 'Seuil de no-show',
-    description: 'Suspendre automatiquement un consommateur apres 5 no-shows en 30 jours',
-    threshold: 5,
-    window: '30 jours',
-    action: 'SUSPEND',
-    enabled: true,
-  },
-  {
-    id: 'rule-002',
-    name: 'Abus de velocite reservation',
-    description: 'Alerter si plus de 10 reservations en 1 heure pour le meme consommateur',
-    threshold: 10,
-    window: '1 heure',
-    action: 'ALERT',
-    enabled: true,
-  },
-  {
-    id: 'rule-003',
-    name: 'Multi-localisation',
-    description: 'Alerter si connexions depuis plus de 2 pays en 24h',
-    threshold: 2,
-    window: '24 heures',
-    action: 'ALERT',
-    enabled: true,
-  },
-  {
-    id: 'rule-004',
-    name: 'Tentatives paiement refusees',
-    description: 'Alerter si 3 paiements refuses consecutifs',
-    threshold: 3,
-    window: 'Consecutif',
-    action: 'ALERT',
-    enabled: false,
-  },
-]
-
-// Active suspensions from fraud
-const activeSuspensions = mockFraudAlerts.filter(
-  (f) => (f.status === 'RESOLVED' || f.status === 'ACTIVE') && f.entityType === 'CONSUMER',
-)
-
 function AlertsTab() {
   const [page, setPage] = useState(1)
   const PAGE_SIZE = 10
-  const pageCount = Math.max(1, Math.ceil(mockFraudAlerts.length / PAGE_SIZE))
-  const paged = mockFraudAlerts.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
+
+  const alertsQuery = useFraudAlerts()
+  const alerts = alertsQuery.data?.data ?? []
+  const total = alertsQuery.data?.total ?? 0
+  const pageCount = Math.max(1, Math.ceil(total / PAGE_SIZE))
+  const paged = alerts.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
   return (
     <DataTable
@@ -164,66 +131,97 @@ function AlertsTab() {
       page={page}
       pageCount={pageCount}
       onPageChange={setPage}
+      isLoading={alertsQuery.isLoading}
       emptyMessage="Aucune alerte fraude"
     />
   )
 }
 
 function RulesTab() {
+  const rulesQuery = useThresholdRules()
+  const updateRule = useUpdateThresholdRule()
+  const rules = rulesQuery.data ?? []
+
+  const handleToggle = (rule: ThresholdRule) => {
+    updateRule.mutate({ id: rule.id, enabled: !rule.enabled })
+  }
+
   return (
     <div className="flex flex-col gap-4">
-      {mockRules.map((rule) => (
-        <Card key={rule.id}>
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex items-start gap-3">
-              <div className="flex-shrink-0 mt-0.5">
-                {rule.enabled ? (
-                  <ShieldAlert className="w-5 h-5 text-[#C62828]" aria-hidden="true" />
-                ) : (
-                  <ShieldCheck className="w-5 h-5 text-[#9CA3AF]" aria-hidden="true" />
-                )}
-              </div>
-              <div>
-                <p className="font-bold text-[#1A1A1A]">{rule.name}</p>
-                <p className="text-sm text-[#6B7280] mt-0.5">{rule.description}</p>
-                <div className="flex items-center gap-3 mt-2 text-xs text-[#9CA3AF]">
-                  <span>Seuil: <strong className="text-[#1A1A1A]">{rule.threshold}</strong></span>
-                  <span>Fenetre: <strong className="text-[#1A1A1A]">{rule.window}</strong></span>
-                  <span>Action: <strong className="text-[#1A1A1A]">{rule.action}</strong></span>
+      {rulesQuery.isLoading ? (
+        <Card>
+          <p className="text-center text-[#9CA3AF] py-8">Chargement...</p>
+        </Card>
+      ) : rules.length === 0 ? (
+        <Card>
+          <p className="text-center text-[#9CA3AF] py-8">Aucune regle configuree</p>
+        </Card>
+      ) : (
+        rules.map((rule) => (
+          <Card key={rule.id}>
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex items-start gap-3">
+                <div className="flex-shrink-0 mt-0.5">
+                  {rule.enabled ? (
+                    <ShieldAlert className="w-5 h-5 text-[#C62828]" aria-hidden="true" />
+                  ) : (
+                    <ShieldCheck className="w-5 h-5 text-[#9CA3AF]" aria-hidden="true" />
+                  )}
+                </div>
+                <div>
+                  <p className="font-bold text-[#1A1A1A]">{rule.name}</p>
+                  <p className="text-sm text-[#6B7280] mt-0.5">{rule.description}</p>
+                  <div className="flex items-center gap-3 mt-2 text-xs text-[#9CA3AF]">
+                    <span>Seuil: <strong className="text-[#1A1A1A]">{rule.thresholdValue}</strong></span>
+                    <span>Fenetre: <strong className="text-[#1A1A1A]">{rule.windowMinutes} min</strong></span>
+                    <span>Type: <strong className="text-[#1A1A1A]">{rule.type}</strong></span>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <label className="flex items-center gap-2 flex-shrink-0 cursor-pointer" aria-label={`${rule.enabled ? 'Desactiver' : 'Activer'} la regle ${rule.name}`}>
-              <span className="text-xs font-semibold text-[#6B7280]">
-                {rule.enabled ? 'Active' : 'Inactive'}
-              </span>
-              <div
-                className={`relative w-10 h-6 rounded-full transition-colors duration-200 ${rule.enabled ? 'bg-[#2E7D32]' : 'bg-[#E5E7EB]'}`}
-                role="switch"
-                aria-checked={rule.enabled}
+              <button
+                onClick={() => handleToggle(rule)}
+                className="flex items-center gap-2 flex-shrink-0 cursor-pointer"
+                aria-label={`${rule.enabled ? 'Desactiver' : 'Activer'} la regle ${rule.name}`}
               >
+                <span className="text-xs font-semibold text-[#6B7280]">
+                  {rule.enabled ? 'Active' : 'Inactive'}
+                </span>
                 <div
-                  className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${rule.enabled ? 'translate-x-5' : 'translate-x-1'}`}
-                />
-              </div>
-            </label>
-          </div>
-        </Card>
-      ))}
+                  className={`relative w-10 h-6 rounded-full transition-colors duration-200 ${rule.enabled ? 'bg-[#2E7D32]' : 'bg-[#E5E7EB]'}`}
+                  role="switch"
+                  aria-checked={rule.enabled}
+                >
+                  <div
+                    className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${rule.enabled ? 'translate-x-5' : 'translate-x-1'}`}
+                  />
+                </div>
+              </button>
+            </div>
+          </Card>
+        ))
+      )}
     </div>
   )
 }
 
 function SuspensionsTab() {
+  const alertsQuery = useFraudAlerts({ status: 'RESOLVED' })
+  const alerts = alertsQuery.data?.data ?? []
+  const suspensions = alerts.filter((a) => a.entityType === 'CONSUMER')
+
   return (
     <div className="flex flex-col gap-4">
-      {activeSuspensions.length === 0 ? (
+      {alertsQuery.isLoading ? (
+        <Card>
+          <p className="text-center text-[#9CA3AF] py-8">Chargement...</p>
+        </Card>
+      ) : suspensions.length === 0 ? (
         <Card>
           <p className="text-center text-[#9CA3AF] py-8">Aucune suspension active.</p>
         </Card>
       ) : (
-        activeSuspensions.map((suspension) => (
+        suspensions.map((suspension) => (
           <Card key={suspension.id}>
             <div className="flex items-start justify-between gap-4">
               <div>
@@ -250,6 +248,20 @@ function SuspensionsTab() {
 
 function FraudPage() {
   const [activeTab, setActiveTab] = useState('alerts')
+  const alertsQuery = useFraudAlerts()
+  const activeAlerts = (alertsQuery.data?.data ?? []).filter(
+    (f) => f.status === 'NEW' || f.status === 'INVESTIGATING',
+  )
+
+  const tabs = [
+    {
+      id: 'alerts',
+      label: 'Alertes',
+      badge: activeAlerts.length > 0 ? activeAlerts.length : undefined,
+    },
+    { id: 'rules', label: 'Regles' },
+    { id: 'suspensions', label: 'Suspensions actives' },
+  ]
 
   return (
     <div className="flex flex-col gap-6">

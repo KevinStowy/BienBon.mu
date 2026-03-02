@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import type { Claim, Review, ResolutionType } from '../api/types'
 import { mockClaims, mockReviews } from '../mocks/extended-data'
+import { getAuthHeaders } from '../api/client'
 
 export interface ClaimFilters {
   status?: string
@@ -20,9 +21,11 @@ export function useClaims(filters: ClaimFilters = {}) {
             .filter(([, v]) => v !== undefined && v !== '' && v !== 'ALL')
             .map(([k, v]) => [k, String(v)]),
         )
-        const res = await fetch(`/api/v1/admin/claims?${params}`)
+        const headers = await getAuthHeaders()
+        const res = await fetch(`/api/v1/admin/claims?${params}`, { headers })
         if (!res.ok) throw new Error('API unavailable')
-        return (await res.json()) as { data: Claim[]; total: number }
+        const raw = await res.json()
+        return { data: raw.data, total: raw.total ?? raw.meta?.total ?? 0 } as { data: Claim[]; total: number }
       } catch {
         let filtered = [...mockClaims]
         if (filters.status && filters.status !== 'ALL') {
@@ -43,7 +46,8 @@ export function useClaim(id: string) {
     queryKey: ['claims', id],
     queryFn: async () => {
       try {
-        const res = await fetch(`/api/v1/admin/claims/${id}`)
+        const headers = await getAuthHeaders()
+        const res = await fetch(`/api/v1/admin/claims/${id}`, { headers })
         if (!res.ok) throw new Error('API unavailable')
         return (await res.json()) as Claim
       } catch {
@@ -60,9 +64,10 @@ export function useResolveClaim() {
   return useMutation({
     mutationFn: async ({ id, type, amount, comment }: { id: string; type: ResolutionType; amount: number | null; comment: string }) => {
       try {
+        const headers = await getAuthHeaders()
         const res = await fetch(`/api/v1/admin/claims/${id}/resolve`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers,
           body: JSON.stringify({ type, amount, comment }),
         })
         if (!res.ok) throw new Error('API unavailable')
@@ -83,7 +88,8 @@ export function useAssignClaim() {
   return useMutation({
     mutationFn: async ({ id }: { id: string }) => {
       try {
-        const res = await fetch(`/api/v1/admin/claims/${id}/assign`, { method: 'POST' })
+        const headers = await getAuthHeaders()
+        const res = await fetch(`/api/v1/admin/claims/${id}/assign`, { method: 'POST', headers })
         if (!res.ok) throw new Error('API unavailable')
         return res.json()
       } catch {
@@ -107,7 +113,8 @@ export function useReviews(filters: { partnerId?: string; rating?: number; searc
             .filter(([, v]) => v !== undefined && v !== '')
             .map(([k, v]) => [k, String(v)]),
         )
-        const res = await fetch(`/api/v1/admin/reviews?${params}`)
+        const headers = await getAuthHeaders()
+        const res = await fetch(`/api/v1/admin/reviews?${params}`, { headers })
         if (!res.ok) throw new Error('API unavailable')
         return (await res.json()) as { data: Review[]; total: number }
       } catch {
@@ -129,9 +136,10 @@ export function useDeleteReview() {
   return useMutation({
     mutationFn: async ({ id, reason }: { id: string; reason: string }) => {
       try {
+        const headers = await getAuthHeaders()
         const res = await fetch(`/api/v1/admin/reviews/${id}`, {
           method: 'DELETE',
-          headers: { 'Content-Type': 'application/json' },
+          headers,
           body: JSON.stringify({ reason }),
         })
         if (!res.ok) throw new Error('API unavailable')

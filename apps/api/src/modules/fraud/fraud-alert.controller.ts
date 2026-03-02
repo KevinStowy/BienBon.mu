@@ -1,6 +1,7 @@
 import {
   Controller,
   Get,
+  Patch,
   Post,
   Body,
   Param,
@@ -29,6 +30,7 @@ import { ResolveAlertDto } from './dto/resolve-alert.dto';
 import { FraudAlertResponseDto } from './dto/fraud-alert-response.dto';
 import { ListAlertsQueryDto } from './dto/list-alerts-query.dto';
 import { PaginatedResponseDto } from '../../shared/dto/pagination.dto';
+import { PrismaService } from '../../prisma/prisma.service';
 
 /**
  * Controller for managing fraud alerts.
@@ -37,9 +39,12 @@ import { PaginatedResponseDto } from '../../shared/dto/pagination.dto';
 @ApiTags('fraud')
 @ApiBearerAuth()
 @Roles(Role.ADMIN, Role.SUPER_ADMIN)
-@Controller('fraud/alerts')
+@Controller('api/v1/admin/fraud/alerts')
 export class FraudAlertController {
-  constructor(private readonly fraudAlertService: FraudAlertService) {}
+  constructor(
+    private readonly fraudAlertService: FraudAlertService,
+    private readonly prisma: PrismaService,
+  ) {}
 
   // ---------------------------------------------------------------------------
   // GET /fraud/alerts — List alerts
@@ -75,6 +80,47 @@ export class FraudAlertController {
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<FraudAlertResponseDto> {
     return this.fraudAlertService.getAlert(id);
+  }
+
+  // ---------------------------------------------------------------------------
+  // PATCH /fraud/alerts/:id — Update alert (frontend uses PATCH)
+  // ---------------------------------------------------------------------------
+  @Patch(':id')
+  @ApiOperation({
+    summary: 'Update a fraud alert status',
+    description: 'Updates the status and optionally adds a comment to a fraud alert.',
+  })
+  @ApiParam({ name: 'id', description: 'Fraud alert UUID', type: String })
+  @ApiResponse({ status: 200, description: 'Fraud alert updated' })
+  async updateAlert(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() body: { status?: string; comment?: string },
+    @CurrentUser() currentUser: AuthUser,
+  ): Promise<unknown> {
+    const data: Record<string, unknown> = {};
+    if (body.comment !== undefined) data['adminComment'] = body.comment;
+    if (body.status === 'INVESTIGATING' || body.status === 'INVESTIGATED') {
+      data['status'] = 'INVESTIGATED';
+    } else if (body.status === 'RESOLVED') {
+      data['status'] = 'RESOLVED';
+      data['resolvedBy'] = currentUser.id;
+    } else if (body.status === 'FALSE_POSITIVE') {
+      data['status'] = 'FALSE_POSITIVE';
+      data['resolvedBy'] = currentUser.id;
+    }
+
+    const updated = await this.prisma.fraudAlert.update({
+      where: { id },
+      data,
+    });
+
+    return {
+      id: updated.id,
+      alertType: updated.alertType,
+      status: updated.status,
+      adminComment: updated.adminComment,
+      updatedAt: updated.updatedAt.toISOString(),
+    };
   }
 
   // ---------------------------------------------------------------------------

@@ -39,7 +39,7 @@ import type { Claim } from '../domain/entities/claim.entity';
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(Role.ADMIN, Role.SUPER_ADMIN)
-@Controller('admin/claims')
+@Controller('api/v1/admin/claims')
 export class AdminReviewClaimsController {
   constructor(
     private readonly claimService: ClaimService,

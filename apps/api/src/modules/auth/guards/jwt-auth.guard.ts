@@ -72,11 +72,14 @@ export class JwtAuthGuard implements CanActivate {
         throw new UnauthorizedException('Invalid or expired token');
       }
 
-      // Extract roles from user metadata
+      // Extract roles from app_metadata (set by admin API) or user_metadata
+      const appMetadata = user.app_metadata as
+        | Record<string, unknown>
+        | undefined;
       const userMetadata = user.user_metadata as
         | Record<string, unknown>
         | undefined;
-      const rolesRaw = userMetadata?.['roles'];
+      const rolesRaw = appMetadata?.['roles'] ?? userMetadata?.['roles'];
       const roles = this.parseRoles(rolesRaw);
 
       // Attach authenticated user to the request

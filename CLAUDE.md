@@ -109,3 +109,10 @@ cd apps/partner-app && flutter run
 ## Design System
 
 Source de vérité : `DESIGN_SYSTEM.md`. Green primary (#1B5E20/#2E7D32/#4CAF50), Orange accent (#E65100/#FF9800). Nunito font. Base 4px spacing. Mobile-first 390px. Background: `#F7F4EF`.
+
+## Préparation avant codage
+Avant de coder une frature, tu dois vérifier : quels sont les agents et skills à invoquer, quels sont les ADR, charger les specs (US et mockups), anticiper les tests à réaliser après le dev
+
+## Test avant livraison
+Avant toute livraison (commit), tu dois impérativement t'assurer que : Le code généré respecte les US, les mockups, les ADR concernés, et que les TESTS ont été éxecutés. tu dois me rendre un mini-rapport que je dois valider pour me prouver que tu as bien fait tout ça avant chaque commit.
+

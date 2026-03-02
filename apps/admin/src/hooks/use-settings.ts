@@ -1,13 +1,15 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import type { Category, Tag } from '../api/types'
 import { mockCategories, mockTags, mockAdminUsers } from '../mocks/extended-data'
+import { getAuthHeaders } from '../api/client'
 
 export function useCategories() {
   return useQuery({
     queryKey: ['settings', 'categories'],
     queryFn: async () => {
       try {
-        const res = await fetch('/api/v1/admin/settings/categories')
+        const headers = await getAuthHeaders()
+        const res = await fetch('/api/v1/admin/settings/categories', { headers })
         if (!res.ok) throw new Error('API unavailable')
         return (await res.json()) as Category[]
       } catch {
@@ -22,9 +24,10 @@ export function useCreateCategory() {
   return useMutation({
     mutationFn: async (data: Omit<Category, 'id' | 'basketCount'>) => {
       try {
+        const headers = await getAuthHeaders()
         const res = await fetch('/api/v1/admin/settings/categories', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers,
           body: JSON.stringify(data),
         })
         if (!res.ok) throw new Error('API unavailable')
@@ -45,9 +48,10 @@ export function useUpdateCategory() {
   return useMutation({
     mutationFn: async ({ id, ...data }: Partial<Category> & { id: string }) => {
       try {
+        const headers = await getAuthHeaders()
         const res = await fetch(`/api/v1/admin/settings/categories/${id}`, {
           method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
+          headers,
           body: JSON.stringify(data),
         })
         if (!res.ok) throw new Error('API unavailable')
@@ -68,7 +72,8 @@ export function useDeleteCategory() {
   return useMutation({
     mutationFn: async ({ id }: { id: string }) => {
       try {
-        const res = await fetch(`/api/v1/admin/settings/categories/${id}`, { method: 'DELETE' })
+        const headers = await getAuthHeaders()
+        const res = await fetch(`/api/v1/admin/settings/categories/${id}`, { method: 'DELETE', headers })
         if (!res.ok) throw new Error('API unavailable')
         return res.json()
       } catch {
@@ -87,7 +92,8 @@ export function useTags() {
     queryKey: ['settings', 'tags'],
     queryFn: async () => {
       try {
-        const res = await fetch('/api/v1/admin/settings/tags')
+        const headers = await getAuthHeaders()
+        const res = await fetch('/api/v1/admin/settings/tags', { headers })
         if (!res.ok) throw new Error('API unavailable')
         return (await res.json()) as Tag[]
       } catch {
@@ -102,9 +108,10 @@ export function useCreateTag() {
   return useMutation({
     mutationFn: async (data: Omit<Tag, 'id' | 'basketCount' | 'consumerCount'>) => {
       try {
+        const headers = await getAuthHeaders()
         const res = await fetch('/api/v1/admin/settings/tags', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers,
           body: JSON.stringify(data),
         })
         if (!res.ok) throw new Error('API unavailable')
@@ -125,9 +132,10 @@ export function useUpdateTag() {
   return useMutation({
     mutationFn: async ({ id, ...data }: Partial<Tag> & { id: string }) => {
       try {
+        const headers = await getAuthHeaders()
         const res = await fetch(`/api/v1/admin/settings/tags/${id}`, {
           method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
+          headers,
           body: JSON.stringify(data),
         })
         if (!res.ok) throw new Error('API unavailable')
@@ -148,7 +156,8 @@ export function useDeleteTag() {
   return useMutation({
     mutationFn: async ({ id }: { id: string }) => {
       try {
-        const res = await fetch(`/api/v1/admin/settings/tags/${id}`, { method: 'DELETE' })
+        const headers = await getAuthHeaders()
+        const res = await fetch(`/api/v1/admin/settings/tags/${id}`, { method: 'DELETE', headers })
         if (!res.ok) throw new Error('API unavailable')
         return res.json()
       } catch {
@@ -167,7 +176,8 @@ export function useAdminUsers() {
     queryKey: ['settings', 'admin-users'],
     queryFn: async () => {
       try {
-        const res = await fetch('/api/v1/admin/settings/admin-users')
+        const headers = await getAuthHeaders()
+        const res = await fetch('/api/v1/admin/settings/admin-users', { headers })
         if (!res.ok) throw new Error('API unavailable')
         return (await res.json()) as typeof mockAdminUsers
       } catch {

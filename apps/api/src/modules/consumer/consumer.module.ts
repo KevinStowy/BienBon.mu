@@ -7,10 +7,13 @@ import { BadgeController } from './badge.controller';
 import { BadgeService } from './badge.service';
 import { ReferralController } from './referral.controller';
 import { ReferralService } from './referral.service';
+import { AdminConsumerController } from './admin-consumer.controller';
+import { AdminConsumerService } from './admin-consumer.service';
 
 /**
  * ConsumerModule — bounded context for consumer-facing profile, favorites,
  * badges, and referral features.
+ * Also includes admin endpoints for consumer management.
  *
  * Classification: CRUD simple (no hexagonal architecture).
  * PrismaService is provided globally by SharedModule (@Global).
@@ -26,18 +29,21 @@ import { ReferralService } from './referral.service';
     FavoriteController,
     BadgeController,
     ReferralController,
+    AdminConsumerController,
   ],
   providers: [
     ConsumerProfileService,
     FavoriteService,
     BadgeService,
     ReferralService,
+    AdminConsumerService,
   ],
   exports: [
     ConsumerProfileService,
     FavoriteService,
     BadgeService,
     ReferralService,
+    AdminConsumerService,
   ],
 })
 export class ConsumerModule {}

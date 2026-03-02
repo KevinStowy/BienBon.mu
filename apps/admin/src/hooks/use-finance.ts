@@ -1,13 +1,15 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import type { CommissionConfig, PayoutStatement, RevenueOverview, RevenueByPartner, PeriodFilter } from '../api/types'
 import { mockCommissionConfig, mockPayouts, mockRevenueOverview, mockRevenueByPartner } from '../mocks/extended-data'
+import { getAuthHeaders } from '../api/client'
 
 export function useCommissionConfig() {
   return useQuery({
     queryKey: ['finance', 'commission-config'],
     queryFn: async () => {
       try {
-        const res = await fetch('/api/v1/admin/finance/commission-config')
+        const headers = await getAuthHeaders()
+        const res = await fetch('/api/v1/admin/finance/commission-config', { headers })
         if (!res.ok) throw new Error('API unavailable')
         return (await res.json()) as CommissionConfig
       } catch {
@@ -22,9 +24,10 @@ export function useUpdateCommissionConfig() {
   return useMutation({
     mutationFn: async (config: Partial<CommissionConfig>) => {
       try {
+        const headers = await getAuthHeaders()
         const res = await fetch('/api/v1/admin/finance/commission-config', {
           method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
+          headers,
           body: JSON.stringify(config),
         })
         if (!res.ok) throw new Error('API unavailable')
@@ -50,7 +53,8 @@ export function usePayouts(filters: { partnerId?: string; period?: string } = {}
             .filter(([, v]) => v !== undefined && v !== '')
             .map(([k, v]) => [k, String(v)]),
         )
-        const res = await fetch(`/api/v1/admin/finance/payouts?${params}`)
+        const headers = await getAuthHeaders()
+        const res = await fetch(`/api/v1/admin/finance/payouts?${params}`, { headers })
         if (!res.ok) throw new Error('API unavailable')
         return (await res.json()) as { data: PayoutStatement[]; total: number }
       } catch {
@@ -69,9 +73,10 @@ export function useGeneratePayouts() {
   return useMutation({
     mutationFn: async ({ month }: { month: string }) => {
       try {
+        const headers = await getAuthHeaders()
         const res = await fetch('/api/v1/admin/finance/payouts/generate', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers,
           body: JSON.stringify({ month }),
         })
         if (!res.ok) throw new Error('API unavailable')
@@ -92,7 +97,8 @@ export function useMarkPayoutAsPaid() {
   return useMutation({
     mutationFn: async ({ id }: { id: string }) => {
       try {
-        const res = await fetch(`/api/v1/admin/finance/payouts/${id}/mark-paid`, { method: 'POST' })
+        const headers = await getAuthHeaders()
+        const res = await fetch(`/api/v1/admin/finance/payouts/${id}/mark-paid`, { method: 'POST', headers })
         if (!res.ok) throw new Error('API unavailable')
         return res.json()
       } catch {
@@ -111,7 +117,8 @@ export function useRevenue(period: PeriodFilter = 'this_month') {
     queryKey: ['finance', 'revenue', period],
     queryFn: async () => {
       try {
-        const res = await fetch(`/api/v1/admin/finance/revenue?period=${period}`)
+        const headers = await getAuthHeaders()
+        const res = await fetch(`/api/v1/admin/finance/revenue?period=${period}`, { headers })
         if (!res.ok) throw new Error('API unavailable')
         return (await res.json()) as RevenueOverview
       } catch {
@@ -126,7 +133,8 @@ export function useRevenueByPartner(period: PeriodFilter = 'this_month') {
     queryKey: ['finance', 'revenue-by-partner', period],
     queryFn: async () => {
       try {
-        const res = await fetch(`/api/v1/admin/finance/revenue/by-partner?period=${period}`)
+        const headers = await getAuthHeaders()
+        const res = await fetch(`/api/v1/admin/finance/revenue/by-partner?period=${period}`, { headers })
         if (!res.ok) throw new Error('API unavailable')
         return (await res.json()) as RevenueByPartner[]
       } catch {

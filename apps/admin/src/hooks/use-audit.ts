@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import type { AuditEntry, AuditCategory } from '../api/types'
 import { mockAuditEntries } from '../mocks/extended-data'
+import { getAuthHeaders } from '../api/client'
 
 export interface AuditFilters {
   search?: string
@@ -22,7 +23,8 @@ export function useAuditLog(filters: AuditFilters = {}) {
             .filter(([, v]) => v !== undefined && v !== '' && v !== 'ALL')
             .map(([k, v]) => [k, String(v)]),
         )
-        const res = await fetch(`/api/v1/admin/audit?${params}`)
+        const headers = await getAuthHeaders()
+        const res = await fetch(`/api/v1/admin/audit?${params}`, { headers })
         if (!res.ok) throw new Error('API unavailable')
         return (await res.json()) as { data: AuditEntry[]; total: number }
       } catch {
@@ -57,7 +59,8 @@ export function useAuditEntry(id: string) {
     queryKey: ['audit', id],
     queryFn: async () => {
       try {
-        const res = await fetch(`/api/v1/admin/audit/${id}`)
+        const headers = await getAuthHeaders()
+        const res = await fetch(`/api/v1/admin/audit/${id}`, { headers })
         if (!res.ok) throw new Error('API unavailable')
         return (await res.json()) as AuditEntry
       } catch {
@@ -74,7 +77,8 @@ export function useUserTimeline(userId: string) {
     queryKey: ['audit', 'timeline', userId],
     queryFn: async () => {
       try {
-        const res = await fetch(`/api/v1/admin/audit/timeline/${userId}`)
+        const headers = await getAuthHeaders()
+        const res = await fetch(`/api/v1/admin/audit/timeline/${userId}`, { headers })
         if (!res.ok) throw new Error('API unavailable')
         return (await res.json()) as AuditEntry[]
       } catch {

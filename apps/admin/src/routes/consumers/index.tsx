@@ -4,7 +4,8 @@ import { createColumnHelper } from '@tanstack/react-table'
 import { DataTable } from '../../components/ui/DataTable'
 import { Badge, statusToBadgeVariant } from '../../components/ui/Badge'
 import { SearchInput } from '../../components/ui/SearchInput'
-import { mockConsumers, type MockConsumer } from '../../mocks/data'
+import { useConsumers } from '../../hooks/use-consumers'
+import type { Consumer } from '../../api/types'
 import { formatCurrency, formatDate } from '../../lib/utils'
 import { Route as rootRoute } from '../__root'
 
@@ -14,7 +15,7 @@ export const Route = createRoute({
   component: ConsumersPage,
 })
 
-const columnHelper = createColumnHelper<MockConsumer>()
+const columnHelper = createColumnHelper<Consumer>()
 
 const columns = [
   columnHelper.display({
@@ -92,26 +93,18 @@ function ConsumersPage() {
   const [page, setPage] = useState(1)
   const PAGE_SIZE = 10
 
-  const filtered = mockConsumers
-    .filter((c) => {
-      if (statusFilter !== 'ALL') return c.status === statusFilter
-      return true
-    })
-    .filter((c) => {
-      if (!search) return true
-      const q = search.toLowerCase()
-      return (
-        c.firstName.toLowerCase().includes(q) ||
-        c.lastName.toLowerCase().includes(q) ||
-        c.email.toLowerCase().includes(q) ||
-        c.phone.includes(q)
-      )
-    })
+  const consumersQuery = useConsumers({
+    status: statusFilter !== 'ALL' ? statusFilter : undefined,
+    search: search || undefined,
+    page,
+    limit: PAGE_SIZE,
+  })
 
-  const pageCount = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
-  const paged = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
+  const consumers = consumersQuery.data?.data ?? []
+  const total = consumersQuery.data?.total ?? 0
+  const pageCount = Math.max(1, Math.ceil(total / PAGE_SIZE))
 
-  const handleRowClick = (consumer: MockConsumer) => {
+  const handleRowClick = (consumer: Consumer) => {
     void navigate({
       to: '/consumers/$consumerId',
       params: { consumerId: consumer.id },
@@ -123,7 +116,7 @@ function ConsumersPage() {
       <div>
         <h1 className="text-2xl font-extrabold text-[#1A1A1A]">Consommateurs</h1>
         <p className="text-sm text-[#6B7280] mt-1">
-          {mockConsumers.length} consommateurs inscrits
+          {total} consommateurs inscrits
         </p>
       </div>
 
@@ -157,11 +150,12 @@ function ConsumersPage() {
         <div className="p-4">
           <DataTable
             columns={columns}
-            data={paged}
+            data={consumers}
             page={page}
             pageCount={pageCount}
             onPageChange={setPage}
             onRowClick={handleRowClick}
+            isLoading={consumersQuery.isLoading}
             emptyMessage="Aucun consommateur trouve"
           />
         </div>

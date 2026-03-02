@@ -1,20 +1,19 @@
 import { createRoute } from '@tanstack/react-router'
 import { useState } from 'react'
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from 'recharts'
 import { Save } from 'lucide-react'
 import { TabNav } from '../components/ui/TabNav'
 import { Card, CardHeader, CardTitle } from '../components/ui/Card'
 import { Button } from '../components/ui/Button'
 import { KpiCard } from '../components/ui/KpiCard'
-import { mockRevenueData, mockPartners, mockDashboardKpis } from '../mocks/data'
+import { Badge, statusToBadgeVariant } from '../components/ui/Badge'
+import {
+  useRevenue,
+  useRevenueByPartner,
+  useCommissionConfig,
+  useUpdateCommissionConfig,
+  usePayouts,
+  useMarkPayoutAsPaid,
+} from '../hooks/use-finance'
 import { formatCurrency, formatDate } from '../lib/utils'
 import { Route as rootRoute } from './__root'
 
@@ -30,49 +29,25 @@ const tabs = [
   { id: 'payouts', label: 'Virements' },
 ]
 
-// Mock payout statements
-const mockPayouts = [
-  {
-    id: 'pay-001',
-    partnerId: 'partner-003',
-    partnerName: 'Island Fresh Market',
-    period: '2026-02',
-    amount: 18450,
-    commission: 3251,
-    status: 'PAID',
-    paidAt: '2026-02-25T16:00:00Z',
-  },
-  {
-    id: 'pay-002',
-    partnerId: 'partner-004',
-    partnerName: 'Cafe des Arts',
-    period: '2026-02',
-    amount: 28600,
-    commission: 3432,
-    status: 'PENDING',
-    paidAt: null,
-  },
-  {
-    id: 'pay-003',
-    partnerId: 'partner-003',
-    partnerName: 'Island Fresh Market',
-    period: '2026-01',
-    amount: 15200,
-    commission: 2280,
-    status: 'PAID',
-    paidAt: '2026-01-28T10:00:00Z',
-  },
-]
-
 function CommissionSettings() {
-  const [globalRate, setGlobalRate] = useState(15)
-  const [premiumRate, setPremiumRate] = useState(12)
-  const [isSaving, setIsSaving] = useState(false)
+  const configQuery = useCommissionConfig()
+  const updateConfig = useUpdateCommissionConfig()
+  const revenueByPartnerQuery = useRevenueByPartner()
 
-  const handleSave = async () => {
-    setIsSaving(true)
-    await new Promise((r) => setTimeout(r, 800))
-    setIsSaving(false)
+  const config = configQuery.data
+  const [globalRate, setGlobalRate] = useState<number | null>(null)
+  const [feeMinimum, setFeeMinimum] = useState<number | null>(null)
+
+  const displayRate = globalRate ?? (config ? config.globalRate * 100 : 15)
+  const displayFee = feeMinimum ?? (config ? config.feeMinimum : 50)
+
+  const partners = revenueByPartnerQuery.data ?? []
+
+  const handleSave = () => {
+    updateConfig.mutate({
+      globalRate: displayRate / 100,
+      feeMinimum: displayFee,
+    })
   }
 
   return (
@@ -95,7 +70,7 @@ function CommissionSettings() {
               min={0}
               max={50}
               step={0.5}
-              value={globalRate}
+              value={displayRate}
               onChange={(e) => setGlobalRate(Number(e.target.value))}
               aria-describedby="global-rate-desc"
               className="w-32 px-3 py-2 text-sm border border-[#E5E7EB] rounded-lg
@@ -108,25 +83,25 @@ function CommissionSettings() {
 
           <div>
             <label
-              htmlFor="premium-rate"
+              htmlFor="fee-minimum"
               className="block text-sm font-semibold text-[#1A1A1A] mb-1.5"
             >
-              Taux premium (%)
+              Frais minimum (Rs)
             </label>
             <input
-              id="premium-rate"
+              id="fee-minimum"
               type="number"
               min={0}
-              max={50}
-              step={0.5}
-              value={premiumRate}
-              onChange={(e) => setPremiumRate(Number(e.target.value))}
-              aria-describedby="premium-rate-desc"
+              max={500}
+              step={5}
+              value={displayFee}
+              onChange={(e) => setFeeMinimum(Number(e.target.value))}
+              aria-describedby="fee-minimum-desc"
               className="w-32 px-3 py-2 text-sm border border-[#E5E7EB] rounded-lg
                 focus:outline-none focus:ring-2 focus:ring-[#4CAF50]"
             />
-            <p id="premium-rate-desc" className="mt-1 text-xs text-[#9CA3AF]">
-              Partenaires genrant plus de Rs 30 000 / mois
+            <p id="fee-minimum-desc" className="mt-1 text-xs text-[#9CA3AF]">
+              Frais minimum par transaction
             </p>
           </div>
 
@@ -134,8 +109,8 @@ function CommissionSettings() {
             variant="primary"
             size="sm"
             className="self-start"
-            isLoading={isSaving}
-            onClick={() => { void handleSave() }}
+            isLoading={updateConfig.isPending}
+            onClick={handleSave}
           >
             <Save className="w-4 h-4" aria-hidden="true" />
             Sauvegarder
@@ -143,7 +118,6 @@ function CommissionSettings() {
         </div>
       </Card>
 
-      {/* Per partner commission */}
       <Card>
         <CardHeader>
           <CardTitle>Commission par partenaire</CardTitle>
@@ -152,24 +126,27 @@ function CommissionSettings() {
           <thead>
             <tr className="border-b border-[#E5E7EB]">
               <th scope="col" className="text-left py-2 font-bold text-[#6B7280] text-xs uppercase">Commerce</th>
-              <th scope="col" className="text-right py-2 font-bold text-[#6B7280] text-xs uppercase">Taux</th>
               <th scope="col" className="text-right py-2 font-bold text-[#6B7280] text-xs uppercase">Revenu</th>
               <th scope="col" className="text-right py-2 font-bold text-[#6B7280] text-xs uppercase">Commission</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-[#E5E7EB]">
-            {mockPartners
-              .filter((p) => p.status === 'ACTIVE')
-              .map((p) => (
-                <tr key={p.id}>
-                  <td className="py-2.5 text-[#1A1A1A] font-semibold">{p.storeName}</td>
-                  <td className="py-2.5 text-right text-[#6B7280]">{p.commissionRate}%</td>
-                  <td className="py-2.5 text-right text-[#1A1A1A]">{formatCurrency(p.revenueTotal)}</td>
-                  <td className="py-2.5 text-right font-semibold text-[#2E7D32]">
-                    {formatCurrency(p.revenueTotal * p.commissionRate / 100)}
-                  </td>
-                </tr>
-              ))}
+            {partners.map((p) => (
+              <tr key={p.partnerId}>
+                <td className="py-2.5 text-[#1A1A1A] font-semibold">{p.partnerName}</td>
+                <td className="py-2.5 text-right text-[#1A1A1A]">{formatCurrency(p.revenue)}</td>
+                <td className="py-2.5 text-right font-semibold text-[#2E7D32]">
+                  {formatCurrency(p.commission)}
+                </td>
+              </tr>
+            ))}
+            {partners.length === 0 && (
+              <tr>
+                <td colSpan={3} className="py-8 text-center text-[#9CA3AF]">
+                  Aucune donnee de commission disponible
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </Card>
@@ -178,66 +155,55 @@ function CommissionSettings() {
 }
 
 function RevenueTab() {
-  const monthlyData = mockRevenueData.filter((_, i) => i % 7 === 0)
+  const revenueQuery = useRevenue('this_month')
+  const overview = revenueQuery.data
 
   return (
     <div className="flex flex-col gap-6">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <KpiCard
           label="Revenus du mois"
-          value={formatCurrency(mockDashboardKpis.totalRevenue)}
-          trend={mockDashboardKpis.revenueGrowth}
-          trendLabel="vs mois dernier"
+          value={formatCurrency(overview?.totalRevenue ?? 0)}
+          trend={0}
         />
         <KpiCard
           label="Commissions percues"
-          value={formatCurrency(mockDashboardKpis.commissionEarned)}
-          trend={mockDashboardKpis.commissionGrowth}
-          trendLabel="vs mois dernier"
+          value={formatCurrency(overview?.totalCommission ?? 0)}
+          trend={0}
         />
         <KpiCard
-          label="Paniers vendus"
-          value={mockDashboardKpis.totalBaskets.toLocaleString()}
-          trend={mockDashboardKpis.basketsGrowth}
-          trendLabel="vs mois dernier"
+          label="Transactions"
+          value={(overview?.totalTransactions ?? 0).toLocaleString()}
+          trend={0}
         />
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Evolution hebdomadaire</CardTitle>
-        </CardHeader>
-        <div className="h-60" role="img" aria-label="Graphique revenus hebdomadaires">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={monthlyData} margin={{ top: 4, right: 4, left: 0, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-              <XAxis
-                dataKey="date"
-                tick={{ fontSize: 10, fill: '#9CA3AF' }}
-                tickLine={false}
-                axisLine={false}
-                tickFormatter={(v: string) => v.slice(5)}
-              />
-              <YAxis
-                tick={{ fontSize: 10, fill: '#9CA3AF' }}
-                tickLine={false}
-                axisLine={false}
-                tickFormatter={(v: number) => `Rs ${Math.round(v / 1000)}k`}
-              />
-              <Tooltip
-                formatter={(value: number) => [formatCurrency(value), 'Revenus']}
-                contentStyle={{ border: '1px solid #E5E7EB', borderRadius: '8px', fontSize: '12px' }}
-              />
-              <Bar dataKey="revenue" fill="#2E7D32" radius={[4, 4, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </Card>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <KpiCard
+          label="Montant moyen"
+          value={formatCurrency(overview?.avgTransactionAmount ?? 0)}
+          trend={0}
+        />
+        <KpiCard
+          label="Marge moyenne"
+          value={`${((overview?.avgMargin ?? 0) * 100).toFixed(1)}%`}
+          trend={0}
+        />
+        <KpiCard
+          label="Remboursements"
+          value={formatCurrency(overview?.totalRefunds ?? 0)}
+          trend={0}
+        />
+      </div>
     </div>
   )
 }
 
 function PayoutsTab() {
+  const payoutsQuery = usePayouts()
+  const markPaid = useMarkPayoutAsPaid()
+  const payouts = payoutsQuery.data?.data ?? []
+
   return (
     <div className="bg-white rounded-lg border border-[#E5E7EB] shadow-sm overflow-hidden">
       <table className="w-full text-sm" aria-label="Virements partenaires">
@@ -248,41 +214,56 @@ function PayoutsTab() {
             <th scope="col" className="px-4 py-3 text-left text-xs font-bold text-[#6B7280] uppercase">Periode</th>
             <th scope="col" className="px-4 py-3 text-right text-xs font-bold text-[#6B7280] uppercase">Montant brut</th>
             <th scope="col" className="px-4 py-3 text-right text-xs font-bold text-[#6B7280] uppercase">Commission</th>
+            <th scope="col" className="px-4 py-3 text-right text-xs font-bold text-[#6B7280] uppercase">Net</th>
             <th scope="col" className="px-4 py-3 text-left text-xs font-bold text-[#6B7280] uppercase">Statut</th>
-            <th scope="col" className="px-4 py-3 text-left text-xs font-bold text-[#6B7280] uppercase">Date</th>
+            <th scope="col" className="px-4 py-3 text-left text-xs font-bold text-[#6B7280] uppercase">Actions</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-[#E5E7EB]">
-          {mockPayouts.map((payout) => (
+          {payouts.map((payout) => (
             <tr key={payout.id} className="hover:bg-[#F7F4EF] transition-colors">
               <td className="px-4 py-3 font-semibold text-[#1A1A1A]">{payout.partnerName}</td>
               <td className="px-4 py-3 text-[#6B7280]">{payout.period}</td>
               <td className="px-4 py-3 text-right font-semibold text-[#1A1A1A]">
-                {formatCurrency(payout.amount)}
+                {formatCurrency(payout.totalGrossSales)}
               </td>
               <td className="px-4 py-3 text-right text-[#C62828]">
-                -{formatCurrency(payout.commission)}
+                -{formatCurrency(payout.totalCommission)}
+              </td>
+              <td className="px-4 py-3 text-right font-semibold text-[#2E7D32]">
+                {formatCurrency(payout.netPayout)}
               </td>
               <td className="px-4 py-3">
-                <span
-                  className={
-                    payout.status === 'PAID'
-                      ? 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#E8F5E9] text-[#2E7D32]'
-                      : 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#FFF3E0] text-[#E65100]'
-                  }
-                >
-                  {payout.status === 'PAID' ? 'Paye' : 'En attente'}
-                </span>
+                <Badge variant={statusToBadgeVariant(payout.status)}>
+                  {payout.status === 'PAID' ? 'Paye' : payout.status === 'ERROR' ? 'Erreur' : 'En attente'}
+                </Badge>
               </td>
-              <td className="px-4 py-3 text-[#6B7280]">
-                {payout.paidAt ? (
-                  <time dateTime={payout.paidAt}>{formatDate(payout.paidAt)}</time>
-                ) : (
-                  '—'
+              <td className="px-4 py-3">
+                {payout.status === 'PENDING' && (
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    isLoading={markPaid.isPending}
+                    onClick={() => markPaid.mutate({ id: payout.id })}
+                  >
+                    Marquer paye
+                  </Button>
+                )}
+                {payout.paidAt && (
+                  <time dateTime={payout.paidAt} className="text-xs text-[#6B7280]">
+                    {formatDate(payout.paidAt)}
+                  </time>
                 )}
               </td>
             </tr>
           ))}
+          {payouts.length === 0 && (
+            <tr>
+              <td colSpan={7} className="px-4 py-8 text-center text-[#9CA3AF]">
+                {payoutsQuery.isLoading ? 'Chargement...' : 'Aucun virement'}
+              </td>
+            </tr>
+          )}
         </tbody>
       </table>
     </div>

@@ -38,7 +38,7 @@ import { PaginatedResponseDto } from '../../shared/dto/pagination.dto';
 @ApiTags('fraud')
 @ApiBearerAuth()
 @Roles(Role.ADMIN, Role.SUPER_ADMIN)
-@Controller('fraud/rules')
+@Controller('api/v1/admin/fraud/rules')
 export class FraudRuleController {
   constructor(private readonly fraudRuleService: FraudRuleService) {}
 
